@@ -18,22 +18,8 @@
 
     @include('components.new-components.back-confirmation-user-modal')
 
-    @if (empty($pretestFolder->quizzes) || $pretestFolder->quizzes->first()?->questions->isEmpty())
-        {{-- Pretest folder exists but has no quizzes --}}
-        <div class="w-[90%] lg:w-[80%] mx-auto mt-[35%] lg:mt-[10%] flex flex-col items-center justify-center text-center">
-            <div class="text-7xl mb-6 animate-bounce">📝</div>
-
-            <h1 class="text-3xl lg:text-4xl font-extrabold text-gray-800 mb-3" style="font-family: 'Inter', sans-serif;">
-                Almost ready!
-            </h1>
-
-            <p class="text-gray-600 text-lg mb-8" style="font-family: 'Inter', sans-serif;">
-                The pretest is on its way. Please check back soon once the quiz has been added.
-            </p>
-
-        </div>
-    @else
-        {{-- Pretest Folder and Quiz Exist --}}
+    @if ($pretestFolder)
+        {{-- Pretest folder exists --}}
         <div class="w-[90%] lg:w-[80%] mx-auto mt-[35%] lg:mt-[10%] flex flex-col items-center justify-center text-center">
             <div class="text-7xl mb-6 animate-bounce">🎯</div>
 
@@ -57,6 +43,20 @@
                 <i class="ri-arrow-right-line ml-3"></i>
             </a>
         </div>
+    @else
+        {{-- No pretest folder --}}
+        <div class="w-[90%] lg:w-[80%] mx-auto mt-[35%] lg:mt-[10%] flex flex-col items-center justify-center text-center">
+            <div class="text-7xl mb-6 animate-bounce">📝</div>
+
+            <h1 class="text-3xl lg:text-4xl font-extrabold text-gray-800 mb-3" style="font-family: 'Inter', sans-serif;">
+                Almost ready!
+            </h1>
+
+            <p class="text-gray-600 text-lg mb-8" style="font-family: 'Inter', sans-serif;">
+                The pretest is on its way. Please check back soon once the quiz has been added.
+            </p>
+        </div>
     @endif
+
 </div>
 @endsection
