@@ -18,7 +18,7 @@
 
     @include('components.new-components.back-confirmation-user-modal')
 
-    @if (empty($pretestFolder->quizzes) || $pretestFolder->quizzes->first()->questions->isEmpty())
+    @if (empty($pretestFolder->quizzes) || $pretestFolder->quizzes->first()?->questions->isEmpty())
         {{-- Pretest folder exists but has no quizzes --}}
         <div class="w-[90%] lg:w-[80%] mx-auto mt-[35%] lg:mt-[10%] flex flex-col items-center justify-center text-center">
             <div class="text-7xl mb-6 animate-bounce">📝</div>
