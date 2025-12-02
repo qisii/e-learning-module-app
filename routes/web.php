@@ -1,0 +1,86 @@
+<?php
+
+use App\Http\Controllers\GradeController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProjectsController;
+use App\Http\Controllers\QuizzesController;
+use App\Http\Controllers\SocialiteController;
+use App\Livewire\ProfileForm;
+use App\Livewire\QuizScore;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+// Route::middleware('auth')->group(function () {
+//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+// });
+
+// Login with Google
+
+Route::get('/auth/google', [SocialiteController::class, 'googleLogin'])->name('auth.google');
+Route::get('/auth/google-callback', [SocialiteController::class, 'googleAuthentication'])->name('auth.google-callback');
+
+Route::group(['middleware' => 'auth'], function(){
+    Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show'); // add {id}
+    // Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
+    // Route::patch('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+
+    # LIVEWIRE
+    // Route::get('/profile/show', ProfileForm::class)->name('profile.show');
+
+    # ADMIN
+    Route::group(['prefix' => 'admin', 'as' => 'admin.'], function(){
+        Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
+        // Route::patch('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+
+        # PROJECTS
+        Route::get('/projects', [ProjectsController::class, 'index'])->name('projects');
+        Route::get('/project/create', [ProjectsController::class, 'create'])->name('projects.create');
+        Route::get('/project/{id}/edit', [ProjectsController::class, 'edit'])->name('projects.edit');
+        Route::delete('/project/{id}/delete', [ProjectsController::class, 'delete'])->name('projects.delete');
+
+        # QUIZ
+        Route::get('/{folder_id}/pretest/quiz', [QuizzesController::class, 'showPretest'])->name('quiz.pretest.show');
+        Route::get('/{folder_id}/post-test/quiz', [QuizzesController::class, 'showPostTest'])->name('quiz.posttest.show');
+
+        # MODULE
+        Route::get('/{folder_id}/module/', [QuizzesController::class, 'showModule'])->name('module.show');
+        Route::get('/refresh', [QuizzesController::class, 'refresh'])->name('refresh');
+
+        # QUESTION
+        Route::delete('/quiz/{question_id}/delete', [QuizzesController::class, 'deleteQuestion'])->name('questions.delete');
+        
+    });
+
+    # USER
+
+    # PROJECT
+    Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
+    # PRETEST
+    Route::get('/project/{project_id}/pretest/welcome', [ProjectController::class, 'welcomePretest'])->name('projects.welcome.pretest');
+    Route::get('/project/{project_id}/pretest/quiz', [ProjectController::class, 'showPretest'])->name('projects.show.pretest');
+    # MODULE HANDOUT
+    Route::get('/project/{project_id}/module/{level_id}/show', [ProjectController::class, 'showModule'])->name('projects.module.show');
+    # POST TEST
+    Route::get('/project/{project_id}/post-test/welcome', [ProjectController::class, 'welcomePostTest'])->name('projects.welcome.posttest');
+    Route::get('/project/{project_id}/post-test/quiz', [ProjectController::class, 'showPostTest'])->name('projects.show.posttest');
+
+    # SCORE
+    Route::get('/pretest/quiz/score/{quizAttemptId}', [ProjectController::class, 'openPreScore'])->name('pre.quiz.score');
+    Route::get('/post_test/quiz/score/{quizAttemptId}', [ProjectController::class, 'openPostScore'])->name('post.quiz.score');
+
+    # GRADE
+    Route::get('/grades/pretests', [GradeController::class, 'indexPretest'])->name('grades.index');
+    Route::get('/grades/post-tests', [GradeController::class, 'indexPostTest'])->name('grades.posttest');
+});
+
+require __DIR__.'/auth.php';

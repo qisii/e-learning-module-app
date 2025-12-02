@@ -1,0 +1,55 @@
+body {
+    background-image: url("{{ asset('assets/images/bg-img.png') }}");
+    background-position: center;
+    background-size: cover;
+}
+
+.font-primary {
+  /* Labels / Inputs / Paragraphs: Inter */
+  font-family: 'Inter', sans-serif;
+}
+
+.font-secondary {
+  /* Headings / Section titles / Error text: Poppins */
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Hide scrollbar but keep scroll functionality */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;  /* For Internet Explorer and Edge */
+  scrollbar-width: none;     /* For Firefox */
+}
+
+[x-cloak] { display: none !important; }
+
+.palette-item { background: #FBFBFB; user-select: none; }
+
+/* override on hover */
+.palette-item:hover {
+  background-color: rgba(243,244,246,1) !important; /* equivalent to bg-gray-50 */
+  transform: translateZ(0); /* help GPU accelerate */
+}
+
+.component-block {
+    background: white;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.04);
+    border-radius: 8px;
+}
+.components-list .component-block + .component-block {
+    margin-top: 0.75rem;
+}
+
+.component-block {
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+/* optional: make the ghost more visible */
+.component-block.bg-blue-50 {
+    background-color: #eff6ff !important;
+    opacity: 0.8;
+}
+
