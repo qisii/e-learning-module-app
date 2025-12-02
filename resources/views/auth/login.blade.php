@@ -24,9 +24,9 @@
                 class="hidden lg:block absolute top-[10%] left-[10%] w-[120px] z-[-20]">
             <img src="{{ asset('assets/images/periwrinkle.png') }}" alt="Periwinkle" 
                 class="hidden lg:block absolute top-[20%] left-[70%] w-[120px]">
-            <img src="{{ asset('assets/images/star.png') }}" alt="Star" 
+            <img src="{{ asset('assets/images/Star.png') }}" alt="Star" 
                 class="hidden lg:block absolute top-[70%] right-[10%] w-[80px]">
-            <img src="{{ asset('assets/images/star.png') }}" alt="Star" 
+            <img src="{{ asset('assets/images/Star.png') }}" alt="Star" 
                 class="hidden lg:block absolute top-[85%] right-[10%] w-[20px]">
             <img src="{{ asset('assets/images/Tube.png') }}" alt="Tube" 
                 class="hidden lg:block absolute top-[85%] right-[75%] w-[80px]">

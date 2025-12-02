@@ -18,13 +18,13 @@
     <div class="w-full flex flex-col lg:flex-row min-h-[80vh] md:h-auto relative">
         <div class="w-full lg:w-1/2 flex justify-center items-center relative order-1 lg:order-none">
             <div class="w-[90%] h-full rounded-lg p-6 relative overflow-hidden flex justify-center">
-                <img src="{{ asset('assets/images/star.png') }}" alt="Star" 
+                <img src="{{ asset('assets/images/Star.png') }}" alt="Star" 
                     class="hidden lg:block absolute top-[10%] left-[10%] w-[120px]">
                 <img src="{{ asset('assets/images/stair.png') }}" alt="Periwinkle" 
                     class="hidden lg:block absolute top-[20%] left-[70%] w-[120px] ">
-                <img src="{{ asset('assets/images/tube.png') }}" alt="Tube" 
+                <img src="{{ asset('assets/images/Tube.png') }}" alt="Tube" 
                     class="hidden lg:block absolute top-[70%] right-[10%] w-[80px]">
-                <img src="{{ asset('assets/images/star.png') }}" alt="Star" 
+                <img src="{{ asset('assets/images/Star.png') }}" alt="Star" 
                     class="hidden lg:block absolute top-[85%] right-[10%] w-[20px]">
                 <img src="{{ asset('assets/images/periwrinkle.png') }}" alt="Periwinkle" 
                     class="hidden lg:block absolute top-[85%] right-[75%] w-[80px]">
