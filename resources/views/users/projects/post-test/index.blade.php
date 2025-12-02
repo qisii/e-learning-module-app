@@ -18,32 +18,15 @@
 
     @include('components.new-components.back-confirmation-user-modal')
 
-    @if (empty($postTestFolder->quizzes) || $postTestFolder->quizzes->isEmpty())
-        {{-- Post-test folder exists but has no quizzes --}}
+    @if ($postTestFolder && $postTestFolder->quizzes->first()?->questions->isNotEmpty())
+        {{-- Post-test exists AND has questions --}}
         <div class="w-[90%] lg:w-[80%] mx-auto mt-[35%] lg:mt-[10%] flex flex-col items-center justify-center text-center">
-            <div class="text-7xl mb-6 animate-bounce">📝</div>
-
-            <h1 class="text-3xl lg:text-4xl font-extrabold text-gray-800 mb-3" style="font-family: 'Inter', sans-serif;">
-                Almost ready!
-            </h1>
-
-            <p class="text-gray-600 text-lg mb-8" style="font-family: 'Inter', sans-serif;">
-                The post-test is on its way. Please check back soon once the quiz has been added.
-            </p>
-
-        </div>
-    @else
-        {{-- Post-test Folder and Quiz Exist --}}
-        <div class="w-[90%] lg:w-[80%] mx-auto mt-[35%] lg:mt-[10%] flex flex-col items-center justify-center text-center">
-            <!-- Changed emoji -->
             <div class="text-7xl mb-6 animate-bounce">🚀</div>
 
-            <!-- Updated heading -->
             <h1 class="text-3xl lg:text-4xl font-extrabold text-gray-800 mb-3" style="font-family: 'Inter', sans-serif;">
                 Ready for the Final Challenge!
             </h1>
 
-            <!-- Updated paragraph -->
             <p class="text-gray-600 text-lg mb-8" style="font-family: 'Inter', sans-serif;">
                 Ready to take the last quiz and prove your skills?
             </p>
@@ -59,6 +42,20 @@
                 Start Quiz
                 <i class="ri-arrow-right-line ml-3"></i>
             </a>
+        </div>
+
+    @else
+        {{-- No folder, no quiz, OR quiz has no questions --}}
+        <div class="w-[90%] lg:w-[80%] mx-auto mt-[35%] lg:mt-[10%] flex flex-col items-center justify-center text-center">
+            <div class="text-7xl mb-6 animate-bounce">📝</div>
+
+            <h1 class="text-3xl lg:text-4xl font-extrabold text-gray-800 mb-3" style="font-family: 'Inter', sans-serif;">
+                Almost ready!
+            </h1>
+
+            <p class="text-gray-600 text-lg mb-8" style="font-family: 'Inter', sans-serif;">
+                The post-test is on its way. Please check back soon once the quiz has been added.
+            </p>
         </div>
     @endif
 </div>

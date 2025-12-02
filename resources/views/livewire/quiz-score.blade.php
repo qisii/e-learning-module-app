@@ -60,19 +60,28 @@
                         Based on your score, you may now access the recommended module.
                     </p>
 
-                    {{-- Continue Button --}}
-                    <a href="{{ route('projects.module.show', [
-                                'project_id' => $project_id,
-                                'level_id' => $recommendedLevel
-                            ]) }}"
-                    class="inline-flex items-center justify-center text-sm py-3
-                            bg-gradient-to-r from-blue-500 to-blue-900 bg-[length:150%_150%] bg-left 
-                            text-white rounded-lg transition-all duration-500 
-                            ease-in-out w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
-                    style="font-family: 'Inter', sans-serif;">
-                        Check Module
-                        <i class="ri-arrow-right-line ml-3"></i>
-                    </a>
+                    {{-- Continue Button or Message --}}
+                    @if (!empty($project_id) && !empty($recommendedLevel))
+                        <a href="{{ route('projects.module.show', [
+                                    'project_id' => $project_id,
+                                    'level_id' => $recommendedLevel
+                                ]) }}"
+                            class="inline-flex items-center justify-center text-sm py-3
+                                    bg-gradient-to-r from-blue-500 to-blue-900 bg-[length:150%_150%] bg-left 
+                                    text-white rounded-lg transition-all duration-500 
+                                    ease-in-out w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
+                            style="font-family: 'Inter', sans-serif;">
+                            Check Module
+                            <i class="ri-arrow-right-line ml-3"></i>
+                        </a>
+                    @else
+                        <div class="mt-6 p-4 bg-blue-50 border border-blue-300 rounded-xl shadow-sm">
+                            <p class="text-blue-800 text-base text-sm font-semibold text-center" 
+                            style="font-family: 'Inter', sans-serif;">
+                                🚧 The module is still on its way. Please check back soon!
+                            </p>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
