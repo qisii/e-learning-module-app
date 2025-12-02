@@ -178,7 +178,7 @@
                         <template x-if="!preview">
                             <div>
                                 @if($currentAvatar)
-                                    <img src="{{ asset('storage/avatars/' . $currentAvatar) }}" alt="{{ $first_name . ' ' . $last_name }}" 
+                                    <img src="{{ cloud_asset('storage/avatars/' . $currentAvatar) }}" alt="{{ $first_name . ' ' . $last_name }}" 
                                          class="absolute inset-0 w-full h-full object-cover rounded-full border-4 border-blue-100">
                                 @else
                                     <div class="absolute inset-0 rounded-full bg-blue-100 flex items-center justify-center overflow-hidden">
