@@ -52,7 +52,7 @@ class AdminProfileForm extends Component
             'last_name' => 'required|max:50',
             'email' => 'required|unique:users,email,' . $this->user->id,
             'password' => 'nullable|min:8',
-            'avatar' => 'nullable|mimes:jpeg,jpg,png,gif|max:5120',
+            'avatar' => 'nullable|mimes:jpeg,jpg,png,gif|max:1048',
         ]);
 
         $user = $this->user->findOrFail($this->user->id);
