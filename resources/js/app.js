@@ -4,62 +4,92 @@ import 'suneditor/dist/css/suneditor.min.css';
 import * as plugins from 'suneditor/src/plugins';
 
 // ---------- SUNEDITOR destroy & recreate pattern ----------
-let sunEditors = []; // global array to track editors
+// map of componentId -> editor instance
+const sunEditorsMap = {};
 
+// destroy all editors and clear map
 function destroyAllSunEditors() {
-    while (sunEditors.length) {
-        const editor = sunEditors.pop();
-        try {
-            editor.destroy();
-        } catch (e) {
-            console.warn("Error destroying SunEditor:", e);
-        }
+  Object.keys(sunEditorsMap).forEach(id => {
+    try {
+      sunEditorsMap[id].destroy();
+    } catch (e) {
+      console.warn('Error destroying SunEditor', id, e);
     }
+    delete sunEditorsMap[id];
+  });
 
-    // Also clear initialized flags so new textareas can be initialized
-    document.querySelectorAll('.suneditor-textarea').forEach(t => t.removeAttribute('data-initialized'));
+  // remove initialized flags on textareas
+  document.querySelectorAll('.suneditor-textarea').forEach(t => t.removeAttribute('data-initialized'));
 }
 
+// init all text editors currently in DOM
 function initSunEditors() {
-    destroyAllSunEditors(); // always destroy existing editors first
+  // destroy existing so we always re-create fresh
+  destroyAllSunEditors();
 
-    document.querySelectorAll('.suneditor-textarea').forEach(textarea => {
-        if (textarea.dataset.initialized) return;
+  document.querySelectorAll('.suneditor-textarea').forEach(textarea => {
+    // each textarea must have data-component-id attribute
+    const componentId = textarea.dataset.componentId;
+    if (!componentId) return;
 
-        const editor = SUNEDITOR.create(textarea.id, {
-            width: '100%',
-            height: 220,
-            plugins,
-            buttonList: [
-                [
-                    'undo', 'redo',
-                    'font', 'fontSize',
-                    'formatBlock', 
-                    'paragraphStyle',
-                    'blockquote',
-                    'bold', 'underline', 'italic', 'strike', 'subscript', 'superscript',
-                    'fontColor', 'hiliteColor', 'textStyle',
-                    'align', 'horizontalRule', 'list', 'lineHeight',
-                    'table', 'link', 'image', 'audio',
-                    'fullScreen', 'showBlocks', 'codeView'
-                ]
-            ],
-        });
+    // avoid double init (defensive)
+    if (textarea.dataset.initialized) return;
 
-        textarea.dataset.initialized = 'true';
-        sunEditors.push(editor);
-        console.log("SunEditor loaded:", editor);
+    // create editor
+    const editor = SUNEDITOR.create(textarea, { // pass the element directly
+      width: '100%',
+      height: 220,
+      plugins,
+      buttonList: [
+        [
+          'undo', 'redo',
+          'font', 'fontSize',
+          'formatBlock',
+          'paragraphStyle',
+          'blockquote',
+          'bold', 'underline', 'italic', 'strike', 'subscript', 'superscript',
+          'fontColor', 'hiliteColor', 'textStyle',
+          'align', 'horizontalRule', 'list', 'lineHeight',
+          'table', 'link', 'image',
+          'fullScreen', 'showBlocks', 'codeView'
+        ]
+      ],
     });
+
+    // store reference
+    sunEditorsMap[componentId] = editor;
+
+    // mark DOM as initialized
+    textarea.dataset.initialized = 'true';
+
+    console.log('SunEditor initialized for component', componentId);
+  });
 }
 
-// ---------- Initialize on DOM ready ----------
-document.addEventListener('DOMContentLoaded', () => {
-    initSunEditors();
-});
+// helper to get content by id (returns HTML string or null)
+function getEditorContent(componentId) {
+  const ed = sunEditorsMap[componentId];
+  if (!ed) return null;
+  try {
+    // getContents returns HTML string
+    return ed.getContents();
+  } catch (e) {
+    console.warn('Error getting content for', componentId, e);
+    return null;
+  }
+}
 
+// Expose helper globally (used by your inline save button)
+window.getEditorContent = getEditorContent;
+window.initSunEditors = initSunEditors;
+window.destroyAllSunEditors = destroyAllSunEditors;
 
-// ---------- Custom SunEditor refresh event ----------
+// init on load
+document.addEventListener('DOMContentLoaded', () => initSunEditors());
+
+// re-init when your Livewire event fires
 window.addEventListener('suneditor:refresh', () => {
-    console.log('SunEditor refresh event received');
-    setTimeout(() => initSunEditors(), 20); // slight delay to ensure DOM is ready
+  console.log('suneditor:refresh received');
+  // tiny delay to let Livewire patch DOM
+  setTimeout(() => initSunEditors(), 15);
 });

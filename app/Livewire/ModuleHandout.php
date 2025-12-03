@@ -19,12 +19,13 @@ class ModuleHandout extends Component
     public $level_id;
     public Handout $handout;
     public $handoutScore;
-
+    
 
     protected $listeners = [
         'reorderPages',
         'addComponentFromPalette',
         'reorderComponents',
+        'saveTextComponent',
     ];
 
     public function mount(Folder $folder, $level_id)
@@ -205,6 +206,31 @@ class ModuleHandout extends Component
 
         $message = 'Score updated successfully!';
         $this->dispatch('flashMessage', type: 'success', message: $message);
+    }
+
+    // --------- STORE JSON ----------
+    public function saveTextComponent($component_id, $content)
+    {
+        // Fetch the component
+        $component = HandoutComponent::find($component_id);
+
+        if (! $component) {
+            $this->dispatch('flashMessage', type: 'error', message: 'Component not found.');
+            return;
+        }
+
+        // Build JSON structure
+        $payload = [
+            'type'    => 'doc',
+            'content' => $content,
+        ];
+
+        // Save into database
+        $component->update([
+            'data' => json_encode($payload),
+        ]);
+
+        $this->dispatch('flashMessage', type: 'success', message: 'Text saved successfully!');
     }
 
 

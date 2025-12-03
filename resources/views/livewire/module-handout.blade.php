@@ -126,8 +126,12 @@
                                                     </div> --}}
 
                                                     <div class="hover:text-green-700 text-green-500 ms-auto text-[13px]">
-                                                        <button class="">
-                                                            <i class="ri-checkbox-circle-line "></i> Save
+                                                        <button
+                                                            onclick="saveTextComponent({{ $component->id }})"
+                                                            type="button"
+                                                            class="cursor-pointer"
+                                                        >
+                                                            <i class="ri-checkbox-circle-line"></i> Save
                                                         </button>
                                                     </div>
 
@@ -142,7 +146,7 @@
                                                         id="suneditor-{{ $component->id }}"
                                                         class="suneditor-textarea"
                                                         data-component-id="{{ $component->id }}"
-                                                    >{{ $component->data['content'] ?? '' }}</textarea>
+                                                    >{{ optional(json_decode($component->data, true))['content'] ?? '' }}</textarea>
                                                 </div>
 
                                             {{-- IMAGE BLOCK --}}
@@ -319,6 +323,22 @@
         }
     }
 
+    function saveTextComponent(componentId) {
+  const content = window.getEditorContent(componentId);
+  console.log('saveTextComponent -> content for', componentId, content);
+
+  if (content === null) {
+    // helpful debug message if editor not ready
+    console.warn('Editor not found for component', componentId);
+    return;
+  }
+
+  Livewire.dispatch('saveTextComponent', {
+    component_id: componentId,    // use snake keys if your dd showed that
+    content: content
+  });
+}
+
     /* Initialize on first load */
     document.addEventListener('DOMContentLoaded', () => {
         initSortables();
@@ -330,12 +350,8 @@
         // small microtask timing safety (usually not needed, but safe)
         setTimeout(() => initSortables(), 10);
     });
-
     
-
     </script>
-
-
 </div>
 
 
