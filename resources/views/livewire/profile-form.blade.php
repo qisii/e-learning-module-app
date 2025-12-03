@@ -176,6 +176,7 @@
                         </template>
 
                         <template x-if="!preview">
+                            {{ Storage::url('avatars/' . $currentAvatar) }}
                             <div>
                                 @if($currentAvatar)
                                     <img src="{{ Storage::url('avatars/' . $currentAvatar) }}" alt="{{ $first_name . ' ' . $last_name }}" 
