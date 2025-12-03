@@ -1,0 +1,6 @@
+storage:
+  - name: persistent-storage
+    mount: storage/app/public
+
+assets:
+  - public/storage
