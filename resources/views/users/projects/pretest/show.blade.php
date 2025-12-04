@@ -27,7 +27,6 @@
 
     </div>
 
-
     @include('components.new-components.back-confirmation-user-modal')
 
     {{-- Pretest Quiz --}}
