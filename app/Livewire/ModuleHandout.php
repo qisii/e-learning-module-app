@@ -10,6 +10,7 @@ use App\Models\HandoutPage;
 use App\Models\HandoutComponent;
 use App\Models\HandoutScore;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ModuleHandout extends Component
 {
@@ -19,6 +20,8 @@ class ModuleHandout extends Component
     public $level_id;
     public Handout $handout;
     public $handoutScore;
+
+    const LOCAL_STORAGE_FOLDER = 'handouts/';
     
 
     protected $listeners = [
@@ -206,33 +209,224 @@ class ModuleHandout extends Component
 
         $message = 'Score updated successfully!';
         $this->dispatch('flashMessage', type: 'success', message: $message);
+        $this->dispatch('suneditor:refresh');
     }
 
     // --------- STORE JSON ----------
+    // public function saveTextComponent($component_id, $content)
+    // {
+    //     // Dump & die to inspect the data
+    //     dd([
+    //         'component_id' => $component_id,
+    //         'content' => $content,
+    //     ]);
+
+    //     // Fetch the component
+    //     $component = HandoutComponent::find($component_id);
+
+    //     if (! $component) {
+    //         $this->dispatch('flashMessage', type: 'error', message: 'Component not found.');
+    //         return;
+    //     }
+
+    //     // Build JSON structure
+    //     $payload = [
+    //         'type'    => 'doc',
+    //         'content' => $content,
+    //     ];
+
+    //     // Save into database
+    //     $component->update([
+    //         'data' => json_encode($payload),
+    //     ]);
+
+    //     $this->dispatch('flashMessage', type: 'success', message: 'Text saved successfully!');
+    // }
+
+    // public function saveTextComponent($component_id, $content)
+    // {
+    //     // Step 1: Find all Base64 <img> tags
+    //     preg_match_all('/<img[^>]+src="data:(image\/[a-zA-Z]+);base64,([^"]+)"/', $content, $matches, PREG_SET_ORDER);
+
+    //     $imagesData = [];
+
+    //     foreach ($matches as $match) {
+    //         $mime = $match[1];         // e.g., image/png
+    //         $base64Data = $match[2];   // the actual Base64 string
+
+    //         // Decode Base64
+    //         $imageBinary = base64_decode($base64Data);
+
+    //         // Optional: create a unique filename
+    //         $extension = explode('/', $mime)[1]; // png, jpeg, etc
+    //         $fileName = time() . "." . $extension;
+
+    //         // Store info in array for inspection
+    //         $imagesData[] = [
+    //             'filename' => $fileName,
+    //             'mime' => $mime,
+    //             'size' => strlen($imageBinary), // size in bytes
+    //             'binary_sample' => substr($imageBinary, 0, 50), // first 50 bytes for preview
+    //         ];
+
+    //         // Here you could save the file if needed:
+    //         // Storage::disk('public')->put('handouts/' . $fileName, $imageBinary);
+    //     }
+
+    //     // Step 2: Dump & die to inspect
+    //     dd([
+    //         'component_id' => $component_id,
+    //         'original_content' => $content,
+    //         'images_extracted' => $imagesData,
+    //     ]);
+
+    //     // Step 3: Continue normal save (unreachable now because of dd)
+    //     $component = HandoutComponent::find($component_id);
+    //     if (! $component) return;
+
+    //     $payload = [
+    //         'type' => 'doc',
+    //         'content' => $content,
+    //     ];
+
+    //     $component->update([
+    //         'data' => json_encode($payload),
+    //     ]);
+    // }
+
+    # WORKING EXCEPT AUDIO LINK
+    // public function saveTextComponent($component_id, $content)
+    // {
+    //     // Step 1: Find all Base64 <img> tags
+    //     preg_match_all('/<img[^>]+src="data:(image\/[a-zA-Z]+);base64,([^"]+)"/', $content, $matches, PREG_SET_ORDER);
+
+    //     $imagesData = [];
+
+    //     foreach ($matches as $match) {
+    //         $mime = $match[1];       // e.g., image/png
+    //         $base64Data = $match[2]; // the actual Base64 string
+
+    //         // Decode Base64
+    //         $imageBinary = base64_decode($base64Data);
+
+    //         // Step 1a: Determine extension
+    //         $extension = explode('/', $mime)[1];
+
+    //         // Step 1b: Use saveImage logic (adapted for binary)
+    //         $fileName = time() . '.' . $extension;
+    //         Storage::disk('public')->put(self::LOCAL_STORAGE_FOLDER . $fileName, $imageBinary);
+
+    //         // Step 1c: Store info for debugging
+    //         $imagesData[] = [
+    //             'filename' => $fileName,
+    //             'mime' => $mime,
+    //             'size' => strlen($imageBinary),
+    //         ];
+
+    //         // Step 1d: Replace Base64 src with storage URL in content
+    //         $storageUrl = asset('storage/' . self::LOCAL_STORAGE_FOLDER . $fileName);
+    //         $content = str_replace($match[0], '<img src="' . $storageUrl . '"', $content);
+    //     }
+
+    //     // Step 2: Dump & die to inspect
+    //     // dd([
+    //     //     'component_id' => $component_id,
+    //     //     'updated_content' => $content,
+    //     //     'images_saved' => $imagesData,
+    //     // ]);
+
+    //     // Step 3: Save
+    //     $component = HandoutComponent::find($component_id);
+    //     if (! $component) return;
+
+    //     $payload = [
+    //         'type' => 'doc',
+    //         'content' => $content,
+    //     ];
+
+    //     $component->update([
+    //         'data' => json_encode($payload),
+    //     ]);
+
+    //     $this->dispatch('flashMessage', type: 'success', message: 'Content saved successfully!');
+    //     $this->dispatch('suneditor:refresh');
+    // }
+
     public function saveTextComponent($component_id, $content)
     {
-        // Fetch the component
-        $component = HandoutComponent::find($component_id);
+        // Step 1: Handle Base64 <img> tags
+        preg_match_all('/<img[^>]+src="data:(image\/[a-zA-Z]+);base64,([^"]+)"/', $content, $matches, PREG_SET_ORDER);
 
-        if (! $component) {
-            $this->dispatch('flashMessage', type: 'error', message: 'Component not found.');
-            return;
+        $imagesData = [];
+
+        foreach ($matches as $match) {
+            $mime = $match[1];       // e.g., image/png
+            $base64Data = $match[2]; // actual Base64 string
+
+            // Decode Base64
+            $imageBinary = base64_decode($base64Data);
+
+            // Validate size (max 5MB)
+            if (strlen($imageBinary) > 5 * 1024 * 1024) {
+                $this->dispatch('flashMessage', type: 'error', message: 'One of the images exceeds the 5MB limit.');
+                $this->dispatch('suneditor:refresh');
+                return; // stop saving
+            }
+
+            // Determine extension
+            $extension = explode('/', $mime)[1];
+
+            // Save image to storage/app/public
+            $fileName = time() . '.' . $extension;
+            Storage::disk('public')->put(self::LOCAL_STORAGE_FOLDER . $fileName, $imageBinary);
+
+            // Store info
+            $imagesData[] = [
+                'filename' => $fileName,
+                'mime' => $mime,
+                'size' => strlen($imageBinary),
+            ];
+
+            // Replace Base64 src with storage URL
+            $storageUrl = asset('storage/' . self::LOCAL_STORAGE_FOLDER . $fileName);
+            $content = str_replace($match[0], '<img src="' . $storageUrl . '"', $content);
         }
 
-        // Build JSON structure
+        // Step 2: Add target="_blank" to all <a> tags
+        $content = preg_replace('/<a\s+([^>]*?)href=/', '<a $1 target="_blank" href=', $content);
+
+        // Step 3: Save content
+        $component = HandoutComponent::find($component_id);
+        if (! $component) return;
+
         $payload = [
-            'type'    => 'doc',
+            'type' => 'doc',
             'content' => $content,
         ];
 
-        // Save into database
         $component->update([
             'data' => json_encode($payload),
         ]);
 
-        $this->dispatch('flashMessage', type: 'success', message: 'Text saved successfully!');
+        $this->dispatch('flashMessage', type: 'success', message: 'Content saved successfully!');
+        $this->dispatch('suneditor:refresh');
     }
 
+
+    // private function saveImage($image)
+    // {
+    //     $image_name = time() . "." . $image->extension();
+    //     $image->storeAs(self::LOCAL_STORAGE_FOLDER, $image_name, 'public');
+    //     return $image_name;
+    // }
+
+    // private function deleteAvatar($image)
+    // {
+    //     $path = self::LOCAL_STORAGE_FOLDER . $image;
+    //     if (Storage::disk('public')->exists($path)) {
+    //         Storage::disk('public')->delete($path);
+    //     }
+    // }
 
     public function render()
     {

@@ -71,6 +71,8 @@ class QuizzesController extends Controller
         return redirect()->back();
     }
 
+    // ---------- UPLOAD HANDOUT IMAGES ----------
+
 
     // ---------- POST TEST ----------
     public function showPostTest($folder_id)

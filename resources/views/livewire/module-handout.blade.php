@@ -25,17 +25,7 @@
             <div class="palette space-y-2 font-secondary text-[13px]">
                 <div class="palette-item flex items-center py-3 px-4 border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-50 cursor-grab" data-type="text">
                     <i class="ri-text align-middle text-gray-500 text-xl mr-3"></i>
-                    <span class="text-gray-700 font-medium">Text</span>
-                </div>
-
-                <div class="palette-item flex items-center py-3 px-4 border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-50 cursor-grab" data-type="image">
-                    <i class="ri-image-line text-gray-500 text-xl mr-3"></i>
-                    <span class="text-gray-700 font-medium">Image</span>
-                </div>
-
-                <div class="palette-item flex items-center py-3 px-4 border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-50 cursor-grab" data-type="video">
-                    <i class="ri-video-line text-gray-500 text-xl mr-3"></i>
-                    <span class="text-gray-700 font-medium">Video</span>
+                    <span class="text-gray-700 font-medium">Editor</span>
                 </div>
 
                 <div class="palette-item flex items-center py-3 px-4 border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-50 cursor-grab" data-type="audio">
@@ -43,6 +33,7 @@
                     <span class="text-gray-700 font-medium">Audio</span>
                 </div>
             </div>
+            
         </div>
 
         {{-- Main area --}}
@@ -53,7 +44,7 @@
                     <h2 class="text-[15px] font-semibold" style="font-family: 'Poppins', sans-serif;">Please Note</h2>
                 </div>
                 <p class="text-[13px] leading-relaxed" style="font-family: 'Inter', sans-serif;">
-                    The size of this form will change depending on how many contents you add.
+                    When using links, please change their color. They will be displayed as black in the student's view.
                 </p>
             </div>
 
@@ -81,7 +72,7 @@
             </div>
 
             {{-- Handout Area --}}
-            <div class="bg-white shadow-lg rounded-lg p-6 mb-6 max-h-[600px] overflow-auto no-scrollbar">
+            <div class="bg-white shadow-lg rounded-lg p-6 mb-6 h-[1000px] overflow-auto no-scrollbar">
                 <div class="text-center mb-10">
                     <h2 class="text-lg font-bold text-gray-800 font-secondary">Module Handout</h2>
                     <span class="inline-block mt-2 px-4 py-1 bg-purple-100 text-purple-600 text-sm font-semibold rounded-full font-secondary">
@@ -110,7 +101,7 @@
                             </div>
 
                             {{-- Components drop area --}}
-                            <div class="components-list min-h-[300px]" data-page-id="{{ $page->id }}">
+                            <div class="components-list min-h-auto" data-page-id="{{ $page->id }}">
                                 @foreach ($page->components as $component)
                                     <div class="component-block border border-gray-200 p-3 rounded bg-white flex items-start gap-3 cursor-grab"
                                         data-component-id="{{ $component->id }}" wire:key="handout-component-{{ $component->id }}">
@@ -121,9 +112,6 @@
                                             {{-- TEXT BLOCK --}}
                                             @if ($component->type === 'text')
                                                 <div class="flex justify-between items-center mb-2">
-                                                    {{-- <div class="text-[13px] text-gray-700">
-                                                        Text block {{ $component->sort_order }}
-                                                    </div> --}}
 
                                                     <div class="hover:text-green-700 text-green-500 ms-auto text-[13px]">
                                                         <button
@@ -141,46 +129,13 @@
                                                     </button>
                                                 </div>
 
-                                                <div wire:ignore>
+                                                <div wire:ignore.self>
                                                     <textarea
                                                         id="suneditor-{{ $component->id }}"
                                                         class="suneditor-textarea"
                                                         data-component-id="{{ $component->id }}"
                                                     >{{ optional(json_decode($component->data, true))['content'] ?? '' }}</textarea>
                                                 </div>
-
-                                            {{-- IMAGE BLOCK --}}
-                                            @elseif ($component->type === 'image')
-                                                <div class="flex justify-between items-center mb-2">
-                                                    <div class="text-[13px] text-gray-700">
-                                                        Image block {{ $component->sort_order }}
-                                                    </div>
-
-                                                    <button wire:click.prevent="removeComponent({{ $component->id }})"
-                                                            class="text-red-500 hover:text-red-700">
-                                                        <i class="ri-delete-bin-line text-sm"></i>
-                                                    </button>
-                                                </div>
-
-                                                <!-- Your image UI here -->
-
-
-                                            {{-- VIDEO BLOCK --}}
-                                            @elseif ($component->type === 'video')
-                                                <div class="flex justify-between items-center mb-2">
-                                                    <div class="text-[13px] text-gray-700">
-                                                        Video block {{ $component->sort_order }}
-                                                    </div>
-
-                                                    <button wire:click.prevent="removeComponent({{ $component->id }})"
-                                                            class="text-red-500 hover:text-red-700">
-                                                        <i class="ri-delete-bin-line text-sm"></i>
-                                                    </button>
-                                                </div>
-
-                                                <!-- Your video UI here -->
-
-
                                             {{-- AUDIO BLOCK --}}
                                             @elseif ($component->type === 'audio')
                                                 <div class="flex justify-between items-center mb-2">
@@ -195,8 +150,6 @@
                                                 </div>
 
                                                 <!-- Your audio UI here -->
-
-
                                             {{-- UNKNOWN BLOCK --}}
                                             @else
                                                 <div class="flex justify-between items-center mb-2">

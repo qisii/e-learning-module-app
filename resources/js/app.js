@@ -38,7 +38,7 @@ function initSunEditors() {
     // create editor
     const editor = SUNEDITOR.create(textarea, { // pass the element directly
       width: '100%',
-      height: 220,
+      height: 500,
       plugins,
       buttonList: [
         [
@@ -50,7 +50,7 @@ function initSunEditors() {
           'bold', 'underline', 'italic', 'strike', 'subscript', 'superscript',
           'fontColor', 'hiliteColor', 'textStyle',
           'align', 'horizontalRule', 'list', 'lineHeight',
-          'table', 'link', 'image',
+          'table', 'link', 'image', 'video',
           'fullScreen', 'showBlocks', 'codeView'
         ]
       ],

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Folder;
 use App\Models\Handout;
+use App\Models\HandoutPage;
 use App\Models\Project;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
@@ -182,12 +183,55 @@ class ProjectController extends Controller
     }
 
     // ---------- MODULE HANDOUT ----------
-    public function showModule($project_id, $level_id){
-        // Check the score of the student to know which module to give them.
-        // handout has a 'score' column. compare it with the student's score
+    // public function showModule($project_id, $level_id){
+    //     // get the module based on the level and get all the handout_components.
+    //     // get the module using project, get the folder with folder_type_id is 2
+    //     // then get the handout of that folder then check the level_id 
+    //     // get all the handout_pages of the module handout
+    //     // get all the handout_components
+    //     // use paginate(1)
 
-        return view('users.projects.modules.show')
-                ->with('project_id', $project_id)
-                ->with('level_id', $level_id);
+    //     return view('users.projects.modules.show')
+    //             ->with('project_id', $project_id)
+    //             ->with('level_id', $level_id);
+    // }
+
+    public function showModule($project_id, $level_id)
+    {
+        // 1. Find the module folder (folder_type_id = 2)
+        $folder = Folder::where('project_id', $project_id)
+            ->where('folder_type_id', 2)
+            ->first();
+
+        if (! $folder) {
+            abort(404, 'Module folder not found');
+        }
+
+        // 2. Find the handout for the given level
+        $handout = Handout::where('folder_id', $folder->id)
+            ->where('level_id', $level_id)
+            ->first();
+
+        if (! $handout) {
+            abort(404, 'Handout not found');
+        }
+
+        // 3. Get the pages with components
+        $pages = HandoutPage::where('handout_id', $handout->id)
+            ->with([
+                'components' => function ($q) {
+                    $q->orderBy('sort_order');
+                }
+            ])
+            ->orderBy('page_number')
+            ->paginate(1);
+
+        return view('users.projects.modules.show', compact(
+            'project_id',
+            'level_id',
+            'handout',
+            'pages'
+        ));
     }
+
 }
