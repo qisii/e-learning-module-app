@@ -28,7 +28,7 @@
                     <span class="text-gray-700 font-medium text-[11px]">Editor</span>
                 </div>
 
-                <div class="palette-item flex items-center py-3 px-3 border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-50 cursor-grab" data-type="audio">
+                <div class="palette-item flex items-center py-3 px-3 border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-50 cursor-grab" data-type="objective">
                     <i class="ri-lightbulb-flash-line text-gray-500 text-lg mr-3"></i>
                     <span class="text-gray-700 font-medium text-[11px]">Hidden Objective</span>
                 </div>
@@ -150,11 +150,11 @@
                                                         data-component-id="{{ $component->id }}"
                                                     >{{ optional(json_decode($component->data, true))['content'] ?? '' }}</textarea>
                                                 </div>
-                                            {{-- AUDIO BLOCK --}}
-                                            @elseif ($component->type === 'audio')
+                                            {{-- HIDDEN OBJECTIVE BLOCK --}}
+                                            @elseif ($component->type === 'objective')
                                                 <div class="flex justify-between items-center mb-2">
                                                     <div class="text-[13px] text-gray-700">
-                                                        Audio block {{ $component->sort_order }}
+                                                        Hidden Objective {{ $component->sort_order }}
                                                     </div>
 
                                                     <button wire:click.prevent="removeComponent({{ $component->id }})"

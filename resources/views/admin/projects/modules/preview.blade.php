@@ -53,7 +53,8 @@
                 </h1>
 
                 <p class="text-gray-600 text-lg mb-8" style="font-family: 'Inter', sans-serif;">
-                    The module is on its way. Please check back soon once the content has been added.
+                    The content for this module has not been added yet.<br>
+                    You can continue editing or upload content to make it available for preview.
                 </p>
             </div>
         @else
