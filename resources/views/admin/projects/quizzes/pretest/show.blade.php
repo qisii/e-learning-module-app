@@ -30,8 +30,8 @@
 
     {{-- Quiz Form Section --}}
     <div class="w-[90%] lg:w-[80%] mx-auto">
-        <div class="md:col-span-2 bg-[#DBEAFE] border border-blue-300 text-blue-800 rounded-lg p-5 mb-5">
-            <div class="flex items-center mb-2">
+        <div class="md:col-span-2 bg-[#DBEAFE] border border-blue-300 text-blue-800 rounded-lg py-4 px-5 mb-5">
+            <div class="flex items-center">
                 <i class="ri-information-fill text-blue-600 text-lg mr-2"></i>
                 <h2 class="text-[15px] font-semibold" style="font-family: 'Poppins', sans-serif;">
                     Please Note

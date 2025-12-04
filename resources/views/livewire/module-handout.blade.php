@@ -11,10 +11,10 @@
                 <div class="flex items-center justify-center font-secondary">
                     <button 
                         wire:click.prevent="addPage" 
-                        class="flex items-center w-full py-3 px-4 border-2 border-blue-400 rounded-lg hover:bg-blue-50 transition"
+                        class="flex items-center w-full py-3 px-3 border-2 border-blue-400 rounded-lg hover:bg-blue-50 transition"
                     >
-                        <i class="ri-add-line text-blue-500 text-2xl mr-3"></i>
-                        <span class="text-blue-600 font-medium text-[13px]">
+                        <i class="ri-add-line text-blue-500 text-lg mr-3"></i>
+                        <span class="text-blue-600 font-medium text-[11px]">
                             Add Page
                         </span>
                     </button>
@@ -23,14 +23,14 @@
 
             {{-- Component buttons --}}
             <div class="palette space-y-2 font-secondary text-[13px]">
-                <div class="palette-item flex items-center py-3 px-4 border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-50 cursor-grab" data-type="text">
-                    <i class="ri-text align-middle text-gray-500 text-xl mr-3"></i>
-                    <span class="text-gray-700 font-medium">Editor</span>
+                <div class="palette-item flex items-center py-3 px-3 border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-50 cursor-grab" data-type="text">
+                    <i class="ri-text align-middle text-gray-500 text-lg mr-3"></i>
+                    <span class="text-gray-700 font-medium text-[11px]">Editor</span>
                 </div>
 
-                <div class="palette-item flex items-center py-3 px-4 border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-50 cursor-grab" data-type="audio">
-                    <i class="ri-mic-line text-gray-500 text-xl mr-3"></i>
-                    <span class="text-gray-700 font-medium">Audio</span>
+                <div class="palette-item flex items-center py-3 px-3 border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-50 cursor-grab" data-type="audio">
+                    <i class="ri-lightbulb-flash-line text-gray-500 text-lg mr-3"></i>
+                    <span class="text-gray-700 font-medium text-[11px]">Hidden Objective</span>
                 </div>
             </div>
             
@@ -38,14 +38,28 @@
 
         {{-- Main area --}}
         <div class="lg:col-span-6 col-span-1">
-            <div class="bg-[#DBEAFE] border border-blue-300 text-blue-800 rounded-lg p-5 mb-5">
-                <div class="flex items-center mb-2">
+            <div class="bg-[#DBEAFE] border border-blue-300 text-blue-800 rounded-lg py-4 px-5 mb-5">
+                <div class="flex items-center">
                     <i class="ri-information-fill text-blue-600 text-lg mr-2"></i>
                     <h2 class="text-[15px] font-semibold" style="font-family: 'Poppins', sans-serif;">Please Note</h2>
                 </div>
-                <p class="text-[13px] leading-relaxed" style="font-family: 'Inter', sans-serif;">
-                    When using links, please change their color. They will be displayed as black in the student's view.
-                </p>
+                <ul class="text-[13px] leading-relaxed list-disc pl-5" style="font-family: 'Inter', sans-serif;">
+                    <li>
+                        When using links, please change their font color. They will appear black to students by default.
+                    </li>
+                    <li>
+                        For adding audio, please insert the audio URL using the link tool  
+                        <i class="ri-link-unlink text-red-600 inline-block"></i>  
+                        inside the editor.
+                    </li>
+                    <li>
+                        After adding or editing content, please make sure to click the
+                        <span class="inline-flex items-center gap-1 text-green-600">
+                            <i class="ri-checkbox-circle-line"></i> Save
+                        </span>
+                        button to apply the changes.
+                    </li>
+                </ul>
             </div>
 
             {{-- Score Area --}}

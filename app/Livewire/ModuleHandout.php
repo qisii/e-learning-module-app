@@ -100,6 +100,7 @@ class ModuleHandout extends Component
         }
 
         $this->dispatch('sortable:refresh');
+        $this->dispatch('suneditor:refresh');
     }
 
     public function reorderComponents($pageId, array $orderedComponentIds)
@@ -352,53 +353,163 @@ class ModuleHandout extends Component
     //     $this->dispatch('suneditor:refresh');
     // }
 
+    // public function saveTextComponent($component_id, $content)
+    // {
+    //     // Step 1: Handle Base64 <img> tags
+    //     preg_match_all('/<img[^>]+src="data:(image\/[a-zA-Z]+);base64,([^"]+)"/', $content, $matches, PREG_SET_ORDER);
+
+    //     $imagesData = [];
+
+    //     foreach ($matches as $match) {
+    //         $mime = $match[1];       // e.g., image/png
+    //         $base64Data = $match[2]; // actual Base64 string
+
+    //         // Decode Base64
+    //         $imageBinary = base64_decode($base64Data);
+
+    //         // Validate size (max 5MB)
+    //         if (strlen($imageBinary) > 5 * 1024 * 1024) {
+    //             $this->dispatch('flashMessage', type: 'error', message: 'One of the images exceeds the 5MB limit.');
+    //             $this->dispatch('suneditor:refresh');
+    //             return; // stop saving
+    //         }
+
+    //         // Determine extension
+    //         $extension = explode('/', $mime)[1];
+
+    //         // Save image to storage/app/public
+    //         $fileName = time() . '.' . $extension;
+    //         Storage::disk('public')->put(self::LOCAL_STORAGE_FOLDER . $fileName, $imageBinary);
+
+    //         // Store info
+    //         $imagesData[] = [
+    //             'filename' => $fileName,
+    //             'mime' => $mime,
+    //             'size' => strlen($imageBinary),
+    //         ];
+
+    //         // Replace Base64 src with storage URL
+    //         $storageUrl = asset('storage/' . self::LOCAL_STORAGE_FOLDER . $fileName);
+    //         $content = str_replace($match[0], '<img src="' . $storageUrl . '"', $content);
+    //     }
+
+    //     // Step 2: Add target="_blank" to all <a> tags
+    //     $content = preg_replace('/<a\s+([^>]*?)href=/', '<a $1 target="_blank" href=', $content);
+
+    //     // Step 3: Save content
+    //     $component = HandoutComponent::find($component_id);
+    //     if (! $component) return;
+
+    //     $payload = [
+    //         'type' => 'doc',
+    //         'content' => $content,
+    //     ];
+
+    //     $component->update([
+    //         'data' => json_encode($payload),
+    //     ]);
+
+    //     $this->dispatch('flashMessage', type: 'success', message: 'Content saved successfully!');
+    //     $this->dispatch('suneditor:refresh');
+    // }
+
     public function saveTextComponent($component_id, $content)
     {
-        // Step 1: Handle Base64 <img> tags
+        // -----------------------------------------------------
+        // Step 0: Get old images from previously saved content
+        // -----------------------------------------------------
+        $component = HandoutComponent::find($component_id);
+        if (! $component) return;
+
+        $oldData = json_decode($component->data, true);
+        $oldContent = $oldData['content'] ?? '';
+
+        preg_match_all(
+            '/<img[^>]+src="[^"]*\/storage\/' . preg_quote(self::LOCAL_STORAGE_FOLDER, '/') . '([^"]+)"/',
+            $oldContent,
+            $oldMatches
+        );
+
+        $oldImages = $oldMatches[1] ?? [];
+
+
+        // -----------------------------------------------------
+        // Step 1: Handle Base64 <img> tags (your original logic)
+        // -----------------------------------------------------
         preg_match_all('/<img[^>]+src="data:(image\/[a-zA-Z]+);base64,([^"]+)"/', $content, $matches, PREG_SET_ORDER);
 
         $imagesData = [];
+        $counter = 0;
 
         foreach ($matches as $match) {
-            $mime = $match[1];       // e.g., image/png
-            $base64Data = $match[2]; // actual Base64 string
+            $mime = $match[1];
+            $base64Data = $match[2];
 
-            // Decode Base64
             $imageBinary = base64_decode($base64Data);
 
             // Validate size (max 5MB)
             if (strlen($imageBinary) > 5 * 1024 * 1024) {
                 $this->dispatch('flashMessage', type: 'error', message: 'One of the images exceeds the 5MB limit.');
                 $this->dispatch('suneditor:refresh');
-                return; // stop saving
+                return;
             }
 
             // Determine extension
             $extension = explode('/', $mime)[1];
 
-            // Save image to storage/app/public
-            $fileName = time() . '.' . $extension;
+            // Create filename using time()
+            $fileName = time() . '_' . $counter++ . '.' . $extension;
+
             Storage::disk('public')->put(self::LOCAL_STORAGE_FOLDER . $fileName, $imageBinary);
 
-            // Store info
             $imagesData[] = [
                 'filename' => $fileName,
                 'mime' => $mime,
                 'size' => strlen($imageBinary),
             ];
 
-            // Replace Base64 src with storage URL
             $storageUrl = asset('storage/' . self::LOCAL_STORAGE_FOLDER . $fileName);
+
+            // Replace Base64 <img> tag with URL
             $content = str_replace($match[0], '<img src="' . $storageUrl . '"', $content);
         }
 
-        // Step 2: Add target="_blank" to all <a> tags
+
+        // -----------------------------------------------------
+        // Step 2: Add target="_blank" to <a> tags (your logic)
+        // -----------------------------------------------------
         $content = preg_replace('/<a\s+([^>]*?)href=/', '<a $1 target="_blank" href=', $content);
 
-        // Step 3: Save content
-        $component = HandoutComponent::find($component_id);
-        if (! $component) return;
 
+        // -----------------------------------------------------
+        // Step 3: Find all final images in updated content
+        // -----------------------------------------------------
+        preg_match_all(
+            '/<img[^>]+src="[^"]*\/storage\/' . preg_quote(self::LOCAL_STORAGE_FOLDER, '/') . '([^"]+)"/',
+            $content,
+            $finalMatches
+        );
+
+        $finalImages = $finalMatches[1] ?? [];
+
+
+        // -----------------------------------------------------
+        // Step 4: Delete removed images
+        // -----------------------------------------------------
+        $imagesToDelete = array_diff($oldImages, $finalImages);
+
+        foreach ($imagesToDelete as $img) {
+            $path = self::LOCAL_STORAGE_FOLDER . $img;
+
+            if (Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
+        }
+
+
+        // -----------------------------------------------------
+        // Step 5: Save updated content (your logic)
+        // -----------------------------------------------------
         $payload = [
             'type' => 'doc',
             'content' => $content,
@@ -411,22 +522,6 @@ class ModuleHandout extends Component
         $this->dispatch('flashMessage', type: 'success', message: 'Content saved successfully!');
         $this->dispatch('suneditor:refresh');
     }
-
-
-    // private function saveImage($image)
-    // {
-    //     $image_name = time() . "." . $image->extension();
-    //     $image->storeAs(self::LOCAL_STORAGE_FOLDER, $image_name, 'public');
-    //     return $image_name;
-    // }
-
-    // private function deleteAvatar($image)
-    // {
-    //     $path = self::LOCAL_STORAGE_FOLDER . $image;
-    //     if (Storage::disk('public')->exists($path)) {
-    //         Storage::disk('public')->delete($path);
-    //     }
-    // }
 
     public function render()
     {

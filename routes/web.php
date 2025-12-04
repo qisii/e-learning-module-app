@@ -54,6 +54,7 @@ Route::group(['middleware' => 'auth'], function(){
 
         # MODULE
         Route::get('/{folder_id}/module/', [QuizzesController::class, 'showModule'])->name('module.show');
+        Route::get('/{folder_id}/module/preview', [QuizzesController::class, 'previewModule'])->name('module.preview');
         Route::get('/refresh', [QuizzesController::class, 'refresh'])->name('refresh');
 
         # QUESTION
