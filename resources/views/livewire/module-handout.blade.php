@@ -1,13 +1,14 @@
 <div>
     <div class="w-full mx-auto grid grid-cols-1 lg:grid-cols-7 lg:gap-6">
         {{-- Left palette --}}
-        <div class="bg-white rounded-lg shadow-md p-4 mb-5 lg:col-span-1 w-full h-fit sticky top-5 z-10">
-            <h3 class="text-sm font-semibold text-gray-500 mb-2" style="font-family: 'Poppins', sans-serif;">
+        <div class="bg-white rounded-lg shadow-md p-4 mb-5 lg:col-span-1 w-full h-fit sticky top-5 z-10 font-secondary">
+            <h3 class="text-sm font-semibold text-gray-500 mb-2">
                 Components
             </h3>
 
             {{-- Add Page button --}}
-            <div class="mb-4">
+            <div class="my-4">
+                <p class="text-gray-500 mb-2 font-medium text-[11px]">Clickable</p>
                 <div class="flex items-center justify-center font-secondary">
                     <button 
                         wire:click.prevent="addPage" 
@@ -23,6 +24,7 @@
 
             {{-- Component buttons --}}
             <div class="palette space-y-2 font-secondary text-[13px]">
+                <p class="text-gray-500 mb-2 font-medium text-[11px]">Drag & Drop to page</p>
                 <div class="palette-item flex items-center py-3 px-3 border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-50 cursor-grab" data-type="text">
                     <i class="ri-text align-middle text-gray-500 text-lg mr-3"></i>
                     <span class="text-gray-700 font-medium text-[11px]">Editor</span>

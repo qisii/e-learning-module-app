@@ -70,6 +70,7 @@ class ModuleHandout extends Component
         ]);
 
         $this->dispatch('sortable:refresh');
+        $this->dispatch('suneditor:refresh');
     }
 
     public function addComponentFromPalette($pageId, $type)
@@ -138,6 +139,7 @@ class ModuleHandout extends Component
             }
         }
         $this->dispatch('sortable:refresh');
+        $this->dispatch('suneditor:refresh');
     }
 
     public function removeComponent($componentId)

@@ -24,16 +24,22 @@ class PostTestQuizScore extends Component
 
         // Calculate score percentage
         $totalQuestions = $this->quizAttempt->quiz->questions->count();
+        
         $this->scorePercentage = $totalQuestions > 0
-            ? round(($this->quizAttempt->score / $totalQuestions) * 100)
+            ? round($this->quizAttempt->score)
             : 0;
 
+        $studentScore = (int) $this->scorePercentage;
+
+        // Determine recommended handout level
+        $this->recommendedLevel = $this->determineHandoutLevel();
+
         // Determine message, emoji, and color based on score
-        if ($this->scorePercentage < 40) {
+        if ($this->recommendedLevel === 1) {
             $this->message = "Don't worry! You can do better next time!";
             $this->emoji = "💪";
             $this->color = "text-red-500";
-        } elseif ($this->scorePercentage < 80) {
+        } elseif ($this->recommendedLevel === 2) {
             $this->message = "Good job! You're getting there!";
             $this->emoji = "😊";
             $this->color = "text-yellow-500";
@@ -82,40 +88,40 @@ class PostTestQuizScore extends Component
 
     public function determineHandoutLevel()
     {
-        $studentScore = $this->scorePercentage;
-
+        $studentScore = (int) $this->scorePercentage;
         $projectId = $this->getProjectID();
 
-        if (!$projectId) {
-            return null; // Project not found
-        }
+        if (!$projectId) return null;
 
-        // Get module folder (folder_type_id = 2)
+        // Step 1: Get module folder
         $moduleFolder = Folder::where('project_id', $projectId)
             ->where('folder_type_id', 2)
             ->first();
 
-        if (!$moduleFolder) {
-            return null;
+        if (!$moduleFolder) return null;
+
+        // Step 2: Load handouts with their scores
+        $handouts = $moduleFolder->handouts()->with('score')->get();
+
+        // Step 3: Assign cutoffs for each level
+        $easy = $handouts->firstWhere('level_id', 1)?->score?->score ?? null;
+        $average = $handouts->firstWhere('level_id', 2)?->score?->score ?? null;
+        $hard = $handouts->firstWhere('level_id', 3)?->score?->score ?? null;
+
+        // Step 4: Determine selected level based on student score
+        if ($easy !== null && $studentScore <= $easy) {
+            $selected_level_id = 1; // Easy
+        } elseif ($average !== null && $studentScore <= $average) {
+            $selected_level_id = 2; // Average
+        } else {
+            $selected_level_id = 3; // Hard
         }
 
-        $handouts = Handout::where('folder_id', $moduleFolder->id)
-            ->leftJoin('handout_score', 'handouts.id', '=', 'handout_score.handout_id')
-            ->select('handouts.*', 'handout_score.score as cutoff_score')
-            ->orderBy('cutoff_score', 'asc')
-            ->get();
+        // Step 5: Get the handout for the selected level
+        $selectedHandout = $handouts->firstWhere('level_id', $selected_level_id);
 
-        if ($handouts->isEmpty()) {
-            return null;
-        }
-
-        // Find the highest cutoff <= student score
-        $selected = $handouts
-            ->filter(fn($h) => $studentScore >= $h->cutoff_score)
-            ->sortByDesc('cutoff_score')
-            ->first();
-
-        return $selected ? $selected->level_id : $handouts->first()->level_id;
+        // Debug: inspect the selected handout
+        return $selected_level_id;
     }
 
     public function getProjectID()

@@ -19,8 +19,8 @@ class Folder extends Model
         return $this->hasMany(Quiz::class);
     }
 
-    public function handout()
+    public function handouts()
 {
-    return $this->hasOne(Handout::class);
+    return $this->hasMany(Handout::class);
 }
 }
