@@ -117,9 +117,9 @@
                             </div>
 
                             {{-- Components drop area --}}
-                            <div class="components-list min-h-auto overflow-auto" data-page-id="{{ $page->id }}">
+                            <div class="components-list h-auto overflow-auto" data-page-id="{{ $page->id }}">
                                 @foreach ($page->components as $component)
-                                    <div class="component-block border border-gray-200 p-3 rounded bg-white flex items-start gap-3 cursor-grab overflow-auto"
+                                    <div class="component-block border border-gray-200 p-3 rounded bg-white flex items-start gap-3 cursor-grab"
                                         data-component-id="{{ $component->id }}" wire:key="handout-component-{{ $component->id }}">
 
                                         {{-- Component content --}}
@@ -127,7 +127,7 @@
 
                                             {{-- TEXT BLOCK --}}
                                             @if ($component->type === 'text')
-                                                <div class="flex justify-between items-center mb-2 overflow-auto">
+                                                <div class="flex justify-between items-center mb-2">
 
                                                     <div class="hover:text-green-700 text-green-500 ms-auto text-[13px]">
                                                         <button
@@ -154,7 +154,7 @@
                                                 </div>
                                             {{-- HIDDEN OBJECTIVE BLOCK --}}
                                             @elseif ($component->type === 'objective')
-                                                <div class="flex justify-between items-center mb-2 overflow-auto">
+                                                <div class="flex justify-between items-center mb-2">
                                                     <div class="text-[13px] text-gray-700">
                                                         Hidden Objective {{ $component->sort_order }}
                                                     </div>
@@ -168,7 +168,7 @@
                                                 <!-- Your audio UI here -->
                                             {{-- UNKNOWN BLOCK --}}
                                             @else
-                                                <div class="flex justify-between items-center mb-2 overflow-auto">
+                                                <div class="flex justify-between items-center mb-2">
                                                     <div class="text-[13px] text-gray-700">
                                                         Unknown component
                                                     </div>
