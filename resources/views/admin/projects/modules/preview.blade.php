@@ -59,7 +59,7 @@
             </div>
         @else
             {{-- MAIN WRAPPER --}}
-            <div class="relative w-[90%] mx-auto max-h-[1056px] overflow-auto no-scrollbar mt-[4%] px-10 py-15 rounded-lg bg-white shadow-md">
+            <div class="relative w-[90%] mx-auto h-auto overflow-auto no-scrollbar mt-[4%] px-10 py-15 rounded-lg bg-white shadow-md">
 
                 {{-- Title Header --}}
                 <div class="text-center mb-6">

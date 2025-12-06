@@ -31,7 +31,7 @@
             </div>
         </div>
         {{-- Tablet & Mobile Layout --}}
-        <img src="{{ asset('assets/images/star.png') }}" alt="Star" 
+        <img src="{{ asset('assets/images/Star.png') }}" alt="Star" 
             class="block lg:hidden absolute top-[10%] left-[10%] md:w-[120px]  w-[60px]">
         <img src="{{ asset('assets/images/stair.png') }}" alt="Periwinkle" 
             class="block lg:hidden absolute top-[10%] left-[70%] md:left-[82%] w-[60px] ">
@@ -39,7 +39,7 @@
             class="block lg:hidden absolute top-[70%] right-[10%] w-[80px]">
         <img src="{{ asset('assets/images/periwrinkle.png') }}" alt="Star" 
             class="block lg:hidden absolute top-[85%] right-[10%] w-[100px]">
-        <img src="{{ asset('assets/images/star.png') }}" alt="Periwinkle" 
+        <img src="{{ asset('assets/images/Star.png') }}" alt="Periwinkle" 
             class="block lg:hidden absolute top-[95%] right-[50%] w-[50px]">
         
         {{-- Register Form --}}

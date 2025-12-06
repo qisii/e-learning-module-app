@@ -37,7 +37,7 @@
         class="block lg:hidden absolute top-[5%] left-[15%] w-[70px] md:w-[90px] opacity-90 z-[-20]">
     <img src="{{ asset('assets/images/periwrinkle.png') }}" alt="Periwinkle" 
         class="block lg:hidden absolute top-[10%] right-[12%] w-[90px] md:w-[110px] opacity-90">
-    <img src="{{ asset('assets/images/star.png') }}" alt="Star" 
+    <img src="{{ asset('assets/images/Star.png') }}" alt="Star" 
         class="block lg:hidden absolute bottom-[18%] right-[20%] w-[50px] md:w-[100px] opacity-80 z-[-20]">
     <img src="{{ asset('assets/images/periwrinkle.png') }}" alt="Tube" 
         class="block lg:hidden absolute bottom-[5%] md:bottom-0 md:left-[50%] left-[10%] w-[100px] md:w-[130px] opacity-80">

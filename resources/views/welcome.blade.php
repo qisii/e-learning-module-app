@@ -20,7 +20,7 @@
                 class="text-[#6B7280] text-[14px] sm:text-[16px] lg:text-[20px] mb-8"
                 style="font-family: 'Inter', sans-serif;"
             >
-                Interactice courses and enhancing your skills to advance your knowledge.
+                Interactive courses and enhancing your skills to advance your knowledge.
             </p>
 
             <a 
