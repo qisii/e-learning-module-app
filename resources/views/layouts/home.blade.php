@@ -24,7 +24,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body 
-    class="bg-cover bg-no-repeat bg-center text-gray-900 min-h-screen m-0 p-0"
+    class="bg-cover bg-no-repeat bg-center text-gray-900 h-screen m-0 p-0"
     style="background-image: url('{{ asset('assets/images/bg-img.png') }}');"
 >
     {{-- Navbar --}}

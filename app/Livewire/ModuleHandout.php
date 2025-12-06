@@ -69,6 +69,10 @@ class ModuleHandout extends Component
             'page_number' => $max + 1,
         ]);
 
+        // 🔥 Update folder timestamp
+        $this->folder->updated_at = now();
+        $this->folder->saveQuietly();
+
         $this->dispatch('sortable:refresh');
         $this->dispatch('suneditor:refresh');
     }
@@ -81,6 +85,10 @@ class ModuleHandout extends Component
             'data'       => null,
             'sort_order' => $this->nextSortOrder($pageId),
         ]);
+
+        // 🔥 Update folder timestamp
+        $this->folder->updated_at = now();
+        $this->folder->saveQuietly();
 
         $this->dispatch('sortable:refresh');
         $this->dispatch('suneditor:refresh');
@@ -99,6 +107,10 @@ class ModuleHandout extends Component
                 $pages[$pageId]->update(['page_number' => $index + 1]);
             }
         }
+
+        // 🔥 Update folder timestamp
+        $this->folder->updated_at = now();
+        $this->folder->saveQuietly();
 
         $this->dispatch('sortable:refresh');
         $this->dispatch('suneditor:refresh');
@@ -119,6 +131,10 @@ class ModuleHandout extends Component
             }
         }
 
+        // 🔥 Update folder timestamp
+        $this->folder->updated_at = now();
+        $this->folder->saveQuietly();
+
         $this->dispatch('sortable:refresh');
         $this->dispatch('suneditor:refresh');
     }
@@ -138,6 +154,11 @@ class ModuleHandout extends Component
                 $p->update(['page_number' => $index + 1]);
             }
         }
+
+        // 🔥 Update folder timestamp
+        $this->folder->updated_at = now();
+        $this->folder->saveQuietly();
+
         $this->dispatch('sortable:refresh');
         $this->dispatch('suneditor:refresh');
     }
@@ -163,6 +184,10 @@ class ModuleHandout extends Component
         foreach ($components as $index => $comp) {
             $comp->update(['sort_order' => $index]);
         }
+
+        // 🔥 Update folder timestamp
+        $this->folder->updated_at = now();
+        $this->folder->saveQuietly();
 
         // Refresh sortable + editor instances
         $this->dispatch('sortable:refresh');
@@ -209,6 +234,10 @@ class ModuleHandout extends Component
                 'score' => $this->handoutScore
             ]
         );
+
+        // 🔥 Update folder timestamp
+        $this->folder->updated_at = now();
+        $this->folder->saveQuietly();
 
         $message = 'Score updated successfully!';
         $this->dispatch('flashMessage', type: 'success', message: $message);
@@ -520,6 +549,10 @@ class ModuleHandout extends Component
         $component->update([
             'data' => json_encode($payload),
         ]);
+
+        // 🔥 Update folder timestamp
+        $this->folder->updated_at = now();
+        $this->folder->saveQuietly();
 
         $this->dispatch('flashMessage', type: 'success', message: 'Content saved successfully!');
         $this->dispatch('suneditor:refresh');

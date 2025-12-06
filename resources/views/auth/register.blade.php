@@ -6,16 +6,16 @@
 <!-- Desktop: large login image at center-left -->
     <img src="{{ asset('assets/images/signup2.png') }}" 
         alt="Login" 
-        class="hidden lg:block absolute bottom-[-15%] left-[26%] transform -translate-x-1/2 w-[400px] z-15">
+        class="hidden lg:block absolute bottom-0 left-[26%] transform -translate-x-1/2 w-[400px] z-15">
 
     <!-- Tablet & Mobile: smaller login image bottom-left -->
     <img src="{{ asset('assets/images/signup2.png') }}" 
         alt="Login" 
-        class="md:w-[220px] md:block lg:hidden absolute bottom-[-17%] left-[4%] hidden z-15">
+        class="md:w-[220px] md:block lg:hidden absolute bottom-0 left-[4%] hidden z-15">
 @endsection
 
 @section('content')
-    <div class="w-full flex flex-col lg:flex-row min-h-[80vh] md:h-auto relative">
+    <div class="w-full flex flex-col lg:flex-row relative">
         <div class="w-full lg:w-1/2 flex justify-center items-center relative order-1 lg:order-none">
             <div class="w-[90%] h-full rounded-lg p-6 relative overflow-hidden flex justify-center">
                 <img src="{{ asset('assets/images/Star.png') }}" alt="Star" 

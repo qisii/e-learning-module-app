@@ -153,6 +153,10 @@ class PretestQuizForm extends Component
 
         // ✅ Clear stored session data
         session()->forget(['instructions', 'questions']);
+        
+        // After quiz and questions saved
+        $this->quiz->folder->updated_at = now();
+        $this->quiz->folder->saveQuietly();
 
         // $this->dispatch('flashMessage', type: 'success', message: 'Quiz updated successfully!');
         $message = $this->quiz ? 'Quiz updated successfully!' : 'Quiz created successfully!';

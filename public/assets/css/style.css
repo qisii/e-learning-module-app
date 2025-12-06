@@ -54,7 +54,7 @@ body {
 }
 
 /* SunEditor wrapper */
-.sun-editor,
+/* .sun-editor,
 .sun-editor .se-container,
 .sun-editor .se-wrapper,
 .sun-editor .se-wrapper-inner,
@@ -64,10 +64,10 @@ body {
     box-sizing: border-box;
     overflow-wrap: break-word;
     word-break: break-word;
-}
+} */
 
 /* Prevent toolbar from overflowing */
-.sun-editor .se-toolbar {
+/* .sun-editor .se-toolbar {
     max-width: 100% !important;
     overflow-x: auto !important;
-}
+} */

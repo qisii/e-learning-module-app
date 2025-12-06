@@ -7,27 +7,20 @@
     <div class="w-[90%] md:w-[85%] lg:w-[85%] min-h-[75vh] flex flex-col lg:flex-row my-4 mx-auto items-center justify-center lg:justify-between gap-6" id="home">
         {{-- Left side: Text --}}
         <div class="w-full lg:w-1/2 flex flex-col justify-center text-center lg:text-left">
-            <div 
-                class="bg-[#DBEAFE] text-[#1E40AF] uppercase inline-block px-4 py-2 rounded-md mb-4 
-                    text-xs sm:text-sm font-semibold tracking-wider mx-auto lg:mx-0"
-                style="font-family: 'Inter', sans-serif;"
-            >
-                Lorem ipsum dolor sit amet consectetur
-            </div>
-
+    
             <h1 
-                class="text-[#111827] font-bold text-[22px] sm:text-[26px] lg:text-[36px] leading-tight mb-4"
+                class="text-[#111827] font-bold text-[22px] md:text-[26px] lg:text-[50px] leading-tight mb-4"
                 style="font-family: 'Poppins', sans-serif;"
             >
-                Lorem ipsum dolor sit amet consectetur 
-                <span class="text-[#3B82F6]">adipisicing elit.</span>
+                Explore the Module
+                <span class="text-[#3B82F6]">made just for you</span>
             </h1>
 
             <p 
                 class="text-[#6B7280] text-[14px] sm:text-[16px] lg:text-[20px] mb-8"
                 style="font-family: 'Inter', sans-serif;"
             >
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis exercitationem est, eligendi velit suscipit minus!
+                Interactice courses and enhancing your skills to advance your knowledge.
             </p>
 
             <a 
@@ -62,8 +55,8 @@
                 <p class="uppercase text-[#1E40AF] font-bold text-sm" style="font-family: 'Inter', sans-serif;">
                     About Us
                 </p>
-                <h3 class="font-bold text-[#111827] text-[22px] md:text-[20px] my-6" style="font-family: 'Poppins', sans-serif;">
-                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Asperiores, voluptate.
+                <h3 class="font-bold text-[#111827] text-[22px] lg:text-[26px] my-6" style="font-family: 'Poppins', sans-serif;">
+                    Empowering Learners Through Interactive Digital Modules
                 </h3>
             </div>
 
@@ -73,11 +66,11 @@
                     <div class="w-18 h-18 bg-[#DBEAFE] rounded-full mx-auto flex items-center justify-center">
                         <i class="ri-lightbulb-line text-[#3B82F6] text-[40px] md:text-[35px]"></i>
                     </div>
-                    <p class="font-bold text-[16px] md:text-[14px] text-[#111827] text-center my-3" style="font-family: 'Poppins', sans-serif;">
-                        Lorem ipsum dolor sit amet.
+                    <p class="font-bold text-[16px] md:text-[16px] text-[#111827] text-center my-3" style="font-family: 'Poppins', sans-serif;">
+                        Innovative Learning
                     </p>
-                    <p class="text-justify text-[14px] md:text-[13px] text-[#6B7280]" style="font-family: 'Inter', sans-serif;">
-                        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Magni sapiente sit, alias incidunt nesciunt exercitationem similique! Provident placeat quia eum?
+                    <p class="text-justify text-[14px] md:text-[14px] text-[#6B7280]" style="font-family: 'Inter', sans-serif;">
+                        We provide engaging digital lessons designed to enhance student understanding.
                     </p>
                 </div>
 
@@ -85,11 +78,11 @@
                     <div class="w-18 h-18 bg-[#DBEAFE] rounded-full mx-auto flex items-center justify-center">
                         <i class="ri-arrow-right-up-line text-[#3B82F6] text-[40px] md:text-[35px]"></i>
                     </div>
-                    <p class="font-bold text-[16px] md:text-[14px] text-[#111827] text-center my-3" style="font-family: 'Poppins', sans-serif;">
-                        Lorem ipsum dolor sit amet.
+                    <p class="font-bold text-[16px] md:text-[16px] text-[#111827] text-center my-3" style="font-family: 'Poppins', sans-serif;">
+                        Skill Development
                     </p>
-                    <p class="text-justify text-[14px] md:text-[13px] text-[#6B7280]" style="font-family: 'Inter', sans-serif;">
-                        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Magni sapiente sit, alias incidunt nesciunt exercitationem similique! Provident placeat quia eum?
+                    <p class="text-justify text-[14px] md:text-[14px] text-[#6B7280]" style="font-family: 'Inter', sans-serif;">
+                        Our modules help students strengthen foundational and advanced competences.
                     </p>
                 </div>
 
@@ -97,11 +90,11 @@
                     <div class="w-18 h-18 bg-[#DBEAFE] rounded-full mx-auto flex items-center justify-center">
                         <i class="ri-book-shelf-line text-[#3B82F6] text-[40px] md:text-[35px]"></i>
                     </div>
-                    <p class="font-bold text-[16px] md:text-[14px] text-[#111827] text-center my-3" style="font-family: 'Poppins', sans-serif;">
-                        Lorem ipsum dolor sit amet.
+                    <p class="font-bold text-[16px] md:text-[16px] text-[#111827] text-center my-3" style="font-family: 'Poppins', sans-serif;">
+                        Teacher-friendly
                     </p>
-                    <p class="text-justify text-[14px] md:text-[13px] text-[#6B7280]" style="font-family: 'Inter', sans-serif;">
-                        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Magni sapiente sit, alias incidunt nesciunt exercitationem similique! Provident placeat quia eum?
+                    <p class="text-justify text-[14px] md:text-[14px] text-[#6B7280]" style="font-family: 'Inter', sans-serif;">
+                        Easy-to-use resources tailored to support classroom instruction.
                     </p>
                 </div>
             </div>
