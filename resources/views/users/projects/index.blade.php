@@ -7,7 +7,7 @@
 @section('projects-active', 'bg-[#0F2250] text-blue-300')
 
 @section('content')
-<div class="w-full p-4 lg:p-10 md:p-10">
+<div class="w-full p-4 lg:p-10 md:p-10 overflow-auto no-scrollbar">
 
     <div class="w-full" style="font-family: 'Poppins', sans-serif;">
         <h2 class="text-xl font-semibold text-gray-800 mb-10">

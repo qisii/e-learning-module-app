@@ -5,7 +5,7 @@
 @section('grades-active', 'bg-[#0F2250] text-blue-300')
 
 @section('content')
-<div class="w-full p-4 lg:p-10 md:p-10" style="font-family: 'Poppins', sans-serif;">
+<div class="w-full p-4 lg:p-10 md:p-10 overflow-auto no-scrollbar" style="font-family: 'Poppins', sans-serif;">
 
     <h2 class="text-xl font-semibold text-gray-800 mb-6">@ {{ Auth::user()->username }}</h2>
 

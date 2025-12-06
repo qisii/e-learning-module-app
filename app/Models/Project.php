@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
+    protected $fillable = ['updated_at'];
+
     /* -------------- RELATIONSHIPS --------------*/
     
     // A project belongs to a user

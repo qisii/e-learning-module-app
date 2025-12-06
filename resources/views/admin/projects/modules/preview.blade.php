@@ -7,7 +7,7 @@
 @section('projects-active', 'bg-[#0F2250] text-blue-300')
 
 @section('content')
-<div class="w-full p-4 lg:p-10 md:p-10">
+<div class="w-full p-4 lg:p-10 md:p-10 overflow-auto no-scrollbar">
 
     {{-- Go Back + Tabs Container --}}
     <div class="flex items-center justify-between mb-6">
@@ -59,7 +59,7 @@
             </div>
         @else
             {{-- MAIN WRAPPER --}}
-            <div class="relative w-[90%] mx-auto h-screen overflow-auto no-scrollbar mt-[4%] px-10 py-15 rounded-lg bg-white shadow-md">
+            <div class="relative w-[90%] mx-auto overflow-auto no-scrollbar mt-[4%] px-10 py-15 rounded-lg bg-white shadow-md">
 
                 {{-- Title Header --}}
                 <div class="text-center mb-6">

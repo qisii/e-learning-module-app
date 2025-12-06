@@ -7,7 +7,7 @@
 @section('projects-active', 'bg-[#0F2250] text-blue-300')
 
 @section('content')
-    <div class="w-full p-4 lg:p-10 md:p-10">
+    <div class="w-full p-4 lg:p-10 md:p-10 overflow-auto no-scrollbar">
         {{-- display loading screen --}}
         <livewire:post-test-quiz-score :quiz-attempt-id="$quiz_attempt->id">
     </div>

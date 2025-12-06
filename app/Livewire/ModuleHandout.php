@@ -69,9 +69,9 @@ class ModuleHandout extends Component
             'page_number' => $max + 1,
         ]);
 
-        // 🔥 Update folder timestamp
-        $this->folder->updated_at = now();
-        $this->folder->saveQuietly();
+        // Update timestamp
+        $this->folder->update(['updated_at' => now()]);
+        $this->folder->project->update(['updated_at' => now()]);
 
         $this->dispatch('sortable:refresh');
         $this->dispatch('suneditor:refresh');
@@ -86,9 +86,9 @@ class ModuleHandout extends Component
             'sort_order' => $this->nextSortOrder($pageId),
         ]);
 
-        // 🔥 Update folder timestamp
-        $this->folder->updated_at = now();
-        $this->folder->saveQuietly();
+        // Update timestamp
+        $this->folder->update(['updated_at' => now()]);
+        $this->folder->project->update(['updated_at' => now()]);
 
         $this->dispatch('sortable:refresh');
         $this->dispatch('suneditor:refresh');
@@ -108,9 +108,9 @@ class ModuleHandout extends Component
             }
         }
 
-        // 🔥 Update folder timestamp
-        $this->folder->updated_at = now();
-        $this->folder->saveQuietly();
+        // Update timestamp
+        $this->folder->update(['updated_at' => now()]);
+        $this->folder->project->update(['updated_at' => now()]);
 
         $this->dispatch('sortable:refresh');
         $this->dispatch('suneditor:refresh');
@@ -131,9 +131,9 @@ class ModuleHandout extends Component
             }
         }
 
-        // 🔥 Update folder timestamp
-        $this->folder->updated_at = now();
-        $this->folder->saveQuietly();
+        // Update timestamp
+        $this->folder->update(['updated_at' => now()]);
+        $this->folder->project->update(['updated_at' => now()]);
 
         $this->dispatch('sortable:refresh');
         $this->dispatch('suneditor:refresh');
@@ -155,9 +155,9 @@ class ModuleHandout extends Component
             }
         }
 
-        // 🔥 Update folder timestamp
-        $this->folder->updated_at = now();
-        $this->folder->saveQuietly();
+        // Update timestamp
+        $this->folder->update(['updated_at' => now()]);
+        $this->folder->project->update(['updated_at' => now()]);
 
         $this->dispatch('sortable:refresh');
         $this->dispatch('suneditor:refresh');
@@ -185,9 +185,9 @@ class ModuleHandout extends Component
             $comp->update(['sort_order' => $index]);
         }
 
-        // 🔥 Update folder timestamp
-        $this->folder->updated_at = now();
-        $this->folder->saveQuietly();
+        // Update timestamp
+        $this->folder->update(['updated_at' => now()]);
+        $this->folder->project->update(['updated_at' => now()]);
 
         // Refresh sortable + editor instances
         $this->dispatch('sortable:refresh');
@@ -235,9 +235,9 @@ class ModuleHandout extends Component
             ]
         );
 
-        // 🔥 Update folder timestamp
-        $this->folder->updated_at = now();
-        $this->folder->saveQuietly();
+        // Update timestamp
+        $this->folder->update(['updated_at' => now()]);
+        $this->folder->project->update(['updated_at' => now()]);
 
         $message = 'Score updated successfully!';
         $this->dispatch('flashMessage', type: 'success', message: $message);
@@ -550,9 +550,9 @@ class ModuleHandout extends Component
             'data' => json_encode($payload),
         ]);
 
-        // 🔥 Update folder timestamp
-        $this->folder->updated_at = now();
-        $this->folder->saveQuietly();
+        // Update timestamp
+        $this->folder->update(['updated_at' => now()]);
+        $this->folder->project->update(['updated_at' => now()]);
 
         $this->dispatch('flashMessage', type: 'success', message: 'Content saved successfully!');
         $this->dispatch('suneditor:refresh');

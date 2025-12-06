@@ -155,8 +155,9 @@ class PostTestQuizForm extends Component
         session()->forget(['instructions', 'questions']);
 
         // After quiz and questions saved
-        $this->quiz->folder->updated_at = now();
-        $this->quiz->folder->saveQuietly();
+        $this->quiz->folder->update(['updated_at' => now()]);
+        $this->quiz->folder->project->update(['updated_at' => now()]);
+
 
         // $this->dispatch('flashMessage', type: 'success', message: 'Quiz updated successfully!');
         $message = $this->quiz ? 'Quiz updated successfully!' : 'Quiz created successfully!';
