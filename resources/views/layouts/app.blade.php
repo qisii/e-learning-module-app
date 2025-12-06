@@ -30,7 +30,7 @@
 </head>
 <body 
     x-data="{ sidebarOpen: false }" 
-    class="bg-[#F9FAFB] text-gray-900 h-screen flex m-0 p-0 overflow-auto"
+    class="bg-[#F9FAFB] text-gray-900 h-screen flex m-0 p-0 overflow-hidden"
 >
     <!-- Sidebar -->
     @if (Auth::user()->role_id == 1)
