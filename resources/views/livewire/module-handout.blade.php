@@ -117,17 +117,17 @@
                             </div>
 
                             {{-- Components drop area --}}
-                            <div class="components-list h-auto overflow-auto" data-page-id="{{ $page->id }}">
+                            <div class="components-list overflow-auto" data-page-id="{{ $page->id }}">
                                 @foreach ($page->components as $component)
-                                    <div class="component-block border border-gray-200 p-3 rounded bg-white flex items-start gap-3 cursor-grab"
+                                    <div class="component-block border border-gray-200 p-3 rounded bg-white flex items-start gap-3 cursor-grab overflow-auto"
                                         data-component-id="{{ $component->id }}" wire:key="handout-component-{{ $component->id }}">
 
                                         {{-- Component content --}}
-                                        <div class="flex-1 font-medium text-gray-700">
+                                        <div class="flex-1 font-medium text-gray-700 overflow-auto">
 
                                             {{-- TEXT BLOCK --}}
                                             @if ($component->type === 'text')
-                                                <div class="flex justify-between items-center mb-2">
+                                                <div class="flex justify-between items-center mb-2 overflow-auto">
 
                                                     <div class="hover:text-green-700 text-green-500 ms-auto text-[13px]">
                                                         <button
