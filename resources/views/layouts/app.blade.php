@@ -41,7 +41,7 @@
     
 
     <!-- Main Content -->
-    <main class="flex-1 flex flex-col overflow-y-auto">
+    <main class="flex-1 flex flex-col overflow-y-auto no-scrollbar">
         <!-- Header -->
         <header class="bg-white shadow-sm py-5 px-4 lg:px-10 md:px-10 flex items-center justify-between sticky top-0 z-20">
             <div class="flex items-center gap-3">
