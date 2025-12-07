@@ -44,7 +44,7 @@
         
         {{-- Register Form --}}
         <div class="w-full lg:w-1/2 flex justify-center items-center py-2 lg:mt-0">
-            <div class="w-[90%] h-full rounded-lg p-6 pt-0 pb-0">
+            <div class="w-[90%] h-full rounded-lg p-6 pb-0">
                 <div x-data="{ role: 'student' }" class="pt-0 md:pt-4 lg:pt-0 px-4 md:px-16 lg:px-24 w-full">
                         
                         <h2 class="text-[24px] md:text-[28px] font-bold text-[#111827] text-center mb-8 md:mb-10 font-secondary" 
