@@ -23,11 +23,11 @@
     {{-- Alphine JS --}}
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script> 
 </head>
-<body class="bg-[#F9FAFB] h-screen m-0 p-0 relative">
+<body class="bg-[#F9FAFB] h-screen m-0 p-0 relative overflow-auto no-scrollbar">
     @yield('image')
 
     <main class="relative z-10">
-        <div class="w-full pt-16 mx-auto">
+        <div class="w-full pt-10 mx-auto">
             {{-- Page content here --}}
             @yield('content')
         </div>

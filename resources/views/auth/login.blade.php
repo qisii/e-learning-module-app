@@ -6,19 +6,19 @@
     <!-- Desktop: large login image at center-left -->
     <img src="{{ asset('assets/images/login2.png') }}" 
         alt="Login" 
-        class="hidden lg:block absolute bottom-0 left-[26%] transform -translate-x-1/2 w-[400px] z-0">
+        class="hidden lg:block absolute bottom-0 left-[26%] transform -translate-x-1/2 w-[400px] z-15">
 
     <!-- Tablet & Mobile: smaller login image bottom-left -->
     <img src="{{ asset('assets/images/login2.png') }}" 
         alt="Login" 
-        class="md:w-[220px] md:block lg:hidden absolute bottom-0 left-[4%] hidden z-0">
+        class="md:w-[220px] md:hidden lg:hidden absolute bottom-0 left-[4%] hidden z-0">
 @endsection
 
 @section('content')
 <div class="w-full flex flex-col lg:flex-row relative">
     <!-- Left Side Images -->
     <div class="w-full lg:w-1/2 flex justify-center items-center relative order-1 lg:order-none">
-        <div class="w-[90%] h-full rounded-lg p-6 relative overflow-hidden flex justify-center">
+        <div class="w-[90%] h-full rounded-lg p-6 relative overflow-hidden flex justify-center hidden lg:block">
             
             <img src="{{ asset('assets/images/stair.png') }}" alt="Stair" 
                 class="hidden lg:block absolute top-[10%] left-[10%] w-[120px] z-[-20]">
@@ -36,17 +36,17 @@
     <img src="{{ asset('assets/images/stair.png') }}" alt="Stair" 
         class="block lg:hidden absolute top-[5%] left-[15%] w-[70px] md:w-[90px] opacity-90 z-[-20]">
     <img src="{{ asset('assets/images/periwrinkle.png') }}" alt="Periwinkle" 
-        class="block lg:hidden absolute top-[10%] right-[12%] w-[90px] md:w-[110px] opacity-90">
+        class="block lg:hidden absolute top-[10%] right-[12%] w-[90px] md:w-[110px] opacity-90 z-[-20]">
     <img src="{{ asset('assets/images/Star.png') }}" alt="Star" 
         class="block lg:hidden absolute bottom-[18%] right-[20%] w-[50px] md:w-[100px] opacity-80 z-[-20]">
     <img src="{{ asset('assets/images/periwrinkle.png') }}" alt="Tube" 
-        class="block lg:hidden absolute bottom-[5%] md:bottom-0 md:left-[50%] left-[10%] w-[100px] md:w-[130px] opacity-80">
+        class="block lg:hidden absolute bottom-[5%] md:bottom-0 md:left-[50%] left-[10%] w-[100px] md:w-[130px] opacity-80 z-[-20]">
 
 
     <!-- Login Form -->
-    <div class="w-full lg:w-1/2 flex justify-center items-center mt-2 md:mt-4 lg:mt-0">
-        <div class="w-[90%] h-full rounded-lg p-6 pt-0">
-            <div x-data="{ role: 'student' }" class="mt-0 md:mt-10 px-4 md:px-16 lg:px-24 w-full">
+    <div class="w-full lg:w-1/2 flex justify-center items-center py-2 md:mt-4 lg:mt-0">
+        <div class="w-[90%] h-full rounded-lg p-6 pt-0 pb-0">
+            <div x-data="{ role: 'student' }" class="mt-0 px-4 md:px-16 lg:px-24 w-full">
                 
                 @if (session('status'))
                     <div class="mb-4 text-sm text-green-600 text-center">
@@ -225,7 +225,7 @@
 
                 </div>
 
-                <p class="text-[14px] text-[#6B7280] text-center mt-7 font-secondary">
+                <p class="text-[14px] text-[#6B7280] text-center font-secondary">
                     Don't have an account? 
                     <a href="{{ route('register') }}" class="text-[#1E40AF] font-bold">Signup</a>
                 </p>
