@@ -1,7 +1,7 @@
 <div>
     <div class="w-full mx-auto grid grid-cols-1 lg:grid-cols-7 lg:gap-6">
         {{-- Left palette --}}
-        <div class="bg-white rounded-lg shadow-md p-4 mb-5 lg:col-span-1 w-full h-fit sticky top-5 z-10 font-secondary">
+        <div class="bg-white rounded-lg shadow-md p-4 mb-5 lg:col-span-1 w-full sticky top-5 z-10 font-secondary self-start">
             <h3 class="text-sm font-semibold text-gray-500 mb-2">
                 Components
             </h3>

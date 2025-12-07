@@ -30,7 +30,7 @@
     @include('components.new-components.back-confirmation-user-modal')
 
     {{-- Post Quiz --}}
-    <div class="w-[90%] lg:w-[80%] mx-auto overflow-auto no-scrollbar">
+    <div class="w-[90%] lg:w-[80%] mx-auto">
         @if (empty($post_test))
             <livewire:student-post-test-quiz-form" :project="$project"/>
         @else

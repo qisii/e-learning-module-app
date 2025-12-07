@@ -1,9 +1,6 @@
 <div class="max-w-6xl mx-auto flex gap-6">
     {{-- Quiz Form --}}
-    <div 
-        class="flex-1 bg-white shadow-lg rounded-xl p-5 lg:p-10 bg-cover bg-center"
-        style="background-image: url('{{ $bgImage }}');"
-    >
+    <div class="flex-1 bg-white shadow-lg rounded-xl p-5 lg:p-10 bg-cover bg-center overflow-auto no-scrollbar" style="background-image: url('{{ $bgImage }}');">
         {{-- QUIZ HEADER --}}
         <div class="text-center mb-10">
             <h1 class="text-2xl font-extrabold text-gray-800 mb-2" style="font-family: 'Poppins', sans-serif;">
@@ -90,7 +87,7 @@
     </div>
 
     {{-- Sticky Timer Panel (Outside Quiz Card) --}}
-    <div class="w-40 sticky top-17 h-fit bg-white shadow-lg rounded-xl p-4">
+    <div class="w-40 sticky top-17 self-start bg-white shadow-lg rounded-xl p-4">
         <h3 class="font-semibold text-gray-800 mb-2">Timer</h3>
         <div wire:poll.1000ms="tick" class="text-2xl font-bold text-blue-600">
             {{ sprintf('%02d:%02d', floor($seconds / 60), $seconds % 60) }}

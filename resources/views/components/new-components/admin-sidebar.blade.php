@@ -21,9 +21,10 @@
             </div>
         </div>
 
-            <!-- Navigation -->
+        <!-- Scrollable NAV + LOGOUT -->
         <div class="flex-1 overflow-auto no-scrollbar px-2">
             <div class="flex flex-col min-h-full">
+                <!-- Navigation -->
                 <nav class="flex flex-col space-y-2 font-[Inter] text-sm mb-6">
                     <a href="{{ route('admin.profile.show') }}" 
                         class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 
@@ -57,7 +58,7 @@
                     </a>
                 </nav>
                 <!-- Logout Section -->
-                <div class="py-6 border-t border-blue-900 font-[Inter]">
+                <div class="py-6 border-t border-blue-900 font-[Inter] mt-auto">
                     <a href="#"
                         class="flex items-center text-[13px] gap-3 px-4 py-3 rounded-lg hover:bg-[#0F2250] hover:text-blue-300 transition-all duration-200">
                         <i class="ri-question-line text-[14px]"></i> Help

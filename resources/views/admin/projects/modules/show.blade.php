@@ -7,7 +7,7 @@
 @section('projects-active', 'bg-[#0F2250] text-blue-300')
 
 @section('content')
-<div class="w-full p-4 lg:p-10 md:p-10 overflow-auto no-scrollbar">
+<div class="w-full p-4 lg:p-10 md:p-10">
 
     {{-- Go Back + Tabs Container --}}
     <div class="flex items-center justify-between mb-6">
