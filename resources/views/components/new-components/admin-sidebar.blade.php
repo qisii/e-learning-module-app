@@ -36,9 +36,9 @@
                         text-[#E5E7EB] text-[13px] hover:bg-[#0F2250] hover:text-blue-300 @yield('projects-active')">
                         <i class="ri-folder-3-line text-[14px]"></i> Projects
                     </a>
-                    <a href="#" 
+                    <a href="{{ route('admin.grades.pretest') }}" 
                         class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 
-                        text-[#E5E7EB] text-[13px] hover:bg-[#0F2250] hover:text-blue-300 @yield('grade-active')">
+                        text-[#E5E7EB] text-[13px] hover:bg-[#0F2250] hover:text-blue-300 @yield('grades-active')">
                         <i class="ri-table-line text-[14px]"></i> Grades
                     </a>
                     <a href="#" 

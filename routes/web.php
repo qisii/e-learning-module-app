@@ -59,7 +59,14 @@ Route::group(['middleware' => 'auth'], function(){
 
         # QUESTION
         Route::delete('/quiz/{question_id}/delete', [QuizzesController::class, 'deleteQuestion'])->name('questions.delete');
-        
+
+        # GRADES
+        Route::get('/grades/pretests', [GradeController::class, 'indexPretestAdmin'])->name('grades.pretest');
+        Route::get('/grades/post-tests', [GradeController::class, 'indexPostTestAdmin'])->name('grades.posttest');
+
+        # SEARCH
+        Route::get('/grades/pretests/search', [GradeController::class, 'searchPretestAdmin'])->name('grades.pretest.search');
+        Route::get('/grades/post-tests/search', [GradeController::class, 'searchPostTestAdmin'])->name('grades.posttest.search');
     });
 
     # USER
@@ -82,6 +89,10 @@ Route::group(['middleware' => 'auth'], function(){
     # GRADE
     Route::get('/grades/pretests', [GradeController::class, 'indexPretest'])->name('grades.index');
     Route::get('/grades/post-tests', [GradeController::class, 'indexPostTest'])->name('grades.posttest');
+
+    # SEARCH
+    Route::get('/grades/pretests/search', [GradeController::class, 'searchPretest'])->name('grades.pretest.search');
+    Route::get('/grades/post-tests/search', [GradeController::class, 'searchPostTest'])->name('grades.posttest.search');
 });
 
 require __DIR__.'/auth.php';

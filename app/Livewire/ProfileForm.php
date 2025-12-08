@@ -151,6 +151,8 @@ class ProfileForm extends Component
     public $state_country;
     public $email;
     public $password;
+    public $grade_level;
+    public $section;
 
     public $avatar; // new upload
     public $currentAvatar; // filename from DB
@@ -166,6 +168,8 @@ class ProfileForm extends Component
         $this->username      = $user->username;
         $this->phone_number  = $user->phone_number;
         $this->gender        = $user->gender;
+        $this->grade_level   = $user->grade_level;
+        $this->section       = $user->section;
         $this->city          = $user->city;
         $this->state_country = $user->state_country;
         $this->email         = $user->email;
@@ -191,6 +195,8 @@ class ProfileForm extends Component
         $user->username      = $this->username;
         $user->phone_number  = $this->phone_number;
         $user->gender        = $this->gender;
+        $user->grade_level   = $this->grade_level;
+        $user->section       = $this->section;
         $user->city          = $this->city;
         $user->state_country = $this->state_country;
 

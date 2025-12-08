@@ -42,24 +42,42 @@
                     @enderror
                 </div>
 
-                {{-- Phone Number --}}
+                {{-- Grade Level --}}
                 <div class="relative mb-5">
-                    <label for="phone-number" class="block text-[14px] text-gray-600 mb-2 font-medium font-secondary">Phone Number</label>
+                    <label for="grade-level" class="block text-[14px] text-gray-600 mb-2 font-medium font-secondary">Grade Level</label>
                     <input 
                         type="text" 
-                        id="phone-number"
-                        wire:model="phone_number"
-                        placeholder="Enter phone number"
+                        id="grade-level"
+                        wire:model="grade_level"
+                        placeholder="Enter Grade Level"
                         class="w-full p-3 bg-white border border-gray-200 text-[13px] rounded-lg shadow-sm 
                                focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 
                                transition-all duration-200 ease-in-out placeholder:text-gray-400 
-                               @error('phone_number') border border-red-500 focus:ring-red-300 @enderror"
+                               @error('grade_level') border border-red-500 focus:ring-red-300 @enderror"
                         style="font-family: 'Inter', sans-serif;">
-                    @error('phone_number')
+                    @error('grade_level')
                         <span class="absolute left-0 top-full mt-1 text-red-500 text-[11px] font-secondary">{{ $message }}</span>
                     @enderror
                 </div>
 
+                {{-- Section --}}
+                <div class="relative mb-5">
+                    <label for="section" class="block text-[14px] text-gray-600 mb-2 font-medium font-secondary">Section</label>
+                    <input 
+                        type="text" 
+                        id="section"
+                        wire:model="section"
+                        placeholder="Enter Section"
+                        class="w-full p-3 bg-white border border-gray-200 text-[13px] rounded-lg shadow-sm 
+                               focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 
+                               transition-all duration-200 ease-in-out placeholder:text-gray-400 
+                               @error('section') border border-red-500 focus:ring-red-300 @enderror"
+                        style="font-family: 'Inter', sans-serif;">
+                    @error('section')
+                        <span class="absolute left-0 top-full mt-1 text-red-500 text-[11px] font-secondary">{{ $message }}</span>
+                    @enderror
+                </div>
+                
                 {{-- Gender --}}
                 <div class="relative mb-5">
                     <label for="gender" class="block text-[14px] text-gray-600 mb-2 font-medium font-secondary">Gender</label>
@@ -85,6 +103,24 @@
 
             {{-- Middle Column --}}
             <div class="space-y-4 order-3 md:order-2">
+
+                {{-- Phone Number --}}
+                <div class="relative mb-5">
+                    <label for="phone-number" class="block text-[14px] text-gray-600 mb-2 font-medium font-secondary">Phone Number</label>
+                    <input 
+                        type="text" 
+                        id="phone-number"
+                        wire:model="phone_number"
+                        placeholder="Enter phone number"
+                        class="w-full p-3 bg-white border border-gray-200 text-[13px] rounded-lg shadow-sm 
+                               focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 
+                               transition-all duration-200 ease-in-out placeholder:text-gray-400 
+                               @error('phone_number') border border-red-500 focus:ring-red-300 @enderror"
+                        style="font-family: 'Inter', sans-serif;">
+                    @error('phone_number')
+                        <span class="absolute left-0 top-full mt-1 text-red-500 text-[11px] font-secondary">{{ $message }}</span>
+                    @enderror
+                </div>
 
                 {{-- City --}}
                 <div class="relative mb-5">

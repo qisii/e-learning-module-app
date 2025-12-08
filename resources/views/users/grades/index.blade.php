@@ -27,15 +27,18 @@
 
         {{-- Search Input --}}
         <div class="flex items-center space-x-2 mb-4">
-            <label class="text-gray-600" for="project-title">Project Title</label>
-            <div class="relative w-[20%]">
-                <input 
-                    id="project-title"
-                    type="text" 
-                    placeholder="Enter project name" 
-                    class="border border-gray-300 rounded-lg pl-10 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
-                >
-                <i class="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <div class="relative w-[50%] lg:w-[30%]">
+                <form action="{{ route('grades.pretest.search') }}" method="get">
+                    <input 
+                        id="search"
+                        type="search"
+                        name="search"
+                        value="{{ request('search') }}"
+                        placeholder="Search here..." 
+                        class="border border-gray-300 rounded-lg pl-10 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+                    >
+                    <i class="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                </form>
             </div>
         </div>
 
@@ -47,7 +50,7 @@
                         <th class="py-4 px-6 text-left font-semibold">Project Title</th>
                         <th class="py-4 px-6 text-left font-semibold">Score</th>
                         <th class="py-4 px-6 text-left font-semibold">Time Spent</th>
-                        <th class="py-4 px-6 text-left font-semibold">Attempts</th>
+                        <th class="py-4 px-6 text-left font-semibold">Attempts <span class="lowercase">(th)</span></th>
                         <th class="py-4 px-6 text-left font-semibold">Date</th>
                     </tr>
                 </thead>
@@ -65,7 +68,7 @@
                                     {{ gmdate('i:s', $grade->time_spent) }}
                                 </td>
                                 <td class="py-4 px-6 border-b border-gray-100">
-                                    {{ $grade->attempt_number }}th
+                                    {{ $grade->attempt_number }}
                                 </td>
                                 <td class="py-4 px-6 border-b border-gray-100 text-gray-500">
                                     {{ $grade->created_at->format('M d, Y') }}

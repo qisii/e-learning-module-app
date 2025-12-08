@@ -7,16 +7,18 @@
 @section('content')
 <div class="w-full p-4 lg:p-10 md:p-10 overflow-auto no-scrollbar" style="font-family: 'Poppins', sans-serif;">
 
-    <h2 class="text-xl font-semibold text-gray-800 mb-6">@ {{ Auth::user()->username }}</h2>
+    <h2 class="text-xl font-semibold text-gray-800 mb-6">
+        {{ Auth::user()->gender === 'female' ? '👩‍🏫' : '👨‍🏫' }} {{ Auth::user()->first_name . ' ' . Auth::user()->last_name }}
+    </h2>
 
     {{-- Tabs Section --}}
     <div class="flex items-center gap-2 mb-6 bg-gray-100 rounded-xl">
-        <a href="{{ route('grades.index') }}"
+        <a href="{{ route('admin.grades.pretest') }}"
             class="px-6 py-4 text-[12px] rounded-xl text-[#6B7280] hover:text-[#374151] transition">
             Pretest
         </a>
 
-        <a href="{{ route('grades.posttest') }}"
+        <a href="{{ route('admin.grades.posttest') }}"
             class="px-6 py-4 text-[12px] rounded-xl bg-[#E5E7EB] text-[#374151] font-semibold cursor-default">
             Post-test
         </a>
@@ -28,10 +30,10 @@
         {{-- Search Input --}}
         <div class="flex items-center space-x-2 mb-4">
             <div class="relative w-[50%] lg:w-[30%]">
-                <form action="{{ route('grades.posttest.search') }}" method="get">
+                <form action="{{ route('admin.grades.posttest.search') }}" method="get">
                     <input 
                         id="search"
-                        type="search"
+                        type="search" 
                         name="search"
                         value="{{ request('search') }}"
                         placeholder="Search here..." 
@@ -47,6 +49,9 @@
             <table class="min-w-full border-collapse table-auto">
                 <thead class="bg-[#f0f4ff] text-gray-700 uppercase">
                     <tr>
+                        <th class="py-4 px-6 text-left font-semibold">Student Name</th>
+                        <th class="py-4 px-6 text-left font-semibold">Grade</th>
+                        <th class="py-4 px-6 text-left font-semibold">Section</th>
                         <th class="py-4 px-6 text-left font-semibold">Project Title</th>
                         <th class="py-4 px-6 text-left font-semibold">Score</th>
                         <th class="py-4 px-6 text-left font-semibold">Time Spent</th>
@@ -58,6 +63,15 @@
                     @if(count($posttests) > 0)
                         @foreach($posttests as $grade)
                             <tr class="hover:bg-[#f9fbff] transition">
+                                <td class="py-4 px-6 border-b border-gray-100">
+                                    {{ $grade->user->first_name ?? 'N/A' }} {{ $grade->user->last_name ?? '' }}
+                                </td>
+                                <td class="py-4 px-6 border-b border-gray-100">
+                                    {{ $grade->user->grade_level ?? '-' }}
+                                </td>
+                                <td class="py-4 px-6 border-b border-gray-100">
+                                    {{ $grade->user->section ?? '-' }}
+                                </td>
                                 <td class="py-4 px-6 border-b border-gray-100">
                                     {{ $grade->quiz->folder->project->title ?? 'N/A' }}
                                 </td>

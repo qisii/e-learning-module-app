@@ -38,7 +38,7 @@
 
         {{-- Right side: Image --}}
         <div class="w-full lg:w-1/2 flex justify-center lg:justify-end mt-8 lg:mt-0">
-            <div class="flex items-center justify-center w-[80%] sm:w-[70%] lg:w-[80%]">
+            <div class="flex items-center justify-center w-[80%] md:w-[50%] lg:w-[70%]">
                 <img 
                     src="{{ asset('assets/images/logo-md2.png') }}" 
                     alt="Logo" 
@@ -118,15 +118,15 @@
 
         {{-- Content --}}
         <div class="w-[70%] mx-auto lg:py-[14%] md:py-[15%] py-[30%] relative z-10">
-            <p class="text-[36px] md:text-[32px] lg:text-[50px] font-bold text-[#F9FAFB] mb-4 leading-tight" 
+            <p class="text-[26px] md:text-[32px] lg:text-[50px] font-bold text-[#F9FAFB] mb-4 leading-tight" 
                 style="font-family: 'Poppins', sans-serif;">
                 Ready to take the quiz?
             </p>
 
-            <p class="w-[70%] md:w-[85%] sm:w-full mx-auto text-center text-[12px] md:text-[14px] lg:text-[16px] text-[#E5E7EB] mb-6 leading-relaxed" 
+            {{-- <p class="w-[70%] md:w-[85%] sm:w-full mx-auto text-center text-[12px] md:text-[14px] lg:text-[16px] text-[#E5E7EB] mb-6 leading-relaxed" 
                 style="font-family: 'Inter', sans-serif;">
                 Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nulla dolore consectetur eos perferendis ad dicta fugit, ducimus hic unde alias dignissimos cum aliquid vero aut! Error exercitationem ullam molestias officia.
-            </p>
+            </p> --}}
 
             <a href="{{ route('register') }}"
                 class="inline-flex items-center px-10 py-4 md:px-8 md:py-3 sm:px-6 sm:py-2 bg-gradient-to-r from-blue-500 to-blue-900 

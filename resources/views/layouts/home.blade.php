@@ -32,7 +32,7 @@
     {{-- @include('components.new-components.navbar') --}}
 
     <main class="">
-        <div class="w-full mt-16 mx-auto">
+        <div class="w-full mt-12 mx-auto">
             {{-- Page content here --}}
             @yield('content')
         </div>
