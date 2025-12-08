@@ -53,6 +53,12 @@ body {
     opacity: 0.8;
 }
 
+.se-video-container {
+  width: 100%; /* Or whatever width you want */
+  margin: 0 auto;   /* Center it */
+}
+
+
 /* SunEditor wrapper */
 /* .sun-editor,
 .sun-editor .se-container,

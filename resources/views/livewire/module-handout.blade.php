@@ -61,6 +61,9 @@
                         </span>
                         button to apply the changes.
                     </li>
+                    <li>
+                        Resize images/videos to set a fixed height for consistent display.
+                    </li>
                 </ul>
             </div>
 
