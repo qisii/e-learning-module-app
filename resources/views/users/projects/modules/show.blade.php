@@ -93,7 +93,7 @@
             You may access other modules.
         </p>
 
-        <div class="flex flex-col items-center mt-4">
+        <div class="flex flex-col items-center mt-4 px-4">
 
             {{-- Other Module buttons --}}
             @if ($level_id == 1)
@@ -101,7 +101,7 @@
                     class="inline-flex items-center justify-center text-sm py-3 mb-3
                         bg-gradient-to-r from-blue-500 to-blue-900 bg-[length:150%_150%] bg-left 
                         text-white rounded-lg transition-all duration-500 
-                        ease-in-out w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
+                        ease-in-out w-full lg:w-60 md:w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
                     style="font-family: 'Inter', sans-serif;">
                     Check Average Module
                     <i class="ri-arrow-right-line ml-3"></i>
@@ -112,7 +112,7 @@
                     class="inline-flex items-center justify-center text-sm py-3 mb-3
                         bg-gradient-to-r from-blue-500 to-blue-900 bg-[length:150%_150%] bg-left 
                         text-white rounded-lg transition-all duration-500 
-                        ease-in-out w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
+                        ease-in-out w-full lg:w-60 md:w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
                     style="font-family: 'Inter', sans-serif;">
                     Check Hard Module
                     <i class="ri-arrow-right-line ml-3"></i>
@@ -124,7 +124,7 @@
                 class="inline-flex items-center justify-center text-sm py-3
                     bg-gradient-to-r from-blue-500 to-blue-900 bg-[length:150%_150%] bg-left 
                     text-white rounded-lg transition-all duration-500 
-                    ease-in-out w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
+                    ease-in-out w-full lg:w-60 md:w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
                 style="font-family: 'Inter', sans-serif;">
                 Continue to Post Test
                 <i class="ri-arrow-right-line ml-3"></i>

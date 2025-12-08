@@ -32,19 +32,19 @@
             @include('components.new-components.back-confirmation-user-modal')
 
             
-            <div class="relative w-[90%] mx-auto mt-[6%] p-20 rounded-lg shadow-md flex flex-col items-center justify-center bg-cover bg-top" style="background-image: url('{{ asset('assets/images/score-bg-3.png') }}');">
+            <div class="relative w-[90%] mx-auto mt-[6%] px-2 py-15 lg:p-20 rounded-lg shadow-md flex flex-col items-center justify-center bg-cover bg-top" style="background-image: url('{{ asset('assets/images/score-bg-3.png') }}');">
 
                 <div class="w-[90%] lg:w-[80%] mx-auto text-center space-y-6 mt-[5%]">
 
                     <div class="text-6xl mb-4 animate-bounce">{{ $emoji }}</div>
 
-                    <h2 class="text-3xl lg:text-3xl font-extrabold {{ $color }}"
+                    <h2 class="text-xl lg:text-3xl font-extrabold {{ $color }}"
                         style="font-family: 'Poppins', sans-serif;">
                         {{ $message }}
                     </h2>
 
                     {{-- Score Details --}}
-                    <div class="space-y-2 text-lg" style="font-family: 'Poppins', sans-serif;">
+                    <div class="space-y-2 text-sm lg:text-lg" style="font-family: 'Poppins', sans-serif;">
                         <p class="text-gray-800">
                             Quiz: <strong>{{ $quizAttempt->quiz->folder->project->title }} PRETEST QUIZ</strong>
                         </p>
@@ -56,7 +56,7 @@
                         </p>
                     </div>
 
-                    <p class="text-gray-500 text-[13px]" style="font-family: 'Inter', sans-serif;">
+                    <p class="text-gray-500 text-[10px] lg:text-[13px]" style="font-family: 'Inter', sans-serif;">
                         Based on your score, you may now access the recommended module.
                     </p>
 
@@ -69,7 +69,7 @@
                             class="inline-flex items-center justify-center text-sm py-3
                                     bg-gradient-to-r from-blue-500 to-blue-900 bg-[length:150%_150%] bg-left 
                                     text-white rounded-lg transition-all duration-500 
-                                    ease-in-out w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
+                                    ease-in-out w-full lg:w-60 md:w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
                             style="font-family: 'Inter', sans-serif;">
                             Check Module
                             <i class="ri-arrow-right-line ml-3"></i>
