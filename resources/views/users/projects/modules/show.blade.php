@@ -44,19 +44,19 @@
                 </p>
             </div>
         @else
+        {{-- TIMER DISPLAY --}}
+            <div class="text-center mb-4 hidden">
+                <h3 class="text-lg font-semibold text-gray-700">
+                    Time Spent: <span id="handout-timer" class="text-blue-600">00:00:00</span>
+                </h3>
+            </div>
+
             {{-- MAIN WRAPPER --}}
-            <div class="relative w-[90%] mx-auto max-h-[1056px] overflow-auto no-scrollbar mt-[4%] px-0 lg:px-5 py-10 rounded-lg bg-white shadow-md">
+            <div id="module-wrapper" class="relative w-[90%] mx-auto max-h-[1056px] overflow-auto no-scrollbar mt-[4%] px-0 lg:px-5 py-10 rounded-lg bg-white shadow-md bg-cover bg-center">
 
                 {{-- Title Header --}}
                 <div class="text-center mb-6">
                     <h2 class="text-lg font-bold text-gray-800 font-secondary">Module Handout</h2>
-                    <span class="inline-block mt-2 px-4 py-1 bg-purple-100 text-purple-600 text-sm font-semibold rounded-full font-secondary">
-                        @if ($level_id == 1) Easy
-                        @elseif ($level_id == 2) Average
-                        @elseif ($level_id == 3) Hard
-                        @else Unknown Level
-                        @endif
-                    </span>
                 </div>
 
                 {{-- HANDOUT CONTENT --}}
@@ -94,44 +94,125 @@
         </p>
 
         <div class="flex flex-col items-center mt-4 px-4">
-
             {{-- Other Module buttons --}}
             @if ($level_id == 1)
-                <a href="{{ route('projects.module.show', ['project_id' => $project_id, 'level_id' => 2]) }}"
-                    class="inline-flex items-center justify-center text-sm py-3 mb-3
-                        bg-gradient-to-r from-blue-500 to-blue-900 bg-[length:150%_150%] bg-left 
-                        text-white rounded-lg transition-all duration-500 
-                        ease-in-out w-full lg:w-60 md:w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
-                    style="font-family: 'Inter', sans-serif;">
-                    Check Average Module
-                    <i class="ri-arrow-right-line ml-3"></i>
-                </a>
-
+                <form class="module-form" action="{{ route('projects.module.attempt.store', ['handout_id' => $handout->id]) }}" method="post">
+                    @csrf
+                    <input type="hidden" name="seconds" class="secondsInput" value="0">
+                    <input type="hidden" name="next_page" value="{{ route('projects.module.show', ['project_id' => $project_id, 'level_id' => 2]) }}">
+                    <a href="{{ route('projects.module.show', ['project_id' => $project_id, 'level_id' => 2]) }}"
+                        class="submit-link inline-flex items-center justify-center text-sm py-3 mb-3
+                            bg-gradient-to-r from-blue-500 to-blue-900 bg-[length:150%_150%] bg-left 
+                            text-white rounded-lg transition-all duration-500 
+                            ease-in-out w-full lg:w-60 md:w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
+                        style="font-family: 'Inter', sans-serif;">
+                        Check Average Module
+                        <i class="ri-arrow-right-line ml-3"></i>
+                    </a>
+                </form>
             @elseif ($level_id == 2)
-                <a href="{{ route('projects.module.show', ['project_id' => $project_id, 'level_id' => 3]) }}"
-                    class="inline-flex items-center justify-center text-sm py-3 mb-3
+                <form class="module-form" action="{{ route('projects.module.attempt.store', ['handout_id' => $handout->id]) }}" method="post">
+                    @csrf
+                    <input type="hidden" name="seconds" class="secondsInput" value="0">
+                    <input type="hidden" name="next_page" value="{{ route('projects.module.show', ['project_id' => $project_id, 'level_id' => 3]) }}">
+                    <a href="{{ route('projects.module.show', ['project_id' => $project_id, 'level_id' => 3]) }}"
+                        class="submit-link inline-flex items-center justify-center text-sm py-3 mb-3
+                            bg-gradient-to-r from-blue-500 to-blue-900 bg-[length:150%_150%] bg-left 
+                            text-white rounded-lg transition-all duration-500 
+                            ease-in-out w-full lg:w-60 md:w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
+                        style="font-family: 'Inter', sans-serif;">
+                        Check Hard Module
+                        <i class="ri-arrow-right-line ml-3"></i>
+                    </a>
+                </form>
+            @endif
+            {{-- Post Test Button --}}
+            <form class="module-form" action="{{ route('projects.module.attempt.store', ['handout_id' => $handout->id]) }}" method="post">
+                @csrf
+                <input type="hidden" name="seconds" class="secondsInput" value="0">
+                <input type="hidden" name="next_page" value="{{ route('projects.welcome.posttest', $project_id) }}">
+                <a href="{{ route('projects.welcome.posttest', $project_id) }}"
+                    class="submit-link inline-flex items-center justify-center text-sm py-3
                         bg-gradient-to-r from-blue-500 to-blue-900 bg-[length:150%_150%] bg-left 
                         text-white rounded-lg transition-all duration-500 
                         ease-in-out w-full lg:w-60 md:w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
                     style="font-family: 'Inter', sans-serif;">
-                    Check Hard Module
+                    Continue to Post Test
                     <i class="ri-arrow-right-line ml-3"></i>
                 </a>
-            @endif
-
-            {{-- Post Test Button --}}
-            <a href="{{ route('projects.welcome.posttest', $project_id) }}"
-                class="inline-flex items-center justify-center text-sm py-3
-                    bg-gradient-to-r from-blue-500 to-blue-900 bg-[length:150%_150%] bg-left 
-                    text-white rounded-lg transition-all duration-500 
-                    ease-in-out w-full lg:w-60 md:w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
-                style="font-family: 'Inter', sans-serif;">
-                Continue to Post Test
-                <i class="ri-arrow-right-line ml-3"></i>
-            </a>
-
+            </form>
         </div>
     @endif
+
+    {{-- TIMER SCRIPT --}}
+    <script>
+        const HANDOUT_ID = "{{ $project_id }}_{{ $level_id }}";
+        const TIMER_KEY = "handout_timer_" + HANDOUT_ID;
+
+        // Time running flag
+        let timeRunning = true;
+
+        // Load previous timer or start at 0
+        let totalSeconds = parseInt(sessionStorage.getItem(TIMER_KEY)) || 0;
+
+        function updateTimer() {
+            console.log('timeRunning:', timeRunning); // <-- add this
+            if (!timeRunning) {
+                document.getElementById("handout-timer").textContent = "00:00:00";
+                totalSeconds = 0;
+                sessionStorage.removeItem(TIMER_KEY);
+                return;
+            }
+
+            let hours = Math.floor(totalSeconds / 3600);
+            let minutes = Math.floor((totalSeconds % 3600) / 60);
+            let seconds = totalSeconds % 60;
+
+            document.getElementById("handout-timer").textContent =
+                String(hours).padStart(2, '0') + ":" +
+                String(minutes).padStart(2, '0') + ":" +
+                String(seconds).padStart(2, '0');
+
+            totalSeconds++;
+            sessionStorage.setItem(TIMER_KEY, totalSeconds);
+        }
+
+        setInterval(updateTimer, 1000);
+
+        // Stop timer before form submission
+        document.querySelectorAll('.submit-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const form = this.closest('form');
+                if (!form) return;
+
+                const input = form.querySelector('.secondsInput');
+                if (input) input.value = totalSeconds;
+
+                // Stop timer
+                timeRunning = false;
+
+                // Submit the form
+                form.submit();
+            });
+        });
+
+        // --- Random background image for main wrapper ---
+        const bgImages = [
+            'module-bg.png',
+            'module-bg-1.png',
+            'module-bg-2.png',
+            'module-bg-3.png'
+        ];
+
+        const wrapper = document.getElementById('module-wrapper');
+        if (wrapper) {
+            const randomIndex = Math.floor(Math.random() * bgImages.length);
+            const bgUrl = "{{ asset('assets/images') }}/" + bgImages[randomIndex];
+            wrapper.style.backgroundImage = `url('${bgUrl}')`;
+        }
+    </script>
+
 
 </div>
 @endsection

@@ -22,6 +22,11 @@
             class="px-6 py-4 text-[12px] rounded-xl bg-[#E5E7EB] text-[#374151] font-semibold cursor-default">
             Post-test
         </a>
+
+        <a href="{{ route('admin.grades.module') }}"
+            class="px-6 py-4 text-[12px] rounded-xl text-[#6B7280] hover:text-[#374151] transition">
+            Module
+        </a>
     </div>
 
     {{-- Post Test Content --}}
@@ -50,6 +55,7 @@
                 <thead class="bg-[#f0f4ff] text-gray-700 uppercase">
                     <tr>
                         <th class="py-4 px-6 text-left font-semibold">Student Name</th>
+                        <th class="py-4 px-6 text-left font-semibold">Username</th>
                         <th class="py-4 px-6 text-left font-semibold">Grade</th>
                         <th class="py-4 px-6 text-left font-semibold">Section</th>
                         <th class="py-4 px-6 text-left font-semibold">Project Title</th>
@@ -65,6 +71,9 @@
                             <tr class="hover:bg-[#f9fbff] transition">
                                 <td class="py-4 px-6 border-b border-gray-100">
                                     {{ $grade->user->first_name ?? 'N/A' }} {{ $grade->user->last_name ?? '' }}
+                                </td>
+                                <td class="py-4 px-6 border-b border-gray-100">
+                                    {{ $grade->user->username ?? '-' }}
                                 </td>
                                 <td class="py-4 px-6 border-b border-gray-100">
                                     {{ $grade->user->grade_level ?? '-' }}
@@ -91,7 +100,7 @@
                         @endforeach
                     @else
                         <tr>
-                            <td colspan="6" class="text-center p-3">No post test results yet.</td>
+                            <td colspan="9" class="text-center p-3">No post test results yet.</td>
                         </tr>
                     @endif
                 </tbody>

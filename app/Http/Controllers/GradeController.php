@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\HandoutAttempt;
 use App\Models\QuizAttempt;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -204,5 +205,84 @@ class GradeController extends Controller
 
         return view('admin.grades.post-test')->with('posttests', $posttests);
     }
+
+    public function indexModuleAdmin(Request $request)
+    {
+        // Get all handout attempts for handouts belonging to projects created by the admin
+        $search = $request->input('search');
+
+        $modules = HandoutAttempt::with(['user', 'handout.folder.project'])
+            ->whereHas('handout.folder.project', function ($query) {
+                $query->where('user_id', Auth::id()); // Only projects created by the admin
+            })
+            ->when($search, function ($query, $search) {
+                $query->whereHas('user', function ($q) use ($search) {
+                    $q->where('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('username', 'like', "%{$search}%")
+                    ->orWhere('grade_level', 'like', "%{$search}%")
+                    ->orWhere('section', 'like', "%{$search}%");
+                })
+                ->orWhereHas('handout.folder.project', function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%");
+                })
+                ->orWhere('attempt_number', 'like', "%{$search}%")
+                ->orWhere('time_spent', 'like', "%{$search}%");
+            })
+            ->latest()
+            ->paginate(8)
+            ->appends(['search' => $search]); // Keep search query on pagination
+
+        return view('admin.grades.module')->with('modules', $modules);
+    }
     
+    public function searchModuleAdmin(Request $request)
+    {
+        $search = $request->input('search');
+
+        // Map level names to IDs
+        $levelMap = [
+            'easy' => 1,
+            'average' => 2,
+            'hard' => 3,
+        ];
+
+        $searchLower = strtolower($search);
+        $searchLevelId = $levelMap[$searchLower] ?? null;
+
+        $modules = HandoutAttempt::with('user', 'handout.folder.project')
+            ->whereHas('handout.folder.project', function ($q) {
+                $q->where('user_id', Auth::id()); // Projects created by this admin
+            })
+            ->where(function ($query) use ($search, $searchLevelId) {
+                // User filters
+                $query->whereHas('user', function ($q) use ($search) {
+                    $q->where('first_name', 'like', "%$search%")
+                    ->orWhere('last_name', 'like', "%$search%")
+                    ->orWhere('username', 'like', "%$search%")
+                    ->orWhere('grade_level', 'like', "%$search%")
+                    ->orWhere('section', 'like', "%$search%");
+                })
+                // Project title filter
+                ->orWhereHas('handout.folder.project', function ($q) use ($search) {
+                    $q->where('title', 'like', "%$search%");
+                })
+                // Level filter (only if searching by level name)
+                ->orWhere(function ($q) use ($searchLevelId) {
+                    if ($searchLevelId) {
+                        $q->whereHas('handout', function ($h) use ($searchLevelId) {
+                            $h->where('level_id', $searchLevelId);
+                        });
+                    }
+                })
+                // Attempt number or time spent
+                ->orWhere('attempt_number', 'like', "%$search%")
+                ->orWhere('time_spent', 'like', "%$search%");
+            })
+            ->latest()
+            ->paginate(8)
+            ->appends(['search' => $search]);
+
+        return view('admin.grades.module')->with('modules', $modules);
+    }
 }

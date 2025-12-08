@@ -74,7 +74,7 @@
                 </div>
 
                 {{-- HANDOUT CONTENT --}}
-                <div class="my-10 space-y-6 mx-8">
+                <div class="my-10 space-y-6 mx-8 overflow-auto">
                     @foreach ($pages as $page)
                         @foreach ($page->components as $component)
                             @php

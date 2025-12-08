@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Folder;
 use App\Models\Handout;
+use App\Models\HandoutAttempt;
 use App\Models\HandoutPage;
 use App\Models\Project;
 use App\Models\Quiz;
@@ -18,14 +19,16 @@ class ProjectController extends Controller
     private $quiz;
     private $quiz_attempt;
     private $handout;
+    private $handout_attempt;
 
-    public function __construct(Project $project, Folder $folder, Quiz $quiz, QuizAttempt $quiz_attempt, Handout $handout)
+    public function __construct(Project $project, Folder $folder, Quiz $quiz, QuizAttempt $quiz_attempt, Handout $handout, HandoutAttempt $handout_attempt)
     {
         $this->project  = $project;
         $this->folder   = $folder;
         $this->quiz     = $quiz;
         $this->quiz_attempt = $quiz_attempt;
         $this->handout = $handout;
+        $this->handout_attempt = $handout_attempt;
     }
 
     public function index()
@@ -254,4 +257,29 @@ class ProjectController extends Controller
         ));
     }
 
+   public function storeHandoutAttempt(Request $request, $handout_id)
+{
+    $userId = Auth::user()->id;
+    $handout = $this->handout->findOrFail($handout_id);
+    $levelId = $handout->level_id;
+    $seconds = $request->input('seconds', 0);
+    $attemptNumber = $this->handout_attempt->where('user_id', $userId)
+                        ->where('handout_id', $handout_id)
+                        ->count() + 1;
+
+    // Save attempt
+    $this->handout_attempt->create([
+        'user_id' => $userId,
+        'handout_id' => $handout_id,
+        'level_id' => $levelId,
+        'time_spent' => $seconds,
+        'attempt_number' => $attemptNumber,
+    ]);
+    
+    // Redirect to the next page passed from the form
+    $nextPage = $request->input('next_page');
+    return redirect($nextPage);
+}
+
+    
 }

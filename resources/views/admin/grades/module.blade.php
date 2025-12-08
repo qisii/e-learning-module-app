@@ -13,27 +13,29 @@
 
     {{-- Tabs Section --}}
     <div class="flex items-center gap-2 mb-6 bg-gray-100 rounded-xl">
-        <a href="{{ route('admin.grades.pretest') }} "
-            class="px-6 py-4 text-[12px] rounded-xl bg-[#E5E7EB] text-[#374151] font-semibold cursor-default">
+        <a href="{{ route('admin.grades.pretest') }}"
+            class="px-6 py-4 text-[12px] rounded-xl text-[#6B7280] hover:text-[#374151] transition">
             Pretest
         </a>
+
         <a href="{{ route('admin.grades.posttest') }}"
             class="px-6 py-4 text-[12px] rounded-xl text-[#6B7280] hover:text-[#374151] transition">
             Post-test
         </a>
+
         <a href="{{ route('admin.grades.module') }}"
-            class="px-6 py-4 text-[12px] rounded-xl text-[#6B7280] hover:text-[#374151] transition">
+            class="px-6 py-4 text-[12px] rounded-xl bg-[#E5E7EB] text-[#374151] font-semibold cursor-default">
             Module
         </a>
     </div>
 
-    {{-- Pretest Content --}}
+    {{-- Module Content --}}
     <div class="bg-white rounded-xl shadow-md p-6 text-[12px]">
 
         {{-- Search Input --}}
         <div class="flex items-center space-x-2 mb-4">
             <div class="relative w-[50%] lg:w-[30%]">
-                <form action="{{ route('admin.grades.pretest.search') }}" method="get">
+                <form action="{{ route('admin.grades.module.search') }}" method="get">
                     <input 
                         id="search"
                         type="search" 
@@ -57,56 +59,66 @@
                         <th class="py-4 px-6 text-left font-semibold">Grade</th>
                         <th class="py-4 px-6 text-left font-semibold">Section</th>
                         <th class="py-4 px-6 text-left font-semibold">Project Title</th>
-                        <th class="py-4 px-6 text-left font-semibold">Score</th>
+                        <th class="py-4 px-6 text-left font-semibold">Level</th>
                         <th class="py-4 px-6 text-left font-semibold">Time Spent</th>
                         <th class="py-4 px-6 text-left font-semibold">Attempts <span class="lowercase">(th)</span></th>
                         <th class="py-4 px-6 text-left font-semibold">Date</th>
                     </tr>
                 </thead>
                 <tbody class="text-gray-600">
-                    @if(count($pretests) > 0)
-                        @foreach($pretests as $grade)
+                    @if(count($modules) > 0)
+                        @foreach($modules as $attempt)
                             <tr class="hover:bg-[#f9fbff] transition">
                                 <td class="py-4 px-6 border-b border-gray-100">
-                                    {{ $grade->user->first_name ?? 'N/A' }} {{ $grade->user->last_name ?? '' }}
+                                    {{ $attempt->user->first_name ?? 'N/A' }} {{ $attempt->user->last_name ?? '' }}
                                 </td>
                                 <td class="py-4 px-6 border-b border-gray-100">
-                                    {{ $grade->user->username ?? '-' }}
+                                    {{ $attempt->user->username ?? '-' }}
                                 </td>
                                 <td class="py-4 px-6 border-b border-gray-100">
-                                    {{ $grade->user->grade_level ?? '-' }}
+                                    {{ $attempt->user->grade_level ?? '-' }}
                                 </td>
                                 <td class="py-4 px-6 border-b border-gray-100">
-                                    {{ $grade->user->section ?? '-' }}
+                                    {{ $attempt->user->section ?? '-' }}
                                 </td>
                                 <td class="py-4 px-6 border-b border-gray-100">
-                                    {{ $grade->quiz->folder->project->title ?? 'N/A' }}
-                                </td>
-                                <td class="py-4 px-6 border-b border-gray-100 text-blue-600 font-medium">
-                                    {{ $grade->score }} / {{ $grade->quiz->questions->count() }}
+                                    {{ $attempt->handout->folder->project->title ?? 'N/A' }}
                                 </td>
                                 <td class="py-4 px-6 border-b border-gray-100">
-                                    {{ gmdate('i:s', $grade->time_spent) }}
+                                    @if ($attempt->handout->level_id == 1)
+                                        <span class="text-green-500 font-semibold">Easy</span>
+                                    @elseif ($attempt->handout->level_id == 2)
+                                        <span class="text-yellow-500 font-semibold">Average</span>
+                                    @elseif ($attempt->handout->level_id == 3)
+                                        <span class="text-red-500 font-semibold">Hard</span>
+                                    @else
+                                        <span class="text-gray-500 font-semibold">Unknown Level</span>
+                                    @endif
+                                </td>
+
+                                <td class="py-4 px-6 border-b border-gray-100">
+                                    {{ gmdate('i:s', $attempt->time_spent) }}
                                 </td>
                                 <td class="py-4 px-6 border-b border-gray-100">
-                                    {{ $grade->attempt_number }}
+                                    {{ $attempt->attempt_number }}
                                 </td>
                                 <td class="py-4 px-6 border-b border-gray-100 text-gray-500">
-                                    {{ $grade->created_at->format('M d, Y') }}
+                                    {{ $attempt->created_at->format('M d, Y') }}
                                 </td>
                             </tr>
                         @endforeach
                     @else
                         <tr>
-                            <td colspan="9" class="text-center p-3">No pretest results yet.</td>
+                            <td colspan="9" class="text-center p-3">No module attempts yet.</td>
                         </tr>
                     @endif
                 </tbody>
+
             </table>
 
             {{-- Pagination --}}
             <div class="mt-8">
-                {{ $pretests->links() }}
+                {{ $modules->links() }}
             </div>
         </div>
     </div>

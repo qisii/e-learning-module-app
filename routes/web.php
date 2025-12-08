@@ -63,10 +63,12 @@ Route::group(['middleware' => 'auth'], function(){
         # GRADES
         Route::get('/grades/pretests', [GradeController::class, 'indexPretestAdmin'])->name('grades.pretest');
         Route::get('/grades/post-tests', [GradeController::class, 'indexPostTestAdmin'])->name('grades.posttest');
+        Route::get('/grades/modules', [GradeController::class, 'indexModuleAdmin'])->name('grades.module');
 
         # SEARCH
         Route::get('/grades/pretests/search', [GradeController::class, 'searchPretestAdmin'])->name('grades.pretest.search');
         Route::get('/grades/post-tests/search', [GradeController::class, 'searchPostTestAdmin'])->name('grades.posttest.search');
+        Route::get('/grades/modules/search', [GradeController::class, 'searchModuleAdmin'])->name('grades.module.search');
     });
 
     # USER
@@ -78,6 +80,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/project/{project_id}/pretest/quiz', [ProjectController::class, 'showPretest'])->name('projects.show.pretest');
     # MODULE HANDOUT
     Route::get('/project/{project_id}/module/{level_id}/show', [ProjectController::class, 'showModule'])->name('projects.module.show');
+    Route::post('/project/{handout_id}/module/store', [ProjectController::class, 'storeHandoutAttempt'])->name('projects.module.attempt.store');
     # POST TEST
     Route::get('/project/{project_id}/post-test/welcome', [ProjectController::class, 'welcomePostTest'])->name('projects.welcome.posttest');
     Route::get('/project/{project_id}/post-test/quiz', [ProjectController::class, 'showPostTest'])->name('projects.show.posttest');
