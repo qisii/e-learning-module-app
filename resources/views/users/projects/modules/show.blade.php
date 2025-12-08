@@ -45,7 +45,7 @@
             </div>
         @else
             {{-- MAIN WRAPPER --}}
-            <div class="relative w-[90%] mx-auto h-auto max-h-[1056px] overflow-auto no-scrollbar mt-[4%] px-0 lg:px-5 py-10 rounded-lg bg-white shadow-md">
+            <div class="relative w-[90%] mx-auto max-h-[1056px] overflow-auto no-scrollbar mt-[4%] px-0 lg:px-5 py-10 rounded-lg bg-white shadow-md">
 
                 {{-- Title Header --}}
                 <div class="text-center mb-6">

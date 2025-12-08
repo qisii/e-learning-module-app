@@ -55,6 +55,7 @@ body {
 
 .se-video-container {
   width: 100%; /* Or whatever width you want */
+  overflow: auto;
   margin: 0 auto;   /* Center it */
 }
 
