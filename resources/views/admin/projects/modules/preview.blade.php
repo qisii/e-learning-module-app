@@ -59,7 +59,7 @@
             </div>
         @else
             {{-- MAIN WRAPPER --}}
-            <div class="relative w-[90%] mx-auto overflow-auto no-scrollbar mt-[4%] px-10 py-15 rounded-lg bg-white shadow-md">
+            <div class="relative w-[90%] mx-auto overflow-auto no-scrollbar mt-[4%] px-0 lg:px-5 py-10 rounded-lg bg-white shadow-md">
 
                 {{-- Title Header --}}
                 <div class="text-center mb-6">
@@ -74,7 +74,7 @@
                 </div>
 
                 {{-- HANDOUT CONTENT --}}
-                <div class="my-10 space-y-6 mx-8">
+                <div class="my-10 space-y-6 mx-8 overflow-auto">
                     @foreach ($pages as $page)
                         @foreach ($page->components as $component)
                             @php
