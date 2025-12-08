@@ -6,12 +6,12 @@
             
             {{-- Loading heading --}}
             <h1 class="text-3xl lg:text-3xl font-extrabold text-gray-800 mb-3" style="font-family: 'Inter', sans-serif;">
-                Processing your answers...
+                 {{ $attempted ? 'Checking your previous pretest records...' : 'Processing your answers...' }}  
             </h1>
 
             {{-- Optional subtext --}}
             <p class="text-gray-600 text-lg" style="font-family: 'Inter', sans-serif;">
-                Please wait while we calculate your score.
+                {{ $attempted ? 'Please wait while we get your score...' : 'Please wait while we calculate your score.' }}
             </p>
 
             {{-- Spinner animation --}}

@@ -67,8 +67,9 @@ class QuizScore extends Component
     public $color;
     public $recommendedLevel;
     public $project_id;
+    public $attempted;
 
-    public function mount($quizAttemptId)
+    public function mount($quizAttemptId, $attempted = null)
     {
         $this->quizAttempt = QuizAttempt::findOrFail($quizAttemptId);
 
@@ -108,6 +109,7 @@ class QuizScore extends Component
 
         $this->recommendedLevel = $this->determineHandoutLevel();
         $this->project_id = $this->getProjectID();
+        $this->attempted = $attempted;
     }
 
     public function render()

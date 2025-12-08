@@ -20,7 +20,7 @@
 
     @if ($pretestFolder && $pretestFolder->quizzes->first()?->questions->isNotEmpty())
     {{-- Pretest exists and has questions --}}
-        <div class="w-[90%] lg:w-[80%] mx-auto mt-[35%] lg:mt-[10%] flex flex-col items-center justify-center text-center">
+        <div class="w-[90%] lg:w-[80%] mx-auto mt-[35%] md:mt-[15%] lg:mt-[15%] flex flex-col items-center justify-center text-center">
             <div class="text-7xl mb-6 animate-bounce">🎯</div>
 
             <h1 class="text-3xl lg:text-4xl font-extrabold text-gray-800 mb-3" style="font-family: 'Inter', sans-serif;">
@@ -45,7 +45,7 @@
         </div>
     @else
         {{-- No pretest or no questions --}}
-        <div class="w-[90%] lg:w-[80%] mx-auto mt-[35%] lg:mt-[10%] flex flex-col items-center justify-center text-center">
+        <div class="w-[90%] lg:w-[80%] mx-auto mt-[35%] md:mt-[15%] lg:mt-[15%] flex flex-col items-center justify-center text-center">
             <div class="text-7xl mb-6 animate-bounce">📝</div>
 
             <h1 class="text-3xl lg:text-4xl font-extrabold text-gray-800 mb-3" style="font-family: 'Inter', sans-serif;">

@@ -95,7 +95,6 @@
                         @if ($level_id == 1) Easy
                         @elseif ($level_id == 2) Average
                         @elseif ($level_id == 3) Hard
-                        @else Unknown Level
                         @endif
                     </span>
                 </div>
@@ -119,7 +118,7 @@
                             {{-- Components drop area --}}
                             <div class="components-list overflow-auto" data-page-id="{{ $page->id }}">
                                 @foreach ($page->components as $component)
-                                    <div class="component-block border border-gray-200 p-3 rounded bg-white flex items-start gap-3 cursor-grab overflow-auto"
+                                    <div class="component-block border border-gray-200 p-3 rounded bg-white flex items-start gap-3 overflow-auto"
                                         data-component-id="{{ $component->id }}" wire:key="handout-component-{{ $component->id }}">
 
                                         {{-- Component content --}}
@@ -154,32 +153,70 @@
                                                 </div>
                                             {{-- HIDDEN OBJECTIVE BLOCK --}}
                                             @elseif ($component->type === 'objective')
-                                                <div class="flex justify-between items-center mb-2">
+                                                <div class="flex justify-between items-center mb-2 overflow-auto">
+
+                                                    {{-- LABEL --}}
                                                     <div class="text-[13px] text-gray-700">
-                                                        Hidden Objective {{ $component->sort_order }}
+                                                        Hidden Objective
                                                     </div>
 
+                                                    {{-- SAVE BUTTON --}}
+                                                    <div class="hover:text-green-700 text-green-500 ms-auto text-[13px]">
+                                                        <button
+                                                            type="button"
+                                                            wire:click="saveObjective({{ $component->id }})"
+                                                            class="cursor-pointer"
+                                                        >
+                                                            <i class="ri-checkbox-circle-line"></i> Save
+                                                        </button>
+                                                    </div>
+
+                                                    {{-- DELETE BUTTON --}}
                                                     <button wire:click.prevent="removeComponent({{ $component->id }})"
                                                             class="text-red-500 hover:text-red-700">
-                                                        <i class="ri-delete-bin-line text-sm"></i>
+                                                        <i class="ri-delete-bin-line text-sm ms-2"></i>
                                                     </button>
                                                 </div>
 
-                                                <!-- Your audio UI here -->
-                                            {{-- UNKNOWN BLOCK --}}
-                                            @else
-                                                <div class="flex justify-between items-center mb-2">
-                                                    <div class="text-[13px] text-gray-700">
-                                                        Unknown component
+                                                {{-- OBJECTIVE INPUTS --}}
+                                                <div class="space-y-3 p-3 border rounded-md bg-gray-50">
+
+                                                    {{-- Display Message --}}
+                                                    <div>
+                                                        <label class="block text-xs text-gray-600 mb-1">Instruction</label>
+                                                        <textarea 
+                                                            class="w-full border rounded p-2 text-sm"
+                                                            rows="1"
+                                                            wire:model.lazy="objectiveData.{{ $component->id }}.display_message"
+                                                        ></textarea>
                                                     </div>
 
-                                                    <button wire:click.prevent="removeComponent({{ $component->id }})"
-                                                            class="text-red-500 hover:text-red-700">
-                                                        <i class="ri-delete-bin-line text-sm"></i>
-                                                    </button>
+                                                    {{-- Target Selection --}}
+                                                    <div>
+                                                        <label class="block text-xs text-gray-600 mb-1">Target Element(s)</label>
+
+                                                        <div class="flex items-center gap-2 mb-2">
+                                                            <button 
+                                                                type="button"
+                                                                class="px-3 py-1 text-xs bg-blue-500 hover:bg-blue-600 text-white rounded"
+                                                                onclick="window.selectTargetForObjective({{ $component->id }})"
+                                                            >
+                                                                + Select Target
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    {{-- Completion Message --}}
+                                                    <div>
+                                                        <label class="block text-xs text-gray-600 mb-1">Completion Message</label>
+                                                        <textarea 
+                                                            class="w-full border rounded p-2 text-sm"
+                                                            rows="2"
+                                                            wire:model.lazy="objectiveData.{{ $component->id }}.completion_message"
+                                                        ></textarea>
+                                                    </div>
                                                 </div>
                                             @endif
-
                                         </div>
                                     </div>
                                 @endforeach
@@ -293,20 +330,20 @@
     }
 
     function saveTextComponent(componentId) {
-  const content = window.getEditorContent(componentId);
-  console.log('saveTextComponent -> content for', componentId, content);
+        const content = window.getEditorContent(componentId);
+        console.log('saveTextComponent -> content for', componentId, content);
 
-  if (content === null) {
-    // helpful debug message if editor not ready
-    console.warn('Editor not found for component', componentId);
-    return;
-  }
+        if (content === null) {
+            // helpful debug message if editor not ready
+            console.warn('Editor not found for component', componentId);
+            return;
+        }
 
-  Livewire.dispatch('saveTextComponent', {
-    component_id: componentId,    // use snake keys if your dd showed that
-    content: content
-  });
-}
+        Livewire.dispatch('saveTextComponent', {
+            component_id: componentId,    // use snake keys if your dd showed that
+            content: content
+        });
+    }
 
     /* Initialize on first load */
     document.addEventListener('DOMContentLoaded', () => {
@@ -321,6 +358,7 @@
     });
     
     </script>
+    
 </div>
 
 

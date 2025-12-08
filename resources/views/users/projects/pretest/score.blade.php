@@ -9,6 +9,6 @@
 @section('content')
 <div class="w-full p-4 lg:p-10 md:p-10 overflow-auto no-scrollbar">
     {{-- display loading then score --}}
-    <livewire:quiz-score :quiz-attempt-id="$quiz_attempt->id" /> 
+    <livewire:quiz-score :quiz-attempt-id="$quiz_attempt->id" :attempted="$attempted" /> 
 </div>
 @endsection

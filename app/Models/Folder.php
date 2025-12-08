@@ -20,7 +20,7 @@ class Folder extends Model
     }
 
     public function handouts()
-{
-    return $this->hasMany(Handout::class);
-}
+    {
+        return $this->hasMany(Handout::class);
+    }
 }

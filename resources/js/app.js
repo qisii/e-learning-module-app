@@ -85,11 +85,23 @@ window.initSunEditors = initSunEditors;
 window.destroyAllSunEditors = destroyAllSunEditors;
 
 // init on load
+// document.addEventListener('DOMContentLoaded', () => initSunEditors());
+
+// // re-init when your Livewire event fires
+// window.addEventListener('suneditor:refresh', () => {
+//   console.log('suneditor:refresh received');
+//   // tiny delay to let Livewire patch DOM
+//   setTimeout(() => initSunEditors(), 15);
+// });
+
 document.addEventListener('DOMContentLoaded', () => initSunEditors());
 
-// re-init when your Livewire event fires
+// Livewire updates finished → refresh editors
+Livewire.hook('message.processed', () => {
+    setTimeout(() => initSunEditors(), 10);
+});
+
+// Also refresh when you manually dispatch (add component, reorder, etc.)
 window.addEventListener('suneditor:refresh', () => {
-  console.log('suneditor:refresh received');
-  // tiny delay to let Livewire patch DOM
-  setTimeout(() => initSunEditors(), 15);
+    setTimeout(() => initSunEditors(), 10);
 });

@@ -9,6 +9,7 @@ use App\Models\Project;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProjectController extends Controller
 {
@@ -106,15 +107,34 @@ class ProjectController extends Controller
     }
 
     // ---------- PRE TEST ----------
-    public function welcomePretest($project_id){
+    public function welcomePretest($project_id)
+    {
         $project = $this->project->findOrFail($project_id);
-
-        // Get the Pretest folder (folder_type_id = 1)
         $pretestFolder = $this->getFolderByType($project, 1);
         
+        $quizIds = Quiz::where('folder_id', $pretestFolder->id)->pluck('id');
+        $latestAttempt = QuizAttempt::whereIn('quiz_id', $quizIds)
+            ->where('user_id', Auth::id())
+            ->latest()
+            ->first();
+        
+        $attempted = false;
+
+        if ($latestAttempt) {
+            $twoDaysAgo = now()->subDays(2);
+
+            // If attempt is WITHIN last 2 days → show score
+            if ($latestAttempt->created_at->gte($twoDaysAgo)) {
+                $attempted = true;
+                return $this->openPreScore($latestAttempt->id, $attempted);
+            }
+        }
+
+        // Otherwise show pretest page
         return view('users.projects.pretest.index')
-                ->with('project', $project)
-                ->with('pretestFolder', $pretestFolder);
+            ->with('project', $project)
+            ->with('pretestFolder', $pretestFolder)
+            ->with('attempted', $attempted);
     }
 
     public function showPretest($project_id){
@@ -141,10 +161,10 @@ class ProjectController extends Controller
             ->first();
     }
 
-    public function openPreScore($quiz_attempt_id){
+    public function openPreScore($quiz_attempt_id, $attempted){
         $quiz_attempt = $this->quiz_attempt->findOrFail($quiz_attempt_id);
         $project = $quiz_attempt->quiz->folder->project;
-        return view('users.projects.pretest.score')->with('quiz_attempt', $quiz_attempt)->with('project', $project);
+        return view('users.projects.pretest.score')->with('quiz_attempt', $quiz_attempt)->with('project', $project)->with('attempted', $attempted);
     }
 
     public function openPostScore($quiz_attempt_id){

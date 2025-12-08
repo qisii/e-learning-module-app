@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\QuizAttempt;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -52,6 +53,15 @@ class GradeController extends Controller
             ->paginate(8);
 
         return view('users.grades.post-test')->with('posttests', $posttests);
+    }
+
+    public function deleteOldAttempts()
+    {
+        $cutoffDate = Carbon::now()->subMonths(3);
+
+        QuizAttempt::where('created_at', '<', $cutoffDate)->delete();
+
+        return redirect()->back()->with('success', 'Old quiz attempts deleted successfully.');
     }
 
 }

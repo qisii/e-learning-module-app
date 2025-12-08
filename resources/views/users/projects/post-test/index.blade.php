@@ -7,7 +7,7 @@
 @section('projects-active', 'bg-[#0F2250] text-blue-300')
 
 @section('content')
-<div class="w-full p-4 lg:p-10 md:p-10 overflow-auto no-scrollbar">
+<div class="w-full p-4 lg:p-10 md:p-10 overflow-auto no-scrollbar   ">
     <button type="button" 
             onclick="openBackModal()" 
             class="inline-flex items-center text-[14px] text-[#6B7280] hover:text-[#374151] transition"
@@ -20,7 +20,7 @@
 
     @if ($postTestFolder && $postTestFolder->quizzes->first()?->questions->isNotEmpty())
         {{-- Post-test exists AND has questions --}}
-        <div class="w-[90%] lg:w-[80%] mx-auto mt-[35%] lg:mt-[10%] flex flex-col items-center justify-center text-center">
+        <div class="w-[90%] lg:w-[80%] mx-auto mt-[35%] md:mt-[15%] lg:mt-[15%] flex flex-col items-center justify-center text-center">
             <div class="text-7xl mb-6 animate-bounce">🚀</div>
 
             <h1 class="text-3xl lg:text-4xl font-extrabold text-gray-800 mb-3" style="font-family: 'Inter', sans-serif;">
@@ -46,7 +46,7 @@
 
     @else
         {{-- No folder, no quiz, OR quiz has no questions --}}
-        <div class="w-[90%] lg:w-[80%] mx-auto mt-[35%] lg:mt-[10%] flex flex-col items-center justify-center text-center">
+        <div class="w-[90%] lg:w-[80%] mx-auto mt-[35%] md:mt-[15%] lg:mt-[15%] flex flex-col items-center justify-center text-center">
             <div class="text-7xl mb-6 animate-bounce">📝</div>
 
             <h1 class="text-3xl lg:text-4xl font-extrabold text-gray-800 mb-3" style="font-family: 'Inter', sans-serif;">

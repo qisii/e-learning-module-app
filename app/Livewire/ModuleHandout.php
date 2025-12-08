@@ -446,9 +446,7 @@ class ModuleHandout extends Component
 
     public function saveTextComponent($component_id, $content)
     {
-        // -----------------------------------------------------
         // Step 0: Get old images from previously saved content
-        // -----------------------------------------------------
         $component = HandoutComponent::find($component_id);
         if (! $component) return;
 
@@ -463,10 +461,7 @@ class ModuleHandout extends Component
 
         $oldImages = $oldMatches[1] ?? [];
 
-
-        // -----------------------------------------------------
         // Step 1: Handle Base64 <img> tags (your original logic)
-        // -----------------------------------------------------
         preg_match_all('/<img[^>]+src="data:(image\/[a-zA-Z]+);base64,([^"]+)"/', $content, $matches, PREG_SET_ORDER);
 
         $imagesData = [];
@@ -505,16 +500,10 @@ class ModuleHandout extends Component
             $content = str_replace($match[0], '<img src="' . $storageUrl . '"', $content);
         }
 
-
-        // -----------------------------------------------------
         // Step 2: Add target="_blank" to <a> tags (your logic)
-        // -----------------------------------------------------
         $content = preg_replace('/<a\s+([^>]*?)href=/', '<a $1 target="_blank" href=', $content);
 
-
-        // -----------------------------------------------------
         // Step 3: Find all final images in updated content
-        // -----------------------------------------------------
         preg_match_all(
             '/<img[^>]+src="[^"]*\/storage\/' . preg_quote(self::LOCAL_STORAGE_FOLDER, '/') . '([^"]+)"/',
             $content,
@@ -523,10 +512,7 @@ class ModuleHandout extends Component
 
         $finalImages = $finalMatches[1] ?? [];
 
-
-        // -----------------------------------------------------
         // Step 4: Delete removed images
-        // -----------------------------------------------------
         $imagesToDelete = array_diff($oldImages, $finalImages);
 
         foreach ($imagesToDelete as $img) {
@@ -537,10 +523,7 @@ class ModuleHandout extends Component
             }
         }
 
-
-        // -----------------------------------------------------
         // Step 5: Save updated content (your logic)
-        // -----------------------------------------------------
         $payload = [
             'type' => 'doc',
             'content' => $content,
