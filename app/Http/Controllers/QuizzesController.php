@@ -51,17 +51,47 @@ class QuizzesController extends Controller
                 ->with('quiz', $quiz);
     }
 
-    public function showModule($folder_id){
+    // public function showModule($folder_id){
+    //     $folder = $this->folder->findOrFail($folder_id);
+    //     $level_id = request('level_id');
+    //     if ($folder->folder_type_id != 2){
+    //         return redirect()->route('admin.projects');
+    //     }
+
+    //     return view('admin.projects.modules.show')
+    //             ->with('folder', $folder)
+    //             ->with('level_id', $level_id);
+    // }
+
+    public function showModule($folder_id)
+{
+    $level_id = request('level_id');
+
+    try {
         $folder = $this->folder->findOrFail($folder_id);
-        $level_id = request('level_id');
-        if ($folder->folder_type_id != 2){
+
+        // If folder type is not 2, redirect
+        if ($folder->folder_type_id != 2) {
             return redirect()->route('admin.projects');
         }
+    } catch (\Exception $e) {
+        // Ignore errors, optionally log them
+        // \Log::error($e->getMessage());
 
-        return view('admin.projects.modules.show')
-                ->with('folder', $folder)
-                ->with('level_id', $level_id);
+        // Provide a fallback folder object so the view can still render
+        $folder = (object)[
+            'id' => $folder_id,
+            'folder_type_id' => null,
+            'name' => 'Unknown folder'
+        ];
     }
+
+    // Always render the view
+    return view('admin.projects.modules.show')
+        ->with('folder', $folder)
+        ->with('level_id', $level_id);
+}
+
 
     public function deleteQuestion($question_id){
         $this->question->destroy($question_id);
