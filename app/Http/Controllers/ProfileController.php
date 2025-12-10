@@ -35,11 +35,15 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
-        if ($user->role_id == 1) {
-            return view('admin.profile.show')->with('user', $user);
-        } elseif ($user->role_id == 2) {
-            return view('users.profile.show')->with('user', $user);
-        }
+        return view('users.profile.show')->with('user', $user);
+        // abort(403, 'Unauthorized action.');
+    }
+
+    public function showAdmin(Request $request)
+    {
+        $user = $request->user();
+        
+        return view('admin.profile.show')->with('user', $user);
 
         // abort(403, 'Unauthorized action.');
     }

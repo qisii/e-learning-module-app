@@ -13,7 +13,7 @@
 
             <div class="flex justify-center mb-8">
                 @if (Auth::user()->avatar)
-                    <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}" class="w-20 h-20 rounded-full">
+                    <img src="{{ Auth::user()->avatar }}" class="w-20 h-20 rounded-full">
                 @else
                     <div class="w-20 h-20 rounded-full bg-[#0F2250] flex items-center justify-center overflow-hidden">
                         <i class="ri-image-line text-[#E5E7EB] text-3xl"></i>

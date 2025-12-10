@@ -155,7 +155,7 @@ class ProfileForm extends Component
     public $section;
 
     public $avatar; // new upload
-    public $currentAvatar; // filename from DB
+    // public $currentAvatar; // filename from DB
 
     const LOCAL_STORAGE_FOLDER = 'avatars/';
 
@@ -173,7 +173,7 @@ class ProfileForm extends Component
         $this->city          = $user->city;
         $this->state_country = $user->state_country;
         $this->email         = $user->email;
-        $this->currentAvatar = $user->avatar; // save old filename
+        // $this->currentAvatar = $user->avatar; // save old filename
         $this->avatar        = null;
     }
 
@@ -205,11 +205,13 @@ class ProfileForm extends Component
         }
 
         if ($this->avatar) {
-            if ($this->currentAvatar) { // delete old image
-                $this->deleteAvatar($this->currentAvatar);
-            }
 
-            $user->avatar = $this->saveAvatar($this->avatar); // store new avatar
+            $extension = $this->avatar->extension();
+
+            $base64 = 'data:image/' . $extension . ';base64,' .
+                    base64_encode($this->avatar->get());
+
+            $user->avatar = $base64;
         }
 
         $user->save();

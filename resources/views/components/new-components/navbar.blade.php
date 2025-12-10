@@ -39,10 +39,17 @@
                 </a>
 
                 @auth
-                    <a href="{{ url('/profile/show') }}"
-                        class="px-6 py-3 border border-blue-800 text-blue-800 rounded-lg hover:bg-blue-50 transition duration-200">
-                        Dashboard
-                    </a>
+                    @if(Auth::user()->role_id === 1)
+                        <a href="{{ url('admin/profile/show') }}"
+                            class="px-6 py-3 border border-blue-800 text-blue-800 rounded-lg hover:bg-blue-50 transition duration-200">
+                            Dashboard
+                        </a>
+                    @else
+                        <a href="{{ url('/profile/show') }}"
+                            class="px-6 py-3 border border-blue-800 text-blue-800 rounded-lg hover:bg-blue-50 transition duration-200">
+                            Dashboard
+                        </a>
+                    @endif
                 @else
                     <a href="{{ route('login') }}"
                         class="px-6 py-3 border border-blue-800 text-blue-800 rounded-lg hover:bg-blue-50 transition duration-200">

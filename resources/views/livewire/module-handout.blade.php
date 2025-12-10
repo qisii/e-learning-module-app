@@ -154,6 +154,10 @@
                                                         data-component-id="{{ $component->id }}"
                                                     >{{ optional(json_decode($component->data, true))['content'] ?? '' }}</textarea>
                                                 </div>
+                                                <?php
+                                                // echo ini_get('upload_max_filesize'); // e.g., 2M
+                                                // echo ini_get('post_max_size');
+                                                ?>
                                             {{-- HIDDEN OBJECTIVE BLOCK --}}
                                             @elseif ($component->type === 'objective')
                                                 <div class="flex justify-between items-center mb-2 overflow-auto">

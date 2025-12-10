@@ -30,7 +30,7 @@ Route::get('/auth/google', [SocialiteController::class, 'googleLogin'])->name('a
 Route::get('/auth/google-callback', [SocialiteController::class, 'googleAuthentication'])->name('auth.google-callback');
 
 Route::group(['middleware' => 'auth'], function(){
-    Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show'); // add {id}
+     // add {id}
     // Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
     // Route::patch('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
@@ -38,8 +38,8 @@ Route::group(['middleware' => 'auth'], function(){
     // Route::get('/profile/show', ProfileForm::class)->name('profile.show');
 
     # ADMIN
-    Route::group(['prefix' => 'admin', 'as' => 'admin.'], function(){
-        Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
+    Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], function(){
+        Route::get('/profile/show', [ProfileController::class, 'showAdmin'])->name('profile.show');
         // Route::patch('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
         # PROJECTS
@@ -72,30 +72,33 @@ Route::group(['middleware' => 'auth'], function(){
     });
 
     # USER
+    Route::group(['middleware' => 'user'], function(){
+        # PROFILE
+        Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
+        # PROJECT
+        Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
+        # PRETEST
+        Route::get('/project/{project_id}/pretest/welcome', [ProjectController::class, 'welcomePretest'])->name('projects.welcome.pretest');
+        Route::get('/project/{project_id}/pretest/quiz', [ProjectController::class, 'showPretest'])->name('projects.show.pretest');
+        # MODULE HANDOUT
+        Route::get('/project/{project_id}/module/{level_id}/show', [ProjectController::class, 'showModule'])->name('projects.module.show');
+        Route::post('/project/{handout_id}/module/store', [ProjectController::class, 'storeHandoutAttempt'])->name('projects.module.attempt.store');
+        # POST TEST
+        Route::get('/project/{project_id}/post-test/welcome', [ProjectController::class, 'welcomePostTest'])->name('projects.welcome.posttest');
+        Route::get('/project/{project_id}/post-test/quiz', [ProjectController::class, 'showPostTest'])->name('projects.show.posttest');
 
-    # PROJECT
-    Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
-    # PRETEST
-    Route::get('/project/{project_id}/pretest/welcome', [ProjectController::class, 'welcomePretest'])->name('projects.welcome.pretest');
-    Route::get('/project/{project_id}/pretest/quiz', [ProjectController::class, 'showPretest'])->name('projects.show.pretest');
-    # MODULE HANDOUT
-    Route::get('/project/{project_id}/module/{level_id}/show', [ProjectController::class, 'showModule'])->name('projects.module.show');
-    Route::post('/project/{handout_id}/module/store', [ProjectController::class, 'storeHandoutAttempt'])->name('projects.module.attempt.store');
-    # POST TEST
-    Route::get('/project/{project_id}/post-test/welcome', [ProjectController::class, 'welcomePostTest'])->name('projects.welcome.posttest');
-    Route::get('/project/{project_id}/post-test/quiz', [ProjectController::class, 'showPostTest'])->name('projects.show.posttest');
+        # SCORE
+        Route::get('/pretest/quiz/score/{quizAttemptId}', [ProjectController::class, 'openPreScore'])->name('pre.quiz.score');
+        Route::get('/post_test/quiz/score/{quizAttemptId}', [ProjectController::class, 'openPostScore'])->name('post.quiz.score');
 
-    # SCORE
-    Route::get('/pretest/quiz/score/{quizAttemptId}', [ProjectController::class, 'openPreScore'])->name('pre.quiz.score');
-    Route::get('/post_test/quiz/score/{quizAttemptId}', [ProjectController::class, 'openPostScore'])->name('post.quiz.score');
+        # GRADE
+        Route::get('/grades/pretests', [GradeController::class, 'indexPretest'])->name('grades.index');
+        Route::get('/grades/post-tests', [GradeController::class, 'indexPostTest'])->name('grades.posttest');
 
-    # GRADE
-    Route::get('/grades/pretests', [GradeController::class, 'indexPretest'])->name('grades.index');
-    Route::get('/grades/post-tests', [GradeController::class, 'indexPostTest'])->name('grades.posttest');
-
-    # SEARCH
-    Route::get('/grades/pretests/search', [GradeController::class, 'searchPretest'])->name('grades.pretest.search');
-    Route::get('/grades/post-tests/search', [GradeController::class, 'searchPostTest'])->name('grades.posttest.search');
+        # SEARCH
+        Route::get('/grades/pretests/search', [GradeController::class, 'searchPretest'])->name('grades.pretest.search');
+        Route::get('/grades/post-tests/search', [GradeController::class, 'searchPostTest'])->name('grades.posttest.search');
+    });
 });
 
 require __DIR__.'/auth.php';

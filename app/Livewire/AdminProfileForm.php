@@ -25,7 +25,7 @@ class AdminProfileForm extends Component
     public $password;
 
     public $avatar; // new upload
-    public $currentAvatar; // filename from DB
+    // public $currentAvatar; // Base64 string from DB
 
     const LOCAL_STORAGE_FOLDER = 'avatars/';
 
@@ -41,7 +41,7 @@ class AdminProfileForm extends Component
         $this->city          = $user->city;
         $this->state_country = $user->state_country;
         $this->email         = $user->email;
-        $this->currentAvatar = $user->avatar; // save old filename
+        // $this->currentAvatar = $user->avatar; // already Base64 or null
         $this->avatar        = null;
     }
 
@@ -49,10 +49,12 @@ class AdminProfileForm extends Component
     {
         $this->validate([
             'first_name' => 'required|max:50',
-            'last_name' => 'required|max:50',
-            'email' => 'required|unique:users,email,' . $this->user->id,
-            'password' => 'nullable|min:8',
-            'avatar' => 'nullable|mimes:jpeg,jpg,png,gif|max:1048',
+            'last_name'  => 'required|max:50',
+            'email'      => 'required|unique:users,email,' . $this->user->id,
+            'password'   => 'nullable|min:8',
+            'avatar'     => 'nullable|mimes:jpeg,jpg,png,gif|max:1048',
+        ], [
+            'avatar.max' => 'Max size is 1048kb',
         ]);
 
         $user = $this->user->findOrFail($this->user->id);
@@ -70,11 +72,13 @@ class AdminProfileForm extends Component
         }
 
         if ($this->avatar) {
-            if ($this->currentAvatar) { // delete old image
-                $this->deleteAvatar($this->currentAvatar);
-            }
 
-            $user->avatar = $this->saveAvatar($this->avatar); // store new avatar
+            $extension = $this->avatar->extension();
+
+            $base64 = 'data:image/' . $extension . ';base64,' .
+                    base64_encode($this->avatar->get());
+
+            $user->avatar = $base64;
         }
 
         $user->save();

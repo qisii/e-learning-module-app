@@ -197,8 +197,8 @@
 
                         <template x-if="!preview">
                             <div>
-                                @if($currentAvatar)
-                                    <img src="{{ asset('storage/avatars/' . $currentAvatar) }}" alt="{{ $first_name . ' ' . $last_name }}" 
+                                @if(Auth::user()->avatar)
+                                    <img src="{{ Auth::user()->avatar }}" alt="{{ $first_name . ' ' . $last_name }}" 
                                          class="absolute inset-0 w-full h-full object-cover rounded-full border-4 border-blue-100">
                                 @else
                                     <div class="absolute inset-0 rounded-full bg-blue-100 flex items-center justify-center overflow-hidden">
@@ -213,7 +213,11 @@
                         </label>
                         <input type="file" id="avatar" wire:model="avatar" wire:key="avatar-{{ $user->id }}" class="hidden" accept="image/*"
                                @change="preview = URL.createObjectURL($event.target.files[0])">
+                        @error('avatar')
+                            <span class="absolute left-0 top-full mt-2 pl-4 text-red-500 text-[11px] font-secondary">{{ $message }}</span>
+                        @enderror
                     </div>
+                    
                     {{-- <form action="{{ route('admin.profile.avatar.destroy') }}" method="post" class="mt-3">
                         @csrf
                         @method('DELETE')
