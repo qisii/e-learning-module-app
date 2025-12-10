@@ -2,5 +2,6 @@ storage:
   - name: persistent-storage
     mount: storage/app/public
 
-assets:
-  - public/storage
+deploy:
+  post:
+    - php artisan storage:link --force

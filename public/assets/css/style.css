@@ -60,6 +60,12 @@ body {
 }
 
 
+.se-image-container {
+    max-width: 100%;
+    overflow: auto; /* enables scrollbars */
+}
+
+
 /* SunEditor wrapper */
 /* .sun-editor,
 .sun-editor .se-container,
