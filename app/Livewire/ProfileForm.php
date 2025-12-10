@@ -186,6 +186,8 @@ class ProfileForm extends Component
             'username' => 'required|max:20|unique:users,username,' . $this->user->id,
             'password' => 'nullable|min:8',
             'avatar' => 'nullable|mimes:jpeg,jpg,png,gif|max:1048',
+        ], [
+            'avatar.max' => 'Max image size is 1048kb',
         ]);
 
         $user = $this->user->findOrFail($this->user->id);
