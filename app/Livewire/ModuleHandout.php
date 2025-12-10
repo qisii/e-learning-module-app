@@ -362,58 +362,110 @@ class ModuleHandout extends Component
     //     $this->dispatch('suneditor:refresh');
     // }
 
-    public function saveTextComponent($component_id, $content)
-    {
-        try {
-            // Fetch the component
-            $component = HandoutComponent::find($component_id);
+    // public function saveTextComponent($component_id, $content)
+    // {
+    //     try {
+    //         // Fetch the component
+    //         $component = HandoutComponent::find($component_id);
 
-            if (! $component) {
-                $this->dispatch('flashMessage', type: 'error', message: 'Component not found.');
+    //         if (! $component) {
+    //             $this->dispatch('flashMessage', type: 'error', message: 'Component not found.');
+    //             return;
+    //         }
+
+    //         // Check for Base64 images in the content
+    //         // This regex will match data:image/...;base64,... patterns
+    //         preg_match_all('/data:image\/[a-zA-Z]+;base64,[^\"]+/', $content, $matches);
+
+    //         foreach ($matches[0] as $base64Image) {
+    //             // Remove the prefix "data:image/...;base64,"
+    //             $base64Str = preg_replace('/^data:image\/[a-zA-Z]+;base64,/', '', $base64Image);
+
+    //             // Convert back to raw bytes
+    //             $imageData = base64_decode($base64Str);
+
+    //             // Check the size in KB
+    //             $sizeKB = strlen($imageData) / 1024;
+
+    //             if ($sizeKB > 1048) {
+    //                 // Image is too large
+    //                 $this->dispatch('flashMessage', type: 'error', message: 'Max image size is 1048kb');
+    //                 $this->dispatch('suneditor:refresh');
+    //                 return;
+    //             }
+    //         }
+
+    //         // Build JSON structure
+    //         $payload = [
+    //             'type'    => 'doc',
+    //             'content' => $content,
+    //         ];
+
+    //         // Save into database
+    //         $component->update([
+    //             'data' => json_encode($payload),
+    //         ]);
+
+    //         $this->dispatch('flashMessage', type: 'success', message: 'Text saved successfully!');
+    //         $this->dispatch('suneditor:refresh');
+
+    //     } catch (\Throwable $e) {
+    //         $this->dispatch('flashMessage', type: 'error', message: 'An error occurred while saving the component.');
+    //         $this->dispatch('suneditor:refresh');
+    //     }
+    // }
+
+    public function saveTextComponent($component_id, $content)
+{
+    try {
+        $component = HandoutComponent::find($component_id);
+
+        if (! $component) {
+            $this->dispatch('flashMessage', type: 'error', message: 'Component not found.');
+            $this->dispatch('suneditor:refresh');
+            return;
+        }
+
+        // Match all base64 images in content
+        preg_match_all('/data:image\/[a-zA-Z0-9.+-]+;base64,([^"\']+)/', $content, $matches);
+
+        foreach ($matches[1] as $base64Str) {
+            $imageData = base64_decode($base64Str, true);
+
+            if ($imageData === false) {
+                $this->dispatch('flashMessage', type: 'error', message: 'Invalid image data.');
+                $this->dispatch('suneditor:refresh');
                 return;
             }
 
-            // Check for Base64 images in the content
-            // This regex will match data:image/...;base64,... patterns
-            preg_match_all('/data:image\/[a-zA-Z]+;base64,[^\"]+/', $content, $matches);
+            $sizeKB = strlen($imageData) / 1024;
 
-            foreach ($matches[0] as $base64Image) {
-                // Remove the prefix "data:image/...;base64,"
-                $base64Str = preg_replace('/^data:image\/[a-zA-Z]+;base64,/', '', $base64Image);
-
-                // Convert back to raw bytes
-                $imageData = base64_decode($base64Str);
-
-                // Check the size in KB
-                $sizeKB = strlen($imageData) / 1024;
-
-                if ($sizeKB > 1048) {
-                    // Image is too large
-                    $this->dispatch('flashMessage', type: 'error', message: 'Max image size is 1048kb');
-                    $this->dispatch('suneditor:refresh');
-                    return;
-                }
+            if ($sizeKB > 1048) {
+                $this->dispatch('flashMessage', type: 'error', message: 'Each image must be 1048 KB or less.');
+                $this->dispatch('suneditor:refresh');
+                return;
             }
-
-            // Build JSON structure
-            $payload = [
-                'type'    => 'doc',
-                'content' => $content,
-            ];
-
-            // Save into database
-            $component->update([
-                'data' => json_encode($payload),
-            ]);
-
-            $this->dispatch('flashMessage', type: 'success', message: 'Text saved successfully!');
-            $this->dispatch('suneditor:refresh');
-
-        } catch (\Throwable $e) {
-            $this->dispatch('flashMessage', type: 'error', message: 'An error occurred while saving the component.');
-            $this->dispatch('suneditor:refresh');
         }
+
+        // Save content
+        $payload = [
+            'type'    => 'doc',
+            'content' => $content,
+        ];
+
+        $component->update([
+            'data' => json_encode($payload),
+        ]);
+
+        $this->dispatch('flashMessage', type: 'success', message: 'Text saved successfully!');
+        $this->dispatch('suneditor:refresh');
+
+    } catch (\Throwable $e) {
+        $this->dispatch('flashMessage', type: 'error', message: 'An error occurred while saving.');
+        $this->dispatch('suneditor:refresh');
     }
+}
+
 
 
     // public function saveTextComponent($component_id, $content)

@@ -238,11 +238,10 @@
                                 preview = URL.createObjectURL($event.target.files[0]);
                                 setTimeout(() => $dispatch('input'), 50);
                         ">
-
+                        @error('avatar')
+                            <span class="absolute left-0 top-full mt-2 pl-4 text-red-500 text-[11px] font-secondary">{{ $message }}</span>
+                        @enderror
                     </div>
-                    @error('avatar')
-                        <span class="absolute left-0 top-full mt-1 text-red-500 text-[11px] font-secondary">{{ $message }}</span>
-                    @enderror
                 </div>
 
                 <button type="submit"
