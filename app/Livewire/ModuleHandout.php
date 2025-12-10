@@ -53,30 +53,86 @@ class ModuleHandout extends Component
     //         ->value('score');
     // }
 
+//     public function mount(Folder $folder, $level_id)
+// {
+//     $this->folder = $folder;
+//     $this->level_id = $level_id;
+
+//     try {
+//         // Try to ensure a Handout exists
+//         $this->handout = Handout::firstOrCreate(
+//             [
+//                 'folder_id' => $folder->id,
+//                 'level_id'  => $level_id,
+//                 'user_id'   => Auth::id(), // safer than Auth::user()->id
+//             ],
+//             [
+//                 'title' => null
+//             ]
+//         );
+
+//         // Load existing score
+//         $this->handoutScore = HandoutScore::where('handout_id', $this->handout->id)
+//             ->value('score');
+//     } catch (\Throwable $e) {
+
+//         // Fallback: create a new handout manually if something went wrong
+//         $this->handout = Handout::create([
+//             'folder_id' => $folder->id,
+//             'level_id'  => $level_id,
+//             'user_id'   => Auth::id(),
+//             'title'     => null
+//         ]);
+
+//         $this->handoutScore = null;
+
+//         // Optional: dispatch flash message to inform user
+//         $this->dispatch('flashMessage', type: 'warning', message: 'A new handout was created due to missing data.');
+//     }
+// }
+
     public function mount(Folder $folder, $level_id)
 {
     $this->folder = $folder;
     $this->level_id = $level_id;
 
     try {
-        // Try to ensure a Handout exists
-        $this->handout = Handout::firstOrCreate(
+        // Fetch or create the handout
+        $handout = Handout::firstOrCreate(
             [
                 'folder_id' => $folder->id,
                 'level_id'  => $level_id,
-                'user_id'   => Auth::id(), // safer than Auth::user()->id
+                'user_id'   => Auth::id(),
             ],
-            [
-                'title' => null
-            ]
+            ['title' => null]
         );
 
-        // Load existing score
+        // Check if the handout is "corrupted" or invalid
+        $isValid = $this->validateHandout($handout);
+
+        if (! $isValid) {
+            // Delete the bad handout and create a new one
+            $handout->delete();
+
+            $handout = Handout::create([
+                'folder_id' => $folder->id,
+                'level_id'  => $level_id,
+                'user_id'   => Auth::id(),
+                'title'     => null
+            ]);
+
+            $this->dispatch('flashMessage', type: 'warning', message: 'A new handout was created due to invalid data.');
+        }
+
+        $this->handout = $handout;
+
+        // Load existing score safely
         $this->handoutScore = HandoutScore::where('handout_id', $this->handout->id)
             ->value('score');
-    } catch (\Throwable $e) {
 
-        // Fallback: create a new handout manually if something went wrong
+    } catch (\Throwable $e) {
+        // If anything goes wrong, create a fresh handout
+
         $this->handout = Handout::create([
             'folder_id' => $folder->id,
             'level_id'  => $level_id,
@@ -86,10 +142,31 @@ class ModuleHandout extends Component
 
         $this->handoutScore = null;
 
-        // Optional: dispatch flash message to inform user
-        $this->dispatch('flashMessage', type: 'warning', message: 'A new handout was created due to missing data.');
+        $this->dispatch('flashMessage', type: 'warning', message: 'A new handout was created due to missing or corrupted data.');
     }
 }
+
+/**
+ * Check if the handout is valid.
+ * Adjust the logic based on your business rules.
+ */
+protected function validateHandout(Handout $handout): bool
+{
+    // Example checks:
+    // 1. data is not null
+    // 2. contains at least one page
+    // 3. JSON decodes correctly (if you store JSON)
+    
+    try {
+        $pagesExist = HandoutPage::where('handout_id', $handout->id)->exists();
+
+        // You can add more checks here, e.g., validate JSON components
+        return $pagesExist;
+    } catch (\Throwable $e) {
+        return false;
+    }
+}
+
 
 
     // computed property to fetch pages + components
