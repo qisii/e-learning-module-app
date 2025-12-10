@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('longtext', function (Blueprint $table) {
-            $table->longText('data')->change();
+        Schema::table('handout_components', function (Blueprint $table) {
+            $table->longText('data')->nullable()->change();
         });
     }
 
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('longtext', function (Blueprint $table) {
+         Schema::table('handout_components', function (Blueprint $table) {
             $table->json('data')->nullable()->change();
         });
     }
