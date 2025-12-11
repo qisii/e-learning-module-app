@@ -17,130 +17,161 @@
         </button>
 
         {{-- Download Button --}}
-        <a href="#" 
-        class="px-6 py-4 text-[12px] rounded-xl bg-gray-200 text-[#374151] hover:bg-gray-300 font-semibold transition">
-            <i class="ri-arrow-down-line me-2 text-[13px]"></i> Download
-        </a>
+        @if(!empty($gdriveLink))
+            <a href="{{ $gdriveLink }}" 
+            target="_blank" 
+            title="Download from Google Drive"
+            class="px-6 py-4 text-[12px] rounded-xl bg-purple-100 text-purple-800 border border-purple-200 shadow-sm 
+                    hover:bg-purple-200 hover:shadow-md transition-all duration-200 flex items-center gap-2 font-secondary">
+            
+                <i class="ri-external-link-line text-[14px]"></i> 
+                Download from Google Drive
+            </a>
+        @else
+            <span class="px-6 py-4 text-[12px] rounded-xl bg-gray-100 text-gray-400 border border-gray-200 
+                        font-semibold flex items-center gap-2 transition-all duration-200 font-secondary">
+                <i class="ri-error-warning-line text-[14px]"></i>
+                No Google Drive link available
+            </span>
+        @endif
+
     </div>
 
     @include('components.new-components.back-confirmation-user-modal')
+    
 
+    @if($handout)
         {{-- CHECK IF MODULE HAS CONTENT --}}
-        @php
-            $hasContent = $pages->count() > 0 && $pages->first()->components->count() > 0;
-        @endphp
+            @php
+                $hasContent = $pages->count() > 0 && $pages->first()->components->count() > 0;
+            @endphp
 
-        {{-- IF NO CONTENT – SHOW "MODULE ON ITS WAY" --}}
-        @if (!$hasContent)
-            <div class="w-[90%] lg:w-[80%] mx-auto mt-[20%] lg:mt-[10%] flex flex-col items-center justify-center text-center">
-                <div class="text-7xl mb-6 animate-bounce">📘</div>
+            {{-- IF NO CONTENT – SHOW "MODULE ON ITS WAY" --}}
+            @if (!$hasContent)
+                <div class="w-[90%] lg:w-[80%] mx-auto mt-[20%] lg:mt-[10%] flex flex-col items-center justify-center text-center">
+                    <div class="text-7xl mb-6 animate-bounce">📘</div>
 
-                <h1 class="text-3xl lg:text-4xl font-extrabold text-gray-800 mb-3" style="font-family: 'Inter', sans-serif;">
-                    Almost ready!
-                </h1>
+                    <h1 class="text-3xl lg:text-4xl font-extrabold text-gray-800 mb-3" style="font-family: 'Inter', sans-serif;">
+                        Almost ready!
+                    </h1>
 
-                <p class="text-gray-600 text-lg mb-8" style="font-family: 'Inter', sans-serif;">
-                    The module is on its way. Please check back soon once the content has been added.
-                </p>
-            </div>
-        @else
-        {{-- TIMER DISPLAY --}}
-            <div class="text-center mb-4 hidden">
-                <h3 class="text-lg font-semibold text-gray-700">
-                    Time Spent: <span id="handout-timer" class="text-blue-600">00:00:00</span>
-                </h3>
-            </div>
-
-            {{-- MAIN WRAPPER --}}
-            <div id="module-wrapper" class="relative w-[90%] mx-auto max-h-[1056px] overflow-auto no-scrollbar mt-[4%] px-0 lg:px-5 py-10 rounded-lg bg-white shadow-md bg-cover bg-center">
-
-                {{-- Title Header --}}
-                <div class="text-center mb-6">
-                    <h2 class="text-lg font-bold text-gray-800 font-secondary">Module Handout</h2>
+                    <p class="text-gray-600 text-lg mb-8" style="font-family: 'Inter', sans-serif;">
+                        The module is on its way. Please check back soon once the content has been added.
+                    </p>
+                </div>
+            @else
+            {{-- TIMER DISPLAY --}}
+                <div class="text-center mb-4 hidden">
+                    <h3 class="text-lg font-semibold text-gray-700">
+                        Time Spent: <span id="handout-timer" class="text-blue-600">00:00:00</span>
+                    </h3>
                 </div>
 
-                {{-- HANDOUT CONTENT --}}
-                <div class="my-10 space-y-6 mx-8 overflow-auto">
-                    @foreach ($pages as $page)
-                        @foreach ($page->components as $component)
-                            @php
-                                $data = json_decode($component->data, true);
-                                $html = $data['content'] ?? '';
-                            @endphp
+                {{-- MAIN WRAPPER --}}
+                <div id="module-wrapper" class="relative w-[90%] mx-auto max-h-[1056px] overflow-auto no-scrollbar mt-[4%] px-0 lg:px-5 py-10 rounded-lg bg-white shadow-md bg-cover bg-center">
 
-                            <div class="prose max-w-none">
-                                {!! $html !!}
-                            </div>
+                    {{-- Title Header --}}
+                    <div class="text-center mb-6">
+                        <h2 class="text-lg font-bold text-gray-800 font-secondary">Module Handout</h2>
+                    </div>
+
+                    {{-- HANDOUT CONTENT --}}
+                    <div class="my-10 space-y-6 mx-8 overflow-auto">
+                        @foreach ($pages as $page)
+                            @foreach ($page->components as $component)
+                                @php
+                                    $data = json_decode($component->data, true);
+                                    $html = $data['content'] ?? '';
+                                @endphp
+
+                                <div class="prose max-w-none">
+                                    {!! $html !!}
+                                </div>
+                            @endforeach
                         @endforeach
-                    @endforeach
-                </div>
-            @endif
+                    </div>
+                @endif
 
-        </div> {{-- END WHITE BOX --}}
+            </div> {{-- END WHITE BOX --}}
 
-    {{-- PAGINATION ALWAYS OUTSIDE WHITE CONTAINER --}}
-    @if ($hasContent)
-        <div class="w-[90%] mx-auto mt-8">
-            {{ $pages->links() }}
-        </div>
-    @endif
+        {{-- PAGINATION ALWAYS OUTSIDE WHITE CONTAINER --}}
+        @if ($hasContent)
+            <div class="w-[90%] mx-auto mt-8">
+                {{ $pages->links() }}
+            </div>
+        @endif
 
 
-    {{-- BOTTOM BUTTONS — ONLY ON LAST PAGE AND ONLY IF CONTENT EXISTS --}}
-    @if ($hasContent && $pages->onLastPage())
+        {{-- BOTTOM BUTTONS — ONLY ON LAST PAGE AND ONLY IF CONTENT EXISTS --}}
+        @if ($hasContent && $pages->onLastPage())
 
-        <p class="text-gray-500 text-[13px] text-center mt-10" style="font-family: 'Inter', sans-serif;">
-            You may access other modules.
-        </p>
+            <p class="text-gray-500 text-[13px] text-center mt-10" style="font-family: 'Inter', sans-serif;">
+                You may access other modules.
+            </p>
 
-        <div class="flex flex-col items-center mt-4 px-4">
-            {{-- Other Module buttons --}}
-            @if ($level_id == 1)
+            <div class="flex flex-col items-center mt-4 px-4">
+                {{-- Other Module buttons --}}
+                @if ($level_id == 1)
+                    <form class="module-form" action="{{ route('projects.module.attempt.store', ['handout_id' => $handout->id]) }}" method="post">
+                        @csrf
+                        <input type="hidden" name="seconds" class="secondsInput" value="0">
+                        <input type="hidden" name="next_page" value="{{ route('projects.module.show', ['project_id' => $project_id, 'level_id' => 2]) }}">
+                        <a href="{{ route('projects.module.show', ['project_id' => $project_id, 'level_id' => 2]) }}"
+                            class="submit-link inline-flex items-center justify-center text-sm py-3 mb-3
+                                bg-gradient-to-r from-blue-500 to-blue-900 bg-[length:150%_150%] bg-left 
+                                text-white rounded-lg transition-all duration-500 
+                                ease-in-out w-full lg:w-60 md:w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
+                            style="font-family: 'Inter', sans-serif;">
+                            Check Average Module
+                            <i class="ri-arrow-right-line ml-3"></i>
+                        </a>
+                    </form>
+                @elseif ($level_id == 2)
+                    <form class="module-form" action="{{ route('projects.module.attempt.store', ['handout_id' => $handout->id]) }}" method="post">
+                        @csrf
+                        <input type="hidden" name="seconds" class="secondsInput" value="0">
+                        <input type="hidden" name="next_page" value="{{ route('projects.module.show', ['project_id' => $project_id, 'level_id' => 3]) }}">
+                        <a href="{{ route('projects.module.show', ['project_id' => $project_id, 'level_id' => 3]) }}"
+                            class="submit-link inline-flex items-center justify-center text-sm py-3 mb-3
+                                bg-gradient-to-r from-blue-500 to-blue-900 bg-[length:150%_150%] bg-left 
+                                text-white rounded-lg transition-all duration-500 
+                                ease-in-out w-full lg:w-60 md:w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
+                            style="font-family: 'Inter', sans-serif;">
+                            Check Hard Module
+                            <i class="ri-arrow-right-line ml-3"></i>
+                        </a>
+                    </form>
+                @endif
+                {{-- Post Test Button --}}
                 <form class="module-form" action="{{ route('projects.module.attempt.store', ['handout_id' => $handout->id]) }}" method="post">
                     @csrf
                     <input type="hidden" name="seconds" class="secondsInput" value="0">
-                    <input type="hidden" name="next_page" value="{{ route('projects.module.show', ['project_id' => $project_id, 'level_id' => 2]) }}">
-                    <a href="{{ route('projects.module.show', ['project_id' => $project_id, 'level_id' => 2]) }}"
-                        class="submit-link inline-flex items-center justify-center text-sm py-3 mb-3
+                    <input type="hidden" name="next_page" value="{{ route('projects.welcome.posttest', $project_id) }}">
+                    <a href="{{ route('projects.welcome.posttest', $project_id) }}"
+                        class="submit-link inline-flex items-center justify-center text-sm py-3
                             bg-gradient-to-r from-blue-500 to-blue-900 bg-[length:150%_150%] bg-left 
                             text-white rounded-lg transition-all duration-500 
                             ease-in-out w-full lg:w-60 md:w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
                         style="font-family: 'Inter', sans-serif;">
-                        Check Average Module
+                        Continue to Post Test
                         <i class="ri-arrow-right-line ml-3"></i>
                     </a>
                 </form>
-            @elseif ($level_id == 2)
-                <form class="module-form" action="{{ route('projects.module.attempt.store', ['handout_id' => $handout->id]) }}" method="post">
-                    @csrf
-                    <input type="hidden" name="seconds" class="secondsInput" value="0">
-                    <input type="hidden" name="next_page" value="{{ route('projects.module.show', ['project_id' => $project_id, 'level_id' => 3]) }}">
-                    <a href="{{ route('projects.module.show', ['project_id' => $project_id, 'level_id' => 3]) }}"
-                        class="submit-link inline-flex items-center justify-center text-sm py-3 mb-3
-                            bg-gradient-to-r from-blue-500 to-blue-900 bg-[length:150%_150%] bg-left 
-                            text-white rounded-lg transition-all duration-500 
-                            ease-in-out w-full lg:w-60 md:w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
-                        style="font-family: 'Inter', sans-serif;">
-                        Check Hard Module
-                        <i class="ri-arrow-right-line ml-3"></i>
-                    </a>
-                </form>
-            @endif
-            {{-- Post Test Button --}}
-            <form class="module-form" action="{{ route('projects.module.attempt.store', ['handout_id' => $handout->id]) }}" method="post">
-                @csrf
-                <input type="hidden" name="seconds" class="secondsInput" value="0">
-                <input type="hidden" name="next_page" value="{{ route('projects.welcome.posttest', $project_id) }}">
-                <a href="{{ route('projects.welcome.posttest', $project_id) }}"
-                    class="submit-link inline-flex items-center justify-center text-sm py-3
-                        bg-gradient-to-r from-blue-500 to-blue-900 bg-[length:150%_150%] bg-left 
-                        text-white rounded-lg transition-all duration-500 
-                        ease-in-out w-full lg:w-60 md:w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
-                    style="font-family: 'Inter', sans-serif;">
-                    Continue to Post Test
-                    <i class="ri-arrow-right-line ml-3"></i>
-                </a>
-            </form>
+            </div>
+        @endif
+
+    @else
+        {{-- HANDOUT NOT FOUND --}}
+        <div class="w-[90%] lg:w-[80%] mx-auto mt-[20%] lg:mt-[10%] flex flex-col items-center justify-center text-center">
+            <div class="text-7xl mb-6 animate-bounce">📘</div>
+
+            <h1 class="text-3xl lg:text-4xl font-extrabold text-gray-800 mb-3" style="font-family: 'Inter', sans-serif;">
+                Module not found
+            </h1>
+
+            <p class="text-gray-600 text-lg mb-8" style="font-family: 'Inter', sans-serif;">
+                The module is on its way. Please check back soon once the content has been added.
+            </p>
         </div>
     @endif
 

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Folder extends Model
 {
-    protected $fillable = ['folder_type_id', 'project_id'];
+    protected $fillable = ['folder_type_id', 'project_id', 'updated_at'];
 
     /* -------------- RELATIONSHIPS --------------*/
     public function project()
@@ -23,4 +23,10 @@ class Folder extends Model
     {
         return $this->hasMany(Handout::class);
     }
+
+    public function pdfResources()
+    {
+        return $this->hasMany(PdfResource::class);
+    }
+
 }

@@ -4,13 +4,12 @@
         :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}" 
         class="fixed top-0 left-0 w-60 h-full bg-[#0B1A3F] text-white flex flex-col justify-between transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:relative z-40"
     >
-
-        <!-- Header + Profile -->
         <div class="pt-6 px-2">
             <h1 class="text-xl text-center font-semibold mb-8 font-[Poppins]">
                 My Dashboard
             </h1>
 
+            {{-- Profile --}}
             <div class="flex justify-center mb-8">
                 @if (Auth::user()->avatar)
                     <img src="{{ Auth::user()->avatar }}" class="w-20 h-20 rounded-full">

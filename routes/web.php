@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnalysisController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
@@ -69,6 +70,9 @@ Route::group(['middleware' => 'auth'], function(){
         Route::get('/grades/pretests/search', [GradeController::class, 'searchPretestAdmin'])->name('grades.pretest.search');
         Route::get('/grades/post-tests/search', [GradeController::class, 'searchPostTestAdmin'])->name('grades.posttest.search');
         Route::get('/grades/modules/search', [GradeController::class, 'searchModuleAdmin'])->name('grades.module.search');
+
+        # ANALYSIS
+        Route::get('/analysis', [AnalysisController::class, 'index'])->name('analysis');
     });
 
     # USER

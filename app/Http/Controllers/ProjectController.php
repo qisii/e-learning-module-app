@@ -6,6 +6,7 @@ use App\Models\Folder;
 use App\Models\Handout;
 use App\Models\HandoutAttempt;
 use App\Models\HandoutPage;
+use App\Models\PdfResource;
 use App\Models\Project;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
@@ -150,11 +151,17 @@ class ProjectController extends Controller
         // Get one quiz of the pretest folder
         $pretest = $pretestFolder->quizzes()->first();
 
+        // Find the pdf for this quiz
+        $gdriveLink = PdfResource::where('quiz_id', $pretest->id)
+                    ->whereNull('handout_id')   // only quiz PDFs
+                    ->value('gdrive_link');
+
         // dd($pretestFolder);
         
         return view('users.projects.pretest.show')
                 ->with('project', $project)
-                ->with('pretest', $pretest);
+                ->with('pretest', $pretest)
+                ->with('gdriveLink', $gdriveLink);
     }
 
     private function getFolderByType($project, $folderTypeId)
@@ -164,16 +171,21 @@ class ProjectController extends Controller
             ->first();
     }
 
-    public function openPreScore($quiz_attempt_id, $attempted){
+    public function openPreScore($quiz_attempt_id, $attempted = null){
         $quiz_attempt = $this->quiz_attempt->findOrFail($quiz_attempt_id);
         $project = $quiz_attempt->quiz->folder->project;
-        return view('users.projects.pretest.score')->with('quiz_attempt', $quiz_attempt)->with('project', $project)->with('attempted', $attempted);
+        return view('users.projects.pretest.score')
+                ->with('quiz_attempt', $quiz_attempt)
+                ->with('project', $project)
+                ->with('attempted', $attempted);
     }
 
     public function openPostScore($quiz_attempt_id){
         $quiz_attempt = $this->quiz_attempt->findOrFail($quiz_attempt_id);
         $project = $quiz_attempt->quiz->folder->project;
-        return view('users.projects.post-test.score')->with('quiz_attempt', $quiz_attempt)->with('project', $project);
+        return view('users.projects.post-test.score')
+                ->with('quiz_attempt', $quiz_attempt)
+                ->with('project', $project);
     }
 
     // ---------- POST TEST ----------
@@ -197,6 +209,11 @@ class ProjectController extends Controller
 
         // Get one quiz of the post-test folder
         $post_test = $postTestFolder->quizzes()->first();
+
+        // Find the pdf for this quiz
+        $gdriveLink = PdfResource::where('quiz_id', $post_test->id)
+                    ->whereNull('handout_id')   // only quiz PDFs
+                    ->value('gdrive_link');
 
         // dd($postTestFolder);
         
@@ -235,51 +252,54 @@ class ProjectController extends Controller
             ->where('level_id', $level_id)
             ->first();
 
-        if (! $handout) {
-            abort(404, 'Handout not found');
-        }
+        // Get Google Drive PDF link for this handout (nullable)
+        $gdriveLink = $handout
+                    ? PdfResource::where('handout_id', $handout->id)
+                        ->whereNull('quiz_id') // only handout PDFs
+                        ->value('gdrive_link')
+                    : null;
 
         // 3. Get the pages with components
-        $pages = HandoutPage::where('handout_id', $handout->id)
-            ->with([
-                'components' => function ($q) {
-                    $q->orderBy('sort_order');
-                }
-            ])
-            ->orderBy('page_number')
-            ->paginate(1);
+        $pages = $handout
+                ? HandoutPage::where('handout_id', $handout->id)
+                    ->with(['components' => function ($q) {
+                        $q->orderBy('sort_order');
+                    }])
+                    ->orderBy('page_number')
+                    ->paginate(1)
+                : collect();
 
         return view('users.projects.modules.show', compact(
             'project_id',
             'level_id',
             'handout',
-            'pages'
+            'pages',
+            'gdriveLink'
         ));
     }
 
    public function storeHandoutAttempt(Request $request, $handout_id)
-{
-    $userId = Auth::user()->id;
-    $handout = $this->handout->findOrFail($handout_id);
-    $levelId = $handout->level_id;
-    $seconds = $request->input('seconds', 0);
-    $attemptNumber = $this->handout_attempt->where('user_id', $userId)
-                        ->where('handout_id', $handout_id)
-                        ->count() + 1;
+    {
+        $userId = Auth::user()->id;
+        $handout = $this->handout->findOrFail($handout_id);
+        $levelId = $handout->level_id;
+        $seconds = $request->input('seconds', 0);
+        $attemptNumber = $this->handout_attempt->where('user_id', $userId)
+                            ->where('handout_id', $handout_id)
+                            ->count() + 1;
 
-    // Save attempt
-    $this->handout_attempt->create([
-        'user_id' => $userId,
-        'handout_id' => $handout_id,
-        'level_id' => $levelId,
-        'time_spent' => $seconds,
-        'attempt_number' => $attemptNumber,
-    ]);
-    
-    // Redirect to the next page passed from the form
-    $nextPage = $request->input('next_page');
-    return redirect($nextPage);
-}
+        // Save attempt
+        $this->handout_attempt->create([
+            'user_id' => $userId,
+            'handout_id' => $handout_id,
+            'level_id' => $levelId,
+            'time_spent' => $seconds,
+            'attempt_number' => $attemptNumber,
+        ]);
+        
+        // Redirect to the next page passed from the form
+        $nextPage = $request->input('next_page');
+        return redirect($nextPage);
+    }
 
-    
 }

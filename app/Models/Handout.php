@@ -31,4 +31,10 @@ class Handout extends Model
     public function score(){
         return $this->hasOne(HandoutScore::class);
     }
+
+    public function pdfs()
+    {
+        return $this->hasMany(PdfResource::class);
+    }
+
 }

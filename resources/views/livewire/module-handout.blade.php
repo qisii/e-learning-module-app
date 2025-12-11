@@ -71,18 +71,41 @@
             <div class="bg-white shadow-lg rounded-lg px-5 py-3 mb-6 font-secondary">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2 flex-wrap">
-                        <span class="text-gray-700 text-sm">
+                        <span class="text-gray-700 text-[12px]">
                             This module handout will display if the student's pretest score is
                         </span>
                         <input 
                             type="number"
                             wire:model.defer="handoutScore"
-                            class="w-20 rounded-md font-bold border border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 p-2 text-sm"
+                            class="w-20 rounded-md font-bold border border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 p-2 text-[12px]"
                             placeholder="0"
                         />
                     </div>
 
                     <div wire:click="saveHandoutScore" class="hover:text-green-700 text-green-500 ms-auto text-[13px] cursor-pointer">
+                        <button class="flex items-center gap-1">
+                            <i class="ri-checkbox-circle-line"></i> Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {{-- PDF gdrive --}}
+            <div class="bg-white shadow-lg rounded-lg px-5 py-3 mb-6 font-secondary">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="text-gray-700 text-[12px]">
+                            Enter a Google Drive link to allow students to download the module PDF.
+                        </span>
+                        <input 
+                            type="text"
+                            wire:model.defer="gdriveLink"
+                            class="w-full rounded-md border border-gray-300 p-2 text-[12px] focus:ring-indigo-500 focus:border-indigo-500"
+                            placeholder="https://drive.google.com/file/d/xxxx"
+                        >
+                    </div>
+
+                    <div wire:click="saveGDrivePdf" class="hover:text-green-700 text-green-500 ms-auto text-[13px] cursor-pointer">
                         <button class="flex items-center gap-1">
                             <i class="ri-checkbox-circle-line"></i> Save
                         </button>

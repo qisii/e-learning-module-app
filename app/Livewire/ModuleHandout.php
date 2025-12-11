@@ -9,6 +9,7 @@ use App\Models\Handout;
 use App\Models\HandoutPage;
 use App\Models\HandoutComponent;
 use App\Models\HandoutScore;
+use App\Models\PdfResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -20,9 +21,8 @@ class ModuleHandout extends Component
     public $level_id;
     public Handout $handout;
     public $handoutScore;
-
-    const LOCAL_STORAGE_FOLDER = 'handouts/';
-    
+    public $gdriveLink;
+    public $gdriveTitle;
 
     protected $listeners = [
         'reorderPages',
@@ -31,66 +31,48 @@ class ModuleHandout extends Component
         'saveTextComponent',
     ];
 
-    // public function mount(Folder $folder, $level_id)
-    // {
-    //     $this->folder = $folder;
-    //     $this->level_id = $level_id;
-
-    //     // Ensure a Handout exists for this folder + user (adjust business logic as needed)
-    //     $this->handout = Handout::firstOrCreate(
-    //         [
-    //             'folder_id' => $folder->id,
-    //             'level_id' => $level_id,
-    //             'user_id' => Auth::user()->id
-    //         ],
-    //         [
-    //             'title' => null
-    //         ]
-    //     );
-
-    //     // Load existing score
-    //     $this->handoutScore = HandoutScore::where('handout_id', $this->handout->id)
-    //         ->value('score');
-    // }
-
     public function mount(Folder $folder, $level_id)
-{
-    $this->folder = $folder;
-    $this->level_id = $level_id;
+    {
+        $this->folder = $folder;
+        $this->level_id = $level_id;
 
-    try {
-        // Try to ensure a Handout exists
-        $this->handout = Handout::firstOrCreate(
-            [
+        try {
+            // Try to ensure a Handout exists
+            $this->handout = Handout::firstOrCreate(
+                [
+                    'folder_id' => $folder->id,
+                    'level_id'  => $level_id,
+                    'user_id'   => Auth::id(), // safer than Auth::user()->id
+                ],
+                [
+                    'title' => null
+                ]
+            );
+
+            // Load existing score
+            $this->handoutScore = HandoutScore::where('handout_id', $this->handout->id)
+                ->value('score');
+            $this->gdriveLink = PdfResource::where('handout_id', $this->handout->id)
+                                ->whereNull('quiz_id')
+                                ->value('gdrive_link');
+        } catch (\Throwable $e) {
+
+            // Fallback: create a new handout manually if something went wrong
+            $this->handout = Handout::create([
                 'folder_id' => $folder->id,
                 'level_id'  => $level_id,
-                'user_id'   => Auth::id(), // safer than Auth::user()->id
-            ],
-            [
-                'title' => null
-            ]
-        );
+                'user_id'   => Auth::id(),
+                'title'     => null
+            ]);
 
-        // Load existing score
-        $this->handoutScore = HandoutScore::where('handout_id', $this->handout->id)
-            ->value('score');
-    } catch (\Throwable $e) {
+            $this->handoutScore = null;
+            $this->gdriveLink = null;
 
-        // Fallback: create a new handout manually if something went wrong
-        $this->handout = Handout::create([
-            'folder_id' => $folder->id,
-            'level_id'  => $level_id,
-            'user_id'   => Auth::id(),
-            'title'     => null
-        ]);
+            // Optional: dispatch flash message to inform user
+            $this->dispatch('flashMessage', type: 'warning', message: 'A new handout was created due to missing data.');
+        }
 
-        $this->handoutScore = null;
-
-        // Optional: dispatch flash message to inform user
-        $this->dispatch('flashMessage', type: 'warning', message: 'A new handout was created due to missing data.');
     }
-}
-
 
     // computed property to fetch pages + components
     public function getPagesProperty()
@@ -283,189 +265,36 @@ class ModuleHandout extends Component
         $this->dispatch('suneditor:refresh');
     }
 
+    public function saveGDrivePdf()
+    {
+        $this->validate([
+            'gdriveLink' => 'required|url',
+        ]);
+
+        // Store or update PDF link for this handout
+        PdfResource::updateOrCreate(
+            [
+                'handout_id' => $this->handout->id,
+                'quiz_id'    => null, // ensure it's for handout
+            ],
+            [
+                'folder_id'   => $this->folder->id,
+                'title'       => $this->gdriveTitle ?? 'Handout PDF',
+                'gdrive_link' => $this->gdriveLink,
+            ]
+        );
+
+        // Update timestamps
+        $this->folder->update(['updated_at' => now()]);
+        $this->folder->project->update(['updated_at' => now()]);
+
+        $message = 'Google Drive PDF link saved successfully!';
+        $this->dispatch('flashMessage', type: 'success', message: $message);
+        $this->dispatch('suneditor:refresh');
+    }
+
+
     // --------- STORE JSON ----------
-    // public function saveTextComponent($component_id, $content)
-    // {
-    //     // // Dump & die to inspect the data
-    //     // dd([
-    //     //     'component_id' => $component_id,
-    //     //     'content' => $content,
-    //     // ]);
-
-    //     // Fetch the component
-    //     $component = HandoutComponent::find($component_id);
-
-    //     if (! $component) {
-    //         $this->dispatch('flashMessage', type: 'error', message: 'Component not found.');
-    //         return;
-    //     }
-
-    //     // Build JSON structure
-    //     $payload = [
-    //         'type'    => 'doc',
-    //         'content' => $content,
-    //     ];
-
-    //     // Save into database
-    //     $component->update([
-    //         'data' => json_encode($payload),
-    //     ]);
-
-    //     $this->dispatch('flashMessage', type: 'success', message: 'Text saved successfully!');
-    //     $this->dispatch('suneditor:refresh');
-    // }
-
-    // public function saveTextComponent($component_id, $content)
-    // {
-    //     // Fetch the component
-    //     $component = HandoutComponent::find($component_id);
-
-    //     if (! $component) {
-    //         $this->dispatch('flashMessage', type: 'error', message: 'Component not found.');
-    //         return;
-    //     }
-
-    //     // Check for Base64 images in the content
-    //     // This regex will match data:image/...;base64,... patterns
-    //     preg_match_all('/data:image\/[a-zA-Z]+;base64,[^\"]+/', $content, $matches);
-
-    //     foreach ($matches[0] as $base64Image) {
-    //         // Remove the prefix "data:image/...;base64,"
-    //         $base64Str = preg_replace('/^data:image\/[a-zA-Z]+;base64,/', '', $base64Image);
-
-    //         // Convert back to raw bytes
-    //         $imageData = base64_decode($base64Str);
-
-    //         // Check the size in KB
-    //         $sizeKB = strlen($imageData) / 1024;
-
-    //         if ($sizeKB > 1048) {
-    //             // Image is too large
-    //             $this->dispatch('flashMessage', type: 'error', message: 'Max image is 1048kb');
-    //             $this->dispatch('suneditor:refresh');
-    //             return;
-    //         }
-    //     }
-
-    //     // Build JSON structure
-    //     $payload = [
-    //         'type'    => 'doc',
-    //         'content' => $content,
-    //     ];
-
-    //     // Save into database
-    //     $component->update([
-    //         'data' => json_encode($payload),
-    //     ]);
-
-    //     $this->dispatch('flashMessage', type: 'success', message: 'Text saved successfully!');
-    //     $this->dispatch('suneditor:refresh');
-    // }
-
-    // public function saveTextComponent($component_id, $content)
-    // {
-    //     try {
-    //         // Fetch the component
-    //         $component = HandoutComponent::find($component_id);
-
-    //         if (! $component) {
-    //             $this->dispatch('flashMessage', type: 'error', message: 'Component not found.');
-    //             return;
-    //         }
-
-    //         // Check for Base64 images in the content
-    //         // This regex will match data:image/...;base64,... patterns
-    //         preg_match_all('/data:image\/[a-zA-Z]+;base64,[^\"]+/', $content, $matches);
-
-    //         foreach ($matches[0] as $base64Image) {
-    //             // Remove the prefix "data:image/...;base64,"
-    //             $base64Str = preg_replace('/^data:image\/[a-zA-Z]+;base64,/', '', $base64Image);
-
-    //             // Convert back to raw bytes
-    //             $imageData = base64_decode($base64Str);
-
-    //             // Check the size in KB
-    //             $sizeKB = strlen($imageData) / 1024;
-
-    //             if ($sizeKB > 1048) {
-    //                 // Image is too large
-    //                 $this->dispatch('flashMessage', type: 'error', message: 'Max image size is 1048kb');
-    //                 $this->dispatch('suneditor:refresh');
-    //                 return;
-    //             }
-    //         }
-
-    //         // Build JSON structure
-    //         $payload = [
-    //             'type'    => 'doc',
-    //             'content' => $content,
-    //         ];
-
-    //         // Save into database
-    //         $component->update([
-    //             'data' => json_encode($payload),
-    //         ]);
-
-    //         $this->dispatch('flashMessage', type: 'success', message: 'Text saved successfully!');
-    //         $this->dispatch('suneditor:refresh');
-
-    //     } catch (\Throwable $e) {
-    //         $this->dispatch('flashMessage', type: 'error', message: 'An error occurred while saving the component.');
-    //         $this->dispatch('suneditor:refresh');
-    //     }
-    // }
-
-    // public function saveTextComponent($component_id, $content)
-    // {
-    //     try {
-    //         $component = HandoutComponent::find($component_id);
-
-    //         if (! $component) {
-    //             $this->dispatch('flashMessage', type: 'error', message: 'Component not found.');
-    //             $this->dispatch('suneditor:refresh');
-    //             return;
-    //         }
-
-    //         // Match all base64 images in content
-    //         preg_match_all('/data:image\/[a-zA-Z0-9.+-]+;base64,([^"\']+)/', $content, $matches);
-
-    //         foreach ($matches[1] as $base64Str) {
-    //             $imageData = base64_decode($base64Str, true);
-
-    //             if ($imageData === false) {
-    //                 $this->dispatch('flashMessage', type: 'error', message: 'Invalid image data.');
-    //                 $this->dispatch('suneditor:refresh');
-    //                 return;
-    //             }
-
-    //             $sizeKB = strlen($imageData) / 1024;
-
-    //             if ($sizeKB > 1048) {
-    //                 $this->dispatch('flashMessage', type: 'error', message: 'Each image must be 1048 KB or less.');
-    //                 $this->dispatch('suneditor:refresh');
-    //                 return;
-    //             }
-    //         }
-
-    //         // Save content
-    //         $payload = [
-    //             'type'    => 'doc',
-    //             'content' => $content,
-    //         ];
-
-    //         $component->update([
-    //             'data' => json_encode($payload),
-    //         ]);
-
-    //         $this->dispatch('flashMessage', type: 'success', message: 'Text saved successfully!');
-    //         $this->dispatch('suneditor:refresh');
-
-    //     } catch (\Throwable $e) {
-    //         $this->dispatch('flashMessage', type: 'error', message: 'An error occurred while saving.');
-    //         $this->dispatch('suneditor:refresh');
-    //     }
-    // }
-
     public function saveTextComponent($component_id, $content)
     {
         try {
@@ -512,337 +341,6 @@ class ModuleHandout extends Component
             $this->dispatch('suneditor:refresh');
         }
     }
-
-    // public function saveTextComponent($component_id, $content)
-    // {
-    //     // Fetch the component
-    //     $component = HandoutComponent::find($component_id);
-
-    //     if (! $component) {
-    //         $this->dispatch('flashMessage', type: 'error', message: 'Component not found.');
-    //         return;
-    //     }
-
-    //     // Decode content if it's JSON string
-    //     if (is_string($content)) {
-    //         $decodedContent = json_decode($content, true);
-    //         if (json_last_error() !== JSON_ERROR_NONE || !is_array($decodedContent)) {
-    //             $this->dispatch('flashMessage', type: 'error', message: 'Invalid content format.');
-    //             $this->dispatch('suneditor:refresh');
-    //             return;
-    //         }
-    //     } elseif (is_array($content)) {
-    //         $decodedContent = $content;
-    //     } else {
-    //         $this->dispatch('flashMessage', type: 'error', message: 'Invalid content format.');
-    //         $this->dispatch('suneditor:refresh');
-    //         return;
-    //     }
-
-    //     // Validate base64 images (≤1MB)
-    //     foreach ($decodedContent as $block) {
-    //         if (isset($block['type']) && $block['type'] === 'image') {
-    //             $imageData = $block['data'] ?? null;
-
-    //             if ($imageData && preg_match('/^data:image\/(\w+);base64,/', $imageData)) {
-    //                 $imageBase64 = substr($imageData, strpos($imageData, ',') + 1);
-    //                 $imageBase64 = str_replace(' ', '+', $imageBase64);
-    //                 $imageSize = strlen(base64_decode($imageBase64));
-
-    //                 // Check 1MB limit
-    //                 if ($imageSize > 1024 * 1024) { // 1MB in bytes
-    //                     $this->dispatch('flashMessage', type: 'error', message: 'One of the images exceeds the 1MB limit.');
-    //                     $this->dispatch('suneditor:refresh');
-    //                     return;
-    //                 }
-    //             }
-    //         }
-    //     }
-
-    //     // Build JSON structure
-    //     $payload = [
-    //         'type'    => 'doc',
-    //         'content' => $decodedContent,
-    //     ];
-
-    //     try {
-    //         // Save into database safely
-    //         $component->update([
-    //             'data' => json_encode($payload, JSON_THROW_ON_ERROR),
-    //         ]);
-
-    //         $this->dispatch('flashMessage', type: 'success', message: 'Text saved successfully!');
-    //         $this->dispatch('suneditor:refresh');
-    //     } catch (\JsonException $e) {
-    //         $this->dispatch('flashMessage', type: 'error', message: 'Failed to save text: Invalid content.');
-    //     }
-    // }
-
-    // public function saveTextComponent($component_id, $content)
-    // {
-    //     // Step 1: Find all Base64 <img> tags
-    //     preg_match_all('/<img[^>]+src="data:(image\/[a-zA-Z]+);base64,([^"]+)"/', $content, $matches, PREG_SET_ORDER);
-
-    //     $imagesData = [];
-
-    //     foreach ($matches as $match) {
-    //         $mime = $match[1];         // e.g., image/png
-    //         $base64Data = $match[2];   // the actual Base64 string
-
-    //         // Decode Base64
-    //         $imageBinary = base64_decode($base64Data);
-
-    //         // Optional: create a unique filename
-    //         $extension = explode('/', $mime)[1]; // png, jpeg, etc
-    //         $fileName = time() . "." . $extension;
-
-    //         // Store info in array for inspection
-    //         $imagesData[] = [
-    //             'filename' => $fileName,
-    //             'mime' => $mime,
-    //             'size' => strlen($imageBinary), // size in bytes
-    //             'binary_sample' => substr($imageBinary, 0, 50), // first 50 bytes for preview
-    //         ];
-
-    //         // Here you could save the file if needed:
-    //         // Storage::disk('public')->put('handouts/' . $fileName, $imageBinary);
-    //     }
-
-    //     // Step 2: Dump & die to inspect
-    //     dd([
-    //         'component_id' => $component_id,
-    //         'original_content' => $content,
-    //         'images_extracted' => $imagesData,
-    //     ]);
-
-    //     // Step 3: Continue normal save (unreachable now because of dd)
-    //     $component = HandoutComponent::find($component_id);
-    //     if (! $component) return;
-
-    //     $payload = [
-    //         'type' => 'doc',
-    //         'content' => $content,
-    //     ];
-
-    //     $component->update([
-    //         'data' => json_encode($payload),
-    //     ]);
-    // }
-
-    # WORKING EXCEPT AUDIO LINK
-    // public function saveTextComponent($component_id, $content)
-    // {
-    //     // Step 1: Find all Base64 <img> tags
-    //     preg_match_all('/<img[^>]+src="data:(image\/[a-zA-Z]+);base64,([^"]+)"/', $content, $matches, PREG_SET_ORDER);
-
-    //     $imagesData = [];
-
-    //     foreach ($matches as $match) {
-    //         $mime = $match[1];       // e.g., image/png
-    //         $base64Data = $match[2]; // the actual Base64 string
-
-    //         // Decode Base64
-    //         $imageBinary = base64_decode($base64Data);
-
-    //         // Step 1a: Determine extension
-    //         $extension = explode('/', $mime)[1];
-
-    //         // Step 1b: Use saveImage logic (adapted for binary)
-    //         $fileName = time() . '.' . $extension;
-    //         Storage::disk('public')->put(self::LOCAL_STORAGE_FOLDER . $fileName, $imageBinary);
-
-    //         // Step 1c: Store info for debugging
-    //         $imagesData[] = [
-    //             'filename' => $fileName,
-    //             'mime' => $mime,
-    //             'size' => strlen($imageBinary),
-    //         ];
-
-    //         // Step 1d: Replace Base64 src with storage URL in content
-    //         $storageUrl = asset('storage/' . self::LOCAL_STORAGE_FOLDER . $fileName);
-    //         $content = str_replace($match[0], '<img src="' . $storageUrl . '"', $content);
-    //     }
-
-    //     // Step 2: Dump & die to inspect
-    //     // dd([
-    //     //     'component_id' => $component_id,
-    //     //     'updated_content' => $content,
-    //     //     'images_saved' => $imagesData,
-    //     // ]);
-
-    //     // Step 3: Save
-    //     $component = HandoutComponent::find($component_id);
-    //     if (! $component) return;
-
-    //     $payload = [
-    //         'type' => 'doc',
-    //         'content' => $content,
-    //     ];
-
-    //     $component->update([
-    //         'data' => json_encode($payload),
-    //     ]);
-
-    //     $this->dispatch('flashMessage', type: 'success', message: 'Content saved successfully!');
-    //     $this->dispatch('suneditor:refresh');
-    // }
-
-    // public function saveTextComponent($component_id, $content)
-    // {
-    //     // Step 1: Handle Base64 <img> tags
-    //     preg_match_all('/<img[^>]+src="data:(image\/[a-zA-Z]+);base64,([^"]+)"/', $content, $matches, PREG_SET_ORDER);
-
-    //     $imagesData = [];
-
-    //     foreach ($matches as $match) {
-    //         $mime = $match[1];       // e.g., image/png
-    //         $base64Data = $match[2]; // actual Base64 string
-
-    //         // Decode Base64
-    //         $imageBinary = base64_decode($base64Data);
-
-    //         // Validate size (max 5MB)
-    //         if (strlen($imageBinary) > 5 * 1024 * 1024) {
-    //             $this->dispatch('flashMessage', type: 'error', message: 'One of the images exceeds the 5MB limit.');
-    //             $this->dispatch('suneditor:refresh');
-    //             return; // stop saving
-    //         }
-
-    //         // Determine extension
-    //         $extension = explode('/', $mime)[1];
-
-    //         // Save image to storage/app/public
-    //         $fileName = time() . '.' . $extension;
-    //         Storage::disk('public')->put(self::LOCAL_STORAGE_FOLDER . $fileName, $imageBinary);
-
-    //         // Store info
-    //         $imagesData[] = [
-    //             'filename' => $fileName,
-    //             'mime' => $mime,
-    //             'size' => strlen($imageBinary),
-    //         ];
-
-    //         // Replace Base64 src with storage URL
-    //         $storageUrl = asset('storage/' . self::LOCAL_STORAGE_FOLDER . $fileName);
-    //         $content = str_replace($match[0], '<img src="' . $storageUrl . '"', $content);
-    //     }
-
-    //     // Step 2: Add target="_blank" to all <a> tags
-    //     $content = preg_replace('/<a\s+([^>]*?)href=/', '<a $1 target="_blank" href=', $content);
-
-    //     // Step 3: Save content
-    //     $component = HandoutComponent::find($component_id);
-    //     if (! $component) return;
-
-    //     $payload = [
-    //         'type' => 'doc',
-    //         'content' => $content,
-    //     ];
-
-    //     $component->update([
-    //         'data' => json_encode($payload),
-    //     ]);
-
-    //     $this->dispatch('flashMessage', type: 'success', message: 'Content saved successfully!');
-    //     $this->dispatch('suneditor:refresh');
-    // }
-
-    // public function saveTextComponent($component_id, $content)
-    // {
-    //     // Step 0: Get old images from previously saved content
-    //     $component = HandoutComponent::find($component_id);
-    //     if (! $component) return;
-
-    //     $oldData = json_decode($component->data, true);
-    //     $oldContent = $oldData['content'] ?? '';
-
-    //     preg_match_all(
-    //         '/<img[^>]+src="[^"]*\/storage\/' . preg_quote(self::LOCAL_STORAGE_FOLDER, '/') . '([^"]+)"/',
-    //         $oldContent,
-    //         $oldMatches
-    //     );
-
-    //     $oldImages = $oldMatches[1] ?? [];
-
-    //     // Step 1: Handle Base64 <img> tags (your original logic)
-    //     preg_match_all('/<img[^>]+src="data:(image\/[a-zA-Z]+);base64,([^"]+)"/', $content, $matches, PREG_SET_ORDER);
-
-    //     $imagesData = [];
-    //     $counter = 0;
-
-    //     foreach ($matches as $match) {
-    //         $mime = $match[1];
-    //         $base64Data = $match[2];
-
-    //         $imageBinary = base64_decode($base64Data);
-
-    //         // Validate size (max 5MB)
-    //         if (strlen($imageBinary) > 5 * 1024 * 1024) {
-    //             $this->dispatch('flashMessage', type: 'error', message: 'One of the images exceeds the 5MB limit.');
-    //             $this->dispatch('suneditor:refresh');
-    //             return;
-    //         }
-
-    //         // Determine extension
-    //         $extension = explode('/', $mime)[1];
-
-    //         // Create filename using time()
-    //         $fileName = time() . '_' . $counter++ . '.' . $extension;
-
-    //         Storage::disk('public')->put(self::LOCAL_STORAGE_FOLDER . $fileName, $imageBinary);
-
-    //         $imagesData[] = [
-    //             'filename' => $fileName,
-    //             'mime' => $mime,
-    //             'size' => strlen($imageBinary),
-    //         ];
-
-    //         $storageUrl = asset('storage/' . self::LOCAL_STORAGE_FOLDER . $fileName);
-
-    //         // Replace Base64 <img> tag with URL
-    //         $content = str_replace($match[0], '<img src="' . $storageUrl . '"', $content);
-    //     }
-
-    //     // Step 2: Add target="_blank" to <a> tags (your logic)
-    //     $content = preg_replace('/<a\s+([^>]*?)href=/', '<a $1 target="_blank" href=', $content);
-
-    //     // Step 3: Find all final images in updated content
-    //     preg_match_all(
-    //         '/<img[^>]+src="[^"]*\/storage\/' . preg_quote(self::LOCAL_STORAGE_FOLDER, '/') . '([^"]+)"/',
-    //         $content,
-    //         $finalMatches
-    //     );
-
-    //     $finalImages = $finalMatches[1] ?? [];
-
-    //     // Step 4: Delete removed images
-    //     $imagesToDelete = array_diff($oldImages, $finalImages);
-
-    //     foreach ($imagesToDelete as $img) {
-    //         $path = self::LOCAL_STORAGE_FOLDER . $img;
-
-    //         if (Storage::disk('public')->exists($path)) {
-    //             Storage::disk('public')->delete($path);
-    //         }
-    //     }
-
-    //     // Step 5: Save updated content (your logic)
-    //     $payload = [
-    //         'type' => 'doc',
-    //         'content' => $content,
-    //     ];
-
-    //     $component->update([
-    //         'data' => json_encode($payload),
-    //     ]);
-
-    //     // Update timestamp
-    //     $this->folder->update(['updated_at' => now()]);
-    //     $this->folder->project->update(['updated_at' => now()]);
-
-    //     $this->dispatch('flashMessage', type: 'success', message: 'Content saved successfully!');
-    //     $this->dispatch('suneditor:refresh');
-    // }
 
     public function render()
     {

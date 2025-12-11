@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Folder;
+use App\Models\PdfResource;
 use App\Models\Quiz;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -15,6 +16,8 @@ class PretestQuizForm extends Component
     public $folder;
     public $instructions;
     public $questions = [];
+    public $gdriveLink;
+    public $gdriveTitle;
 
     public function mount(Folder $folder, ?Quiz $quiz = null)
     {
@@ -63,6 +66,11 @@ class PretestQuizForm extends Component
         if (empty($this->instructions)) {
             $this->instructions = '';
         }
+
+        // --- Load existing Google Drive PDF link for this quiz ---
+        $this->gdriveLink  = PdfResource::where('quiz_id', $this->quiz?->id)
+                                        ->whereNull('handout_id')
+                                        ->value('gdrive_link');
     }
 
     // saves those updated values into the Laravel session.
@@ -131,6 +139,8 @@ class PretestQuizForm extends Component
             $quiz = $this->folder->quizzes()->create([
                 'instructions' => $this->instructions,
             ]);
+
+            $this->quiz = $quiz;
         }
 
         // ✅ Store questions and choices
@@ -157,9 +167,16 @@ class PretestQuizForm extends Component
         // After quiz and questions saved
         // $this->quiz->folder->updated_at = now();
         // $this->quiz->folder->saveQuietly();
-        $this->quiz->folder->update(['updated_at' => now()]);
-        $this->quiz->folder->project->update(['updated_at' => now()]);
+        // $this->quiz->folder->update(['updated_at' => now()]);
+        // $this->quiz->folder->project->update(['updated_at' => now()]);
 
+        if ($this->quiz && $this->quiz->folder) {
+            $this->quiz->folder->update(['updated_at' => now()]);
+
+            if ($this->quiz->folder->project) {
+                $this->quiz->folder->project->update(['updated_at' => now()]);
+            }
+        }
 
         // $this->dispatch('flashMessage', type: 'success', message: 'Quiz updated successfully!');
         $message = $this->quiz ? 'Quiz updated successfully!' : 'Quiz created successfully!';
@@ -213,6 +230,45 @@ class PretestQuizForm extends Component
         unset($this->questions[$qIndex]['choices'][$cIndex]);
         $this->questions[$qIndex]['choices'] = array_values($this->questions[$qIndex]['choices']);
         session(['questions' => $this->questions]);
+    }
+
+    public function saveGDrivePdf()
+    {
+        $this->validate([
+            'gdriveLink' => 'required|url',
+        ]);
+
+        // Ensure quiz exists before saving PDF
+        if (! $this->quiz || ! $this->quiz->exists) {
+            $this->dispatch('flashMessage', type: 'error', message: 'Please save the quiz first before adding a PDF.');
+            return;
+        }
+
+        // Store or update PDF link for this quiz
+        PdfResource::updateOrCreate(
+            [
+                'handout_id' => null,
+                'quiz_id'    => $this->quiz->id,
+            ],
+            [
+                'folder_id'   => $this->folder->id,
+                'title'       => $this->gdriveTitle ?? 'Quiz PDF',
+                'gdrive_link' => $this->gdriveLink,
+            ]
+        );
+
+        // Update timestamps
+         if ($this->quiz && $this->quiz->folder) {
+            $this->quiz->folder->update(['updated_at' => now()]);
+
+            if ($this->quiz->folder->project) {
+                $this->quiz->folder->project->update(['updated_at' => now()]);
+            }
+        }
+
+        $message = 'Google Drive PDF link saved successfully!';
+        $this->dispatch('flashMessage', type: 'success', message: $message);
+        $this->dispatch('suneditor:refresh');
     }
 
     public function render()

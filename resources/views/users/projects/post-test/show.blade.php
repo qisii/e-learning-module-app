@@ -20,10 +20,24 @@
         </button>
 
         {{-- Download Button --}}
-        <a href="#" 
-        class="px-6 py-4 text-[12px] rounded-xl bg-gray-200 text-[#374151] hover:bg-gray-300 font-semibold transition">
-            <i class="ri-arrow-down-line me-2 text-[13px]"></i> Download
-        </a>
+        @if(!empty($gdriveLink))
+            <a href="{{ $gdriveLink }}" 
+            target="_blank" 
+            title="Download from Google Drive"
+            class="px-6 py-4 text-[12px] rounded-xl bg-purple-100 text-purple-800 border border-purple-200 shadow-sm 
+                    hover:bg-purple-200 hover:shadow-md transition-all duration-200 flex items-center gap-2 font-secondary">
+            
+                <i class="ri-external-link-line text-[14px]"></i> 
+                Download from Google Drive
+            </a>
+        @else
+            <span class="px-6 py-4 text-[12px] rounded-xl bg-gray-100 text-gray-400 border border-gray-200 
+                        font-semibold flex items-center gap-2 transition-all duration-200 font-secondary">
+                <i class="ri-error-warning-line text-[14px]"></i>
+                No Google Drive link available
+            </span>
+        @endif
+    
 
     </div>
 

@@ -23,4 +23,10 @@ class Quiz extends Model
     {
         return $this->hasMany(QuizAttempt::class); // All attempts for a quiz
     }
+
+    public function pdfs()
+    {
+        return $this->hasMany(PdfResource::class);
+    }
+
 }
