@@ -1,4 +1,4 @@
-<div x-data class="relative">
+<div class="relative">
     <!-- Sidebar -->
     <aside 
         :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}" 

@@ -15,12 +15,12 @@ class UserMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
-    {
-        if (Auth::check() && Auth::user()->role_id == User::USER_ROLE_ID) {
-            return $next($request);
-        }
+        public function handle(Request $request, Closure $next): Response
+        {
+            if (Auth::check() && Auth::user()->role_id == User::USER_ROLE_ID) {
+                return $next($request);
+            }
 
-        return redirect()->back();
-    }
+            return redirect()->back();
+        }
 }
