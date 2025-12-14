@@ -8,6 +8,9 @@ window.Chart = Chart;
 let genderChartInstance = null;
 let totalStudentsChartInstance = null;
 let previousStats = null;
+let moduleChartInstance = null;
+let pretestChartInstance = null;
+let posttestChartInstance = null;
 
 function readStatsFromDOM() {
     return {
@@ -58,6 +61,20 @@ function updateTotalStudentsChart(data) {
 
     totalStudentsChartInstance.update();
 }
+
+function updateModuleChart(moduleData) {
+    if (!moduleChartInstance) {
+        initModuleAttemptsChart(moduleData);
+        return;
+    }
+
+    const levelIds = ['1','2','3'];
+    const newData = levelIds.map(id => moduleData[id]?.totalAttempts ?? 0);
+
+    moduleChartInstance.data.datasets[0].data = newData;
+    moduleChartInstance.update();
+}
+
 
 const delayedAnimation = {
     animation: {
@@ -213,14 +230,78 @@ function initTotalStudentsChart(data) {
     });
 }
 
+function initModuleAttemptsChart(moduleData) {
+    const canvas = document.getElementById('moduleChart');
+    if (!canvas) return;
+
+    if (moduleChartInstance) moduleChartInstance.destroy();
+
+    // Labels and colors
+    const levelLabels = ['Easy', 'Average', 'Hard'];
+    const levelColors = ['#36A2EB', '#FFCE56', '#FF6384'];
+
+    // Access string keys
+    const levelIds = ['1','2','3'];
+    const dataValues = levelIds.map(id => moduleData[id]?.totalAttempts ?? 0);
+
+    moduleChartInstance = new Chart(canvas, {
+        type: 'pie',
+        data: {
+            labels: levelLabels,
+            datasets: [{
+                data: dataValues,
+                backgroundColor: levelColors,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { 
+                    position: 'bottom'
+                },
+                datalabels: {
+                    color: '#fff',
+                    formatter: (value, ctx) => {
+                        const sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                        const percentage = sum > 0 ? ((value / sum) * 100).toFixed(1) : 0;
+                        return `${percentage}%`;
+                    },
+                    font: {
+                        weight: 'bold',
+                        size: 12
+                    }
+                }
+            },
+            ...delayedAnimation
+        },
+        plugins: [ChartDataLabels]
+    });
+}
+
+
 window.addEventListener('update-charts', event => {
     const payload = Array.isArray(event.detail) ? event.detail[0] : event.detail;
 
-    const { genderData, totalData } = payload;
+    // Gender chart
+    if (payload.genderData && payload.totalData) {
+        initGenderChart(payload.genderData);
+        initTotalStudentsChart(payload.totalData);
+    }
 
-    initGenderChart(genderData);
-    initTotalStudentsChart(totalData);
+    // Module attempts chart
+    if (payload.moduleAttempts) {
+        console.log('Module chart payload:', payload.moduleAttempts);
+        updateModuleChart(payload.moduleAttempts);
+    }
+
+    // Pre/Post test chart
+    if (payload.prePostScores) {
+        console.log('📊 Pre/Post test chart payload:', payload.prePostScores);
+        initPrePostChart(payload.prePostScores, payload.startAttempt, payload.endAttempt);
+    }
 });
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.body; // or a more specific wrapper
@@ -248,16 +329,23 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
     const initialStats = readStatsFromDOM();
 
-    // Initialize charts with 0 values for animation effect
+    // Gender & Total students charts
     initGenderChart({ male: 0, female: 0, other: 0, none: 0 });
     initTotalStudentsChart({ male: 0, female: 0, other: 0, none: 0 });
+
+    // Initialize Module chart with 0 values
+    initModuleAttemptsChart({
+        '1': { totalAttempts: 0, users: [] }, // Easy
+        '2': { totalAttempts: 0, users: [] }, // Average
+        '3': { totalAttempts: 0, users: [] }  // Hard
+    });
 
     // Animate to actual stats after short delay
     setTimeout(() => {
         updateGenderChart(initialStats);
         updateTotalStudentsChart(initialStats);
         previousStats = { ...initialStats };
-    }, 100); // slight delay ensures Chart.js finished initialization
+    }, 100);
 });
 
 

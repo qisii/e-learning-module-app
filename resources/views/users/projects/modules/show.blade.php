@@ -41,42 +41,44 @@
     
 
     @if($handout)
-        {{-- CHECK IF MODULE HAS CONTENT --}}
-            @php
-                $hasContent = $pages->count() > 0 && $pages->first()->components->count() > 0;
-            @endphp
+        @php
+            $currentPageComponentsCount = $pages->first() ? $pages->first()->components->count() : 0;
+            $isFirstPage = $pages->currentPage() === 1;
+            $hasContent = $currentPageComponentsCount > 0;
+        @endphp
 
-            {{-- IF NO CONTENT – SHOW "MODULE ON ITS WAY" --}}
-            @if (!$hasContent)
-                <div class="w-[90%] lg:w-[80%] mx-auto mt-[20%] lg:mt-[10%] flex flex-col items-center justify-center text-center">
-                    <div class="text-7xl mb-6 animate-bounce">📘</div>
+        @if($isFirstPage && !$hasContent)
+            {{-- First page empty → show "Almost ready!" --}}
+            <div class="w-[90%] lg:w-[80%] mx-auto mt-[20%] lg:mt-[10%] flex flex-col items-center justify-center text-center">
+                <div class="text-7xl mb-6 animate-bounce">📘</div>
 
-                    <h1 class="text-3xl lg:text-4xl font-extrabold text-gray-800 mb-3" style="font-family: 'Inter', sans-serif;">
-                        Almost ready!
-                    </h1>
+                <h1 class="text-3xl lg:text-4xl font-extrabold text-gray-800 mb-3" style="font-family: 'Inter', sans-serif;">
+                    Almost ready!
+                </h1>
 
-                    <p class="text-gray-600 text-lg mb-8" style="font-family: 'Inter', sans-serif;">
-                        The module is on its way. Please check back soon once the content has been added.
-                    </p>
-                </div>
-            @else
+                <p class="text-gray-600 text-lg mb-8" style="font-family: 'Inter', sans-serif;">
+                    The module is on its way. Please check back soon once the content has been added.
+                </p>
+            </div>
+        @else
             {{-- TIMER DISPLAY --}}
-                <div class="text-center mb-4 hidden">
-                    <h3 class="text-lg font-semibold text-gray-700">
-                        Time Spent: <span id="handout-timer" class="text-blue-600">00:00:00</span>
-                    </h3>
+            <div class="text-center mb-4 hidden">
+                <h3 class="text-lg font-semibold text-gray-700">
+                    Time Spent: <span id="handout-timer" class="text-blue-600">00:00:00</span>
+                </h3>
+            </div>
+
+            {{-- MAIN WRAPPER --}}
+            <div id="module-wrapper" class="relative w-[90%] mx-auto max-h-[1056px] overflow-auto no-scrollbar mt-[4%] px-0 lg:px-5 py-10 rounded-lg bg-white shadow-md bg-cover bg-center">
+
+                {{-- Title Header --}}
+                <div class="text-center mb-6">
+                    <h2 class="text-lg font-bold text-gray-800 font-secondary">Module Handout</h2>
                 </div>
 
-                {{-- MAIN WRAPPER --}}
-                <div id="module-wrapper" class="relative w-[90%] mx-auto max-h-[1056px] overflow-auto no-scrollbar mt-[4%] px-0 lg:px-5 py-10 rounded-lg bg-white shadow-md bg-cover bg-center">
-
-                    {{-- Title Header --}}
-                    <div class="text-center mb-6">
-                        <h2 class="text-lg font-bold text-gray-800 font-secondary">Module Handout</h2>
-                    </div>
-
-                    {{-- HANDOUT CONTENT --}}
-                    <div class="my-10 space-y-6 mx-8 overflow-auto">
+                {{-- HANDOUT CONTENT --}}
+                <div class="my-10 space-y-6 mx-8 overflow-auto">
+                    @if($hasContent)
                         @foreach ($pages as $page)
                             @foreach ($page->components as $component)
                                 @php
@@ -89,21 +91,25 @@
                                 </div>
                             @endforeach
                         @endforeach
-                    </div>
-                @endif
+                    @else
+                        {{-- Empty page placeholder --}}
+                        <div class="w-full h-64 flex items-center justify-center text-gray-500">
+                            <p>No content on this page.</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        @endif
 
-            </div> {{-- END WHITE BOX --}}
-
-        {{-- PAGINATION ALWAYS OUTSIDE WHITE CONTAINER --}}
-        @if ($hasContent)
+        @if($hasContent)
+            {{-- PAGINATION ALWAYS VISIBLE --}}
             <div class="w-[90%] mx-auto mt-8">
                 {{ $pages->links() }}
             </div>
         @endif
 
-
         {{-- BOTTOM BUTTONS — ONLY ON LAST PAGE AND ONLY IF CONTENT EXISTS --}}
-        @if ($hasContent && $pages->onLastPage())
+        @if ($pages->onLastPage())
 
             <p class="text-gray-500 text-[13px] text-center mt-10" style="font-family: 'Inter', sans-serif;">
                 You may access other modules.

@@ -66,4 +66,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(QuizAttempt::class); // All attempts by a user
     }
+
+    public function handoutAttempts()
+    {
+        return $this->hasMany(HandoutAttempt::class, 'user_id', 'id');
+    }
 }

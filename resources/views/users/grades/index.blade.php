@@ -7,7 +7,7 @@
 @section('content')
 <div class="w-full p-4 lg:p-10 md:p-10 overflow-auto no-scrollbar" style="font-family: 'Poppins', sans-serif;">
 
-    <h2 class="text-xl font-semibold text-gray-800 mb-6">@ {{ Auth::user()->username }}</h2>
+    <h2 class="text-xl font-semibold text-gray-800 mb-6">{{ '@' . Auth::user()->username }}</h2>
 
     {{-- Tabs Section --}}
     <div class="flex items-center gap-2 mb-6 bg-gray-100 rounded-xl">
