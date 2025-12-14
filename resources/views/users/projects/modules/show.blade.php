@@ -109,7 +109,7 @@
         @endif
 
         {{-- BOTTOM BUTTONS — ONLY ON LAST PAGE AND ONLY IF CONTENT EXISTS --}}
-        @if ($hasContent && $pages->onLastPage())
+        @if ($pages->onLastPage())
 
             <p class="text-gray-500 text-[13px] text-center mt-10" style="font-family: 'Inter', sans-serif;">
                 You may access other modules.
