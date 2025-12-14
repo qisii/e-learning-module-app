@@ -377,7 +377,7 @@
                 {{-- Download Button --}}
                 <div class="flex items-center justify-between mb-2">
                     <h3 class="text-sm font-semibold text-gray-700">Overall Module Attempts per Level</h3>
-                    <button id=""
+                    <button id="downloadModuleChart"
                             class="text-gray-600 hover:text-gray-800 flex items-center cursor-pointer gap-1 text-[12px] 
                                 bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded shadow-sm">
                         <i class="ri-arrow-down-line"></i> PNG

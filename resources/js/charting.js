@@ -398,3 +398,17 @@ document.getElementById('exportExcelBtn')?.addEventListener('click', () => {
     XLSX.utils.book_append_sheet(wb, ws, 'Students');
     XLSX.writeFile(wb, 'student-demographics.xlsx');
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const downloadModuleBtn = document.getElementById('downloadModuleChart');
+
+    if (downloadModuleBtn) {
+        downloadModuleBtn.addEventListener('click', () => {
+            downloadChartPNG(
+                moduleChartInstance,
+                'Overall Module Attempts per Level',
+                'overall-module-attempts.png'
+            );
+        });
+    }
+});
