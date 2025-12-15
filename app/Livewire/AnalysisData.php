@@ -166,184 +166,86 @@ class AnalysisData extends Component
         ];
     }
 
-    // public function filterPrePost()
-    // {
-    //     $this->validate([
-    //         'projectId'    => 'required|exists:projects,id',
-    //         'startAttempt' => 'required|integer|min:1',
-    //     ]);
-
-    //     $endAttempt = $this->startAttempt + 9;
-
-    //     // dd([
-    //     //     'project_id'    => $this->projectId,
-    //     //     'start_attempt' => $this->startAttempt,
-    //     //     'end_attempt'   => $endAttempt,
-    //     // ]);
-    // }
-
-    // public function filterPrePost()
-    // {
-    //     $this->validate([
-    //         'projectId'    => 'required|exists:projects,id',
-    //         'startAttempt' => 'required|integer|min:1',
-    //     ]);
-
-    //     $endAttempt = $this->startAttempt + 4; // 10-attempt interval
-
-    //     // 1️⃣ Get pretest & post-test folders for the project
-    //     $pretestFolderIds  = Folder::where('project_id', $this->projectId)
-    //                             ->where('folder_type_id', 1)
-    //                             ->pluck('id');
-        
-    //     $posttestFolderIds = Folder::where('project_id', $this->projectId)
-    //                             ->where('folder_type_id', 3)
-    //                             ->pluck('id');
-
-    //     // 2️⃣ Get quizzes in those folders
-    //     $pretestQuizIds  = Quiz::whereIn('folder_id', $pretestFolderIds)->pluck('id');
-    //     $posttestQuizIds = Quiz::whereIn('folder_id', $posttestFolderIds)->pluck('id');
-
-    //     // 3️⃣ Get quiz attempts within the attempt range
-    //     $pretestAttempts  = QuizAttempt::with('user', 'quiz')
-    //         ->whereIn('quiz_id', $pretestQuizIds)
-    //         ->whereBetween('attempt_number', [$this->startAttempt, $endAttempt])
-    //         ->get();
-
-    //     $posttestAttempts = QuizAttempt::with('user', 'quiz')
-    //         ->whereIn('quiz_id', $posttestQuizIds)
-    //         ->whereBetween('attempt_number', [$this->startAttempt, $endAttempt])
-    //         ->get();
-
-    //     // 4️⃣ Structure pretest data
-    //     $pretestData = collect();
-    //     foreach (range($this->startAttempt, $endAttempt) as $attemptNumber) {
-    //         $attemptsForNumber = $pretestAttempts->where('attempt_number', $attemptNumber);
-    //         $pretestData[$attemptNumber] = [
-    //             'attemptNumber' => $attemptNumber,
-    //             'totalAttempts' => $attemptsForNumber->count(),
-    //             'users' => $attemptsForNumber->map(function($a) {
-    //                 return [
-    //                     'user'  => $a->user->first_name . ' ' . $a->user->last_name,
-    //                     'score' => $a->score,
-    //                 ];
-    //             })->values()
-    //         ];
-    //     }
-
-    //     // 5️⃣ Structure post-test data
-    //     $posttestData = collect();
-    //     foreach (range($this->startAttempt, $endAttempt) as $attemptNumber) {
-    //         $attemptsForNumber = $posttestAttempts->where('attempt_number', $attemptNumber);
-    //         $posttestData[$attemptNumber] = [
-    //             'attemptNumber' => $attemptNumber,
-    //             'totalAttempts' => $attemptsForNumber->count(),
-    //             'users' => $attemptsForNumber->map(function($a) {
-    //                 return [
-    //                     'user'  => $a->user->first_name . ' ' . $a->user->last_name,
-    //                     'score' => $a->score,
-    //                 ];
-    //             })->values()
-    //         ];
-    //     }
-
-    //     // 6️⃣ Dispatch to frontend
-    //     $this->dispatch('update-charts', [
-    //         'prePostScores' => [
-    //             'pretest' => $pretestData,
-    //             'posttest' => $posttestData,
-    //         ],
-    //         'startAttempt' => $this->startAttempt,
-    //         'endAttempt'   => $endAttempt,
-    //         'projectId'    => $this->projectId,
-    //     ]);
-    // }
-    
     public function filterPrePost()
-{
-    $this->validate([
-        'projectId'    => 'required|exists:projects,id',
-        'startAttempt' => 'required|integer|min:1',
-    ]);
-
-    $endAttempt = $this->startAttempt + 4; // 5-attempt interval
-
-    // 1️⃣ Get pretest & post-test folders for the project
-    $pretestFolderIds  = Folder::where('project_id', $this->projectId)
-                            ->where('folder_type_id', 1)
-                            ->pluck('id');
-    
-    $posttestFolderIds = Folder::where('project_id', $this->projectId)
-                            ->where('folder_type_id', 3)
-                            ->pluck('id');
-
-    // 2️⃣ Get quizzes in those folders
-    $pretestQuizIds  = Quiz::whereIn('folder_id', $pretestFolderIds)->pluck('id');
-    $posttestQuizIds = Quiz::whereIn('folder_id', $posttestFolderIds)->pluck('id');
-
-    // 3️⃣ Get quiz attempts within the attempt range
-    $pretestAttempts  = QuizAttempt::with('user', 'quiz')
-        ->whereIn('quiz_id', $pretestQuizIds)
-        ->whereBetween('attempt_number', [$this->startAttempt, $endAttempt])
-        ->get();
-
-    $posttestAttempts = QuizAttempt::with('user', 'quiz')
-        ->whereIn('quiz_id', $posttestQuizIds)
-        ->whereBetween('attempt_number', [$this->startAttempt, $endAttempt])
-        ->get();
-
-    // 4️⃣ Structure pretest data
-    $pretestData = collect(range($this->startAttempt, $endAttempt))
-        ->mapWithKeys(fn($attemptNumber) => [
-            $attemptNumber => [
-                'attemptNumber' => $attemptNumber,
-                'totalScore' => $pretestAttempts->where('attempt_number', $attemptNumber)->sum('score'),
-                'users' => $pretestAttempts->where('attempt_number', $attemptNumber)
-                    ->map(fn($a) => [
-                        'user'  => $a->user->first_name . ' ' . $a->user->last_name,
-                        'score' => $a->score,
-                    ])->values(),
-            ]
+    {
+        $this->validate([
+            'projectId'    => 'required|exists:projects,id',
+            'startAttempt' => 'required|integer|min:1',
         ]);
 
-    // 5️⃣ Structure post-test data
-    $posttestData = collect(range($this->startAttempt, $endAttempt))
-        ->mapWithKeys(fn($attemptNumber) => [
-            $attemptNumber => [
-                'attemptNumber' => $attemptNumber,
-                'totalScore' => $posttestAttempts->where('attempt_number', $attemptNumber)->sum('score'),
-                'users' => $posttestAttempts->where('attempt_number', $attemptNumber)
-                    ->map(fn($a) => [
-                        'user'  => $a->user->first_name . ' ' . $a->user->last_name,
-                        'score' => $a->score,
-                    ])->values(),
-            ]
+        $endAttempt = $this->startAttempt + 4; // 5-attempt interval
+
+        // 1️⃣ Get pretest & post-test folders for the project
+        $pretestFolderIds  = Folder::where('project_id', $this->projectId)
+                                ->where('folder_type_id', 1)
+                                ->pluck('id');
+        
+        $posttestFolderIds = Folder::where('project_id', $this->projectId)
+                                ->where('folder_type_id', 3)
+                                ->pluck('id');
+
+        // 2️⃣ Get quizzes in those folders
+        $pretestQuizIds  = Quiz::whereIn('folder_id', $pretestFolderIds)->pluck('id');
+        $posttestQuizIds = Quiz::whereIn('folder_id', $posttestFolderIds)->pluck('id');
+
+        // 3️⃣ Get quiz attempts within the attempt range
+        $pretestAttempts  = QuizAttempt::with('user', 'quiz')
+            ->whereIn('quiz_id', $pretestQuizIds)
+            ->whereBetween('attempt_number', [$this->startAttempt, $endAttempt])
+            ->get();
+
+        $posttestAttempts = QuizAttempt::with('user', 'quiz')
+            ->whereIn('quiz_id', $posttestQuizIds)
+            ->whereBetween('attempt_number', [$this->startAttempt, $endAttempt])
+            ->get();
+
+        // 4️⃣ Structure pretest data with additional user info & created_at
+        $pretestData = collect(range($this->startAttempt, $endAttempt))
+            ->mapWithKeys(fn($attemptNumber) => [
+                $attemptNumber => [
+                    'attemptNumber' => $attemptNumber,
+                    'totalScore' => $pretestAttempts->where('attempt_number', $attemptNumber)->sum('score'),
+                    'users' => $pretestAttempts->where('attempt_number', $attemptNumber)
+                        ->map(fn($a) => [
+                            'user'        => $a->user->first_name . ' ' . $a->user->last_name,
+                            'username'    => $a->user->username ?? null,
+                            'grade_level' => $a->user->grade_level ?? null,
+                            'section'     => $a->user->section ?? null,
+                            'score'       => $a->score,
+                            'created_at'  => $a->created_at->toDateTimeString(), // when user took the quiz
+                        ])->values(),
+                ]
+            ]);
+
+        // 5️⃣ Structure post-test data with additional info
+        $posttestData = collect(range($this->startAttempt, $endAttempt))
+            ->mapWithKeys(fn($attemptNumber) => [
+                $attemptNumber => [
+                    'attemptNumber' => $attemptNumber,
+                    'totalScore' => $posttestAttempts->where('attempt_number', $attemptNumber)->sum('score'),
+                    'users' => $posttestAttempts->where('attempt_number', $attemptNumber)
+                        ->map(fn($a) => [
+                            'user'        => $a->user->first_name . ' ' . $a->user->last_name,
+                            'username'    => $a->user->username ?? null,
+                            'grade_level' => $a->user->grade_level ?? null,
+                            'section'     => $a->user->section ?? null,
+                            'score'       => $a->score,
+                            'created_at'  => $a->created_at->toDateTimeString(),
+                        ])->values(),
+                ]
+            ]);
+
+        // 6️⃣ Dispatch to frontend
+        $this->dispatch('update-charts', [
+            'prePostScores' => [
+                'pretest' => $pretestData,
+                'posttest' => $posttestData,
+            ],
+            'startAttempt' => $this->startAttempt,
+            'endAttempt'   => $endAttempt,
+            'projectId'    => $this->projectId,
         ]);
-
-    // 6️⃣ Dispatch to frontend
-    $this->dispatch('update-charts', [
-        'prePostScores' => [
-            'pretest' => $pretestData,
-            'posttest' => $posttestData,
-        ],
-        'startAttempt' => $this->startAttempt,
-        'endAttempt'   => $endAttempt,
-        'projectId'    => $this->projectId,
-    ]);
-}
-
-
-    // public function filterModule()
-    // {
-    //     $this->validate([
-    //         'projectIdModule' => 'required|exists:projects,id',
-    //     ]);
-
-    //     // dd([
-    //     //     'project_id' => $this->projectIdModule,
-    //     // ]);
-    // }
-    
+    }
 
     public function filterModule()
     {
@@ -386,9 +288,14 @@ class AnalysisData extends Component
         $data = $handoutAttempts->groupBy(fn($attempt) => $attempt->handout->level_id)
             ->map(function($levelAttempts, $levelId) {
                 $users = $levelAttempts->groupBy('user_id')->map(function($userAttempts) {
+                    $firstAttempt = $userAttempts->first();
                     return [
-                        'user' => $userAttempts->first()->user->first_name . ' ' . $userAttempts->first()->user->last_name,
+                        'user'        => $firstAttempt->user->first_name . ' ' . $firstAttempt->user->last_name,
+                        'username'    => $firstAttempt->user->username ?? null,
+                        'grade_level' => $firstAttempt->user->grade_level ?? null,
+                        'section'     => $firstAttempt->user->section ?? null,
                         'totalAttempts' => $userAttempts->sum('attempt_number'),
+                        'created_at'    => $firstAttempt->created_at->toDateTimeString(), // first attempt timestamp
                     ];
                 })->values();
 
@@ -403,7 +310,7 @@ class AnalysisData extends Component
 
         // 5️⃣ Dispatch data to frontend
         $this->dispatch('update-charts', [
-            'moduleAttempts' => $data, // structured by level_id, includes totalAttempts
+            'moduleAttempts' => $data, // structured by level_id, includes totalAttempts and user info
             'projectId'      => $this->projectIdModule,
         ]);
     }

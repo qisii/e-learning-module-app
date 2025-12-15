@@ -11,6 +11,9 @@ let previousStats = null;
 let moduleChartInstance = null;
 let pretestChartInstance = null;
 let posttestChartInstance = null;
+let prePostRawData = { pretest: {}, posttest: {} };
+let moduleRawData = {};
+
 
 function readStatsFromDOM() {
     return {
@@ -258,7 +261,13 @@ function initModuleAttemptsChart(moduleData) {
             maintainAspectRatio: false,
             plugins: {
                 legend: { 
-                    position: 'bottom'
+                    position: 'bottom',
+                    labels: {
+                        filter: function(legendItem, chartData) {
+                            // Hide legend if corresponding data value is 0
+                            return chartData.datasets[0].data[legendItem.index] > 0;
+                        }
+                    }
                 },
                 datalabels: {
                     color: '#fff',
@@ -279,6 +288,148 @@ function initModuleAttemptsChart(moduleData) {
     });
 }
 
+function initPrePostChart(prePostScores, startAttempt, endAttempt) {
+
+    const buildChartData = (data) => {
+        const labels = [];
+        const values = [];
+
+        let overall = 0;
+
+        for (let i = startAttempt; i <= endAttempt; i++) {
+            labels.push(i.toString());
+            const score = data[i]?.totalScore ?? 0;
+            values.push(score);
+            overall += score;
+        }
+
+        labels.push('Overall');
+        values.push(overall);
+
+        return { labels, values };
+    };
+
+    // ---------- PRETEST ----------
+    const pretestCanvas = document.getElementById('pretestChart');
+    if (pretestCanvas) {
+        const pretestData = buildChartData(prePostScores.pretest);
+
+        if (pretestChartInstance) pretestChartInstance.destroy();
+
+        pretestChartInstance = new Chart(pretestCanvas, {
+            type: 'bar',
+            data: {
+                labels: pretestData.labels,
+                datasets: [{
+                    label: 'Pretest',
+                    data: pretestData.values,
+                    backgroundColor: '#36A2EB',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animations: {
+                    y: {
+                        from: (ctx) => {
+                            if (ctx.type === 'data') {
+                                return ctx.chart.scales.y.getPixelForValue(0);
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            boxWidth: 14,
+                            font: {
+                                size: 12,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'top',
+                        color: '#000',
+                        font: { weight: 'bold' }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { precision: 0 }
+                    }
+                },
+                ...delayedAnimation
+            },
+            plugins: [ChartDataLabels]
+        });
+    }
+
+    // ---------- POSTTEST ----------
+    const posttestCanvas = document.getElementById('posttestChart');
+    if (posttestCanvas) {
+        const posttestData = buildChartData(prePostScores.posttest);
+
+        if (posttestChartInstance) posttestChartInstance.destroy();
+
+        posttestChartInstance = new Chart(posttestCanvas, {
+            type: 'bar',
+            data: {
+                labels: posttestData.labels,
+                datasets: [{
+                    label: 'Post-test',
+                    data: posttestData.values,
+                    backgroundColor: '#FF6384',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animations: {
+                    y: {
+                        from: (ctx) => {
+                            if (ctx.type === 'data') {
+                                return ctx.chart.scales.y.getPixelForValue(0);
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            boxWidth: 14,
+                            font: {
+                                size: 12,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'top',
+                        color: '#000',
+                        font: { weight: 'bold' }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { precision: 0 }
+                    }
+                },
+                ...delayedAnimation
+            },
+            plugins: [ChartDataLabels]
+        });
+    }
+}
+
 
 window.addEventListener('update-charts', event => {
     const payload = Array.isArray(event.detail) ? event.detail[0] : event.detail;
@@ -292,12 +443,14 @@ window.addEventListener('update-charts', event => {
     // Module attempts chart
     if (payload.moduleAttempts) {
         console.log('Module chart payload:', payload.moduleAttempts);
+        moduleRawData = payload.moduleAttempts;
         updateModuleChart(payload.moduleAttempts);
     }
 
     // Pre/Post test chart
     if (payload.prePostScores) {
         console.log('📊 Pre/Post test chart payload:', payload.prePostScores);
+        prePostRawData = payload.prePostScores;
         initPrePostChart(payload.prePostScores, payload.startAttempt, payload.endAttempt);
     }
 });
@@ -412,3 +565,169 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const downloadPrePostBtn = document.getElementById('downloadPrePostChart');
+
+    if (downloadPrePostBtn) {
+        downloadPrePostBtn.addEventListener('click', () => {
+            if (!pretestChartInstance || !posttestChartInstance) {
+                console.warn('Charts not ready');
+                return;
+            }
+
+            const preCanvas = pretestChartInstance.canvas;
+            const postCanvas = posttestChartInstance.canvas;
+
+            // Get rendered sizes
+            const preWidth = preCanvas.offsetWidth;
+            const preHeight = preCanvas.offsetHeight;
+            const postWidth = postCanvas.offsetWidth;
+            const postHeight = postCanvas.offsetHeight;
+
+            const padding = 20;
+            const spacing = 50; // space between charts
+            const width = preWidth + postWidth + spacing + padding * 2;
+            const height = Math.max(preHeight, postHeight) + padding * 2 + 40; // extra for title
+
+            const exportCanvas = document.createElement('canvas');
+            exportCanvas.width = width;
+            exportCanvas.height = height;
+            const ctx = exportCanvas.getContext('2d');
+
+            // Background
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+
+            // Optional title
+            const titleHeight = 40;
+            ctx.fillStyle = '#111827';
+            ctx.font = 'bold 18px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('Pre & Post Test Scores', width / 2, padding + titleHeight / 2);
+
+            // Draw pretest chart (left)
+            ctx.drawImage(
+                preCanvas,
+                0, 0, preCanvas.width, preCanvas.height, // source
+                padding, padding + titleHeight, preWidth, preHeight // destination
+            );
+
+            // Draw post-test chart (right)
+            ctx.drawImage(
+                postCanvas,
+                0, 0, postCanvas.width, postCanvas.height, // source
+                padding + preWidth + spacing, padding + titleHeight, postWidth, postHeight // destination
+            );
+
+            // Download combined image
+            const link = document.createElement('a');
+            link.href = exportCanvas.toDataURL('image/png');
+            link.download = 'prepost-charts.png';
+            link.click();
+        });
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Export Pre/Post Chart Excel
+    const exportPrePostBtn = document.getElementById('exportPrePostExcel');
+    if (exportPrePostBtn) {
+        exportPrePostBtn.addEventListener('click', () => {
+            const rows = [
+                ['Pretest Attempts'],
+                ['Attempt Number', 'Total Score', 'Full Name', 'Username', 'Grade Level', 'Section', 'Score', 'Created At']
+            ];
+
+            Object.values(prePostRawData.pretest).forEach(attempt => {
+                const total = attempt.totalScore;
+                if (attempt.users.length) {
+                    attempt.users.forEach(u => {
+                        rows.push([
+                            attempt.attemptNumber,
+                            total,
+                            u.user,
+                            u.username,
+                            u.grade_level,
+                            u.section,
+                            u.score,
+                            u.created_at
+                        ]);
+                    });
+                } else {
+                    rows.push([attempt.attemptNumber, total, '', '', '', '', '', '']);
+                }
+            });
+
+            // Post-test
+            rows.push([]);
+            rows.push(['Post-test Attempts']);
+            rows.push(['Attempt Number', 'Total Score', 'Full Name', 'Username', 'Grade Level', 'Section', 'Score', 'Created At']);
+
+            Object.values(prePostRawData.posttest).forEach(attempt => {
+                const total = attempt.totalScore;
+                if (attempt.users.length) {
+                    attempt.users.forEach(u => {
+                        rows.push([
+                            attempt.attemptNumber,
+                            total,
+                            u.user,
+                            u.username,
+                            u.grade_level,
+                            u.section,
+                            u.score,
+                            u.created_at
+                        ]);
+                    });
+                } else {
+                    rows.push([attempt.attemptNumber, total, '', '', '', '', '', '']);
+                }
+            });
+
+            const ws = XLSX.utils.aoa_to_sheet(rows);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'PrePost Test');
+            XLSX.writeFile(wb, 'prepost-test.xlsx');
+        });
+    }
+
+    // Export Module Chart Excel
+    const exportModuleBtn = document.getElementById('exportModuleExcel');
+    if (exportModuleBtn) {
+        exportModuleBtn.addEventListener('click', () => {
+            const rows = [
+                ['Module Attempts per Level'],
+                ['Level', 'Total Attempts', 'Full Name', 'Username', 'Grade Level', 'Section', 'Created At', 'User Attempts']
+            ];
+
+            Object.entries(moduleRawData).forEach(([levelId, levelData]) => {
+                const totalAttempts = levelData.totalAttempts;
+                const users = levelData.users || [];
+                if (users.length) {
+                    users.forEach(u => {
+                        rows.push([
+                            levelId,
+                            totalAttempts,
+                            u.user,
+                            u.username,
+                            u.grade_level,
+                            u.section,
+                            u.created_at,
+                            u.totalAttempts
+                        ]);
+                    });
+                } else {
+                    rows.push([levelId, totalAttempts, '', '', '', '', '', '']);
+                }
+            });
+
+            const ws = XLSX.utils.aoa_to_sheet(rows);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Module Attempts');
+            XLSX.writeFile(wb, 'module-attempts.xlsx');
+        });
+    }
+});
+
+

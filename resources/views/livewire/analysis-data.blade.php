@@ -297,12 +297,6 @@
             <h2 class="text-xl font-semibold text-gray-800">
                 Learning Performance Analysis <span class="text-[13px] text-gray-500 font-normal">(By Project)</span>
             </h2>
-
-            <button id=""
-                    class="text-white hover:text-white flex items-center cursor-pointer gap-1 text-[12px] 
-                        bg-green-500 hover:bg-green-600 px-3 py-2 rounded shadow-sm">
-                <i class="ri-export-line"></i> Export Excel
-            </button>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
             {{-- Pretest and Post-test --}}
@@ -310,11 +304,21 @@
                 {{-- Title --}}
                 <div class="flex items-center justify-between mb-2">
                     <h3 class="text-sm font-semibold text-gray-700">Overall Pretest & Post-test</h3>
-                    <button id=""
-                            class="text-gray-600 hover:text-gray-800 flex items-center cursor-pointer gap-1 text-[12px] 
-                                bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded shadow-sm">
-                        <i class="ri-arrow-down-line"></i> PNG
-                    </button>
+                    <div class="flex gap-2">
+                        {{-- Export Excel Button --}}
+                        <button id="exportPrePostExcel"
+                                class="text-white hover:text-white flex items-center cursor-pointer gap-1 text-[12px] 
+                                    bg-green-500 hover:bg-green-600 px-3 py-2 rounded shadow-sm">
+                            <i class="ri-export-line"></i> Export Excel
+                        </button>
+
+                        {{-- PNG Button --}}
+                        <button id="downloadPrePostChart"
+                                class="text-gray-600 hover:text-gray-800 flex items-center cursor-pointer gap-1 text-[12px] 
+                                    bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded shadow-sm">
+                            <i class="ri-arrow-down-line"></i> PNG
+                        </button>
+                    </div>
                 </div>
 
                 {{-- Filters --}}
@@ -363,7 +367,7 @@
 
                 </div>
 
-                <div class="flex gap-4 h-70" wire:ignore>
+                <div class="flex gap-4 h-90" wire:ignore>
                     <div class="w-1/2 h-full">
                         <canvas id="pretestChart" class="w-full h-full"></canvas>
                     </div>
@@ -372,14 +376,46 @@
                     </div>
                 </div>
             </div>
+
             {{-- Modules --}}
             <div class="bg-white rounded-lg shadow p-6 relative">
-                {{-- Download Button --}}
-                <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center justify-between mb-2 md:hidden lg:hidden">
                     <h3 class="text-sm font-semibold text-gray-700">Overall Module Attempts per Level</h3>
+                    <div class="flex gap-2">
+                        {{-- Export Excel Button --}}
+                        <button id="exportModuleExcel"
+                                class="text-white hover:text-white flex items-center cursor-pointer gap-1 text-[12px] 
+                                    bg-green-500 hover:bg-green-600 px-3 py-2 rounded shadow-sm">
+                            <i class="ri-export-line"></i> Export Excel
+                        </button>
+
+                        {{-- PNG Button --}}
+                        <button id="downloadModuleChart"
+                                class="text-gray-600 hover:text-gray-800 flex items-center cursor-pointer gap-1 text-[12px] 
+                                    bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded shadow-sm">
+                            <i class="ri-arrow-down-line"></i> PNG
+                        </button>
+                    </div>
+                </div>
+
+                {{-- Module Header --}}
+                <div class="mb-2 hidden md:block lg:block">
+                    <h3 class="text-sm font-semibold text-gray-700">Overall Module Attempts per Level</h3>
+                </div>
+
+                {{-- Buttons Row --}}
+                <div class="flex justify-start gap-2 mb-2 hidden md:flex lg:flex">
+                    {{-- Export Excel Button --}}
+                    <button id="exportModuleExcel"
+                            class="flex items-center justify-center text-white hover:text-white gap-1 text-[12px] 
+                                bg-green-500 hover:bg-green-600 px-3 py-2 rounded shadow-sm">
+                        <i class="ri-export-line"></i> Export Excel
+                    </button>
+
+                    {{-- PNG Button --}}
                     <button id="downloadModuleChart"
-                            class="text-gray-600 hover:text-gray-800 flex items-center cursor-pointer gap-1 text-[12px] 
-                                bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded shadow-sm">
+                            class="flex items-center justify-center text-gray-600 hover:text-gray-800 gap-1 text-[12px] 
+                                bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded shadow-sm">
                         <i class="ri-arrow-down-line"></i> PNG
                     </button>
                 </div>
