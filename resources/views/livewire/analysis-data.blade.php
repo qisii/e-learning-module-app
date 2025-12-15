@@ -383,14 +383,14 @@
                     <h3 class="text-sm font-semibold text-gray-700">Overall Module Attempts per Level</h3>
                     <div class="flex gap-2">
                         {{-- Export Excel Button --}}
-                        <button id="exportModuleExcel"
+                        <button id="exportModuleExcelSm"
                                 class="text-white hover:text-white flex items-center cursor-pointer gap-1 text-[12px] 
                                     bg-green-500 hover:bg-green-600 px-3 py-2 rounded shadow-sm">
                             <i class="ri-export-line"></i> Export Excel
                         </button>
 
                         {{-- PNG Button --}}
-                        <button id="downloadModuleChart"
+                        <button id="downloadModuleChartSm"
                                 class="text-gray-600 hover:text-gray-800 flex items-center cursor-pointer gap-1 text-[12px] 
                                     bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded shadow-sm">
                             <i class="ri-arrow-down-line"></i> PNG
@@ -406,14 +406,14 @@
                 {{-- Buttons Row --}}
                 <div class="flex justify-start gap-2 mb-2 hidden md:flex lg:flex">
                     {{-- Export Excel Button --}}
-                    <button id="exportModuleExcel"
+                    <button id="exportModuleExcelLg"
                             class="flex items-center justify-center text-white cursor-pointer hover:text-white gap-1 text-[12px] 
                                 bg-green-500 hover:bg-green-600 px-3 py-2 rounded shadow-sm">
                         <i class="ri-export-line"></i> Export Excel
                     </button>
 
                     {{-- PNG Button --}}
-                    <button id="downloadModuleChart"
+                    <button id="downloadModuleChartLg"
                             class="flex items-center justify-center text-gray-600 cursor-pointer hover:text-gray-800 gap-1 text-[12px] 
                                 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded shadow-sm">
                         <i class="ri-arrow-down-line"></i> PNG

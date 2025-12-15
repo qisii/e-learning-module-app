@@ -553,17 +553,22 @@ document.getElementById('exportExcelBtn')?.addEventListener('click', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    const downloadModuleBtn = document.getElementById('downloadModuleChart');
+    const downloadBtns = [
+        document.getElementById('downloadModuleChartSm'),
+        document.getElementById('downloadModuleChartLg')
+    ];
 
-    if (downloadModuleBtn) {
-        downloadModuleBtn.addEventListener('click', () => {
-            downloadChartPNG(
-                moduleChartInstance,
-                'Overall Module Attempts per Level',
-                'overall-module-attempts.png'
-            );
-        });
-    }
+    downloadBtns.forEach(btn => {
+        if (btn) {
+            btn.addEventListener('click', () => {
+                downloadChartPNG(
+                    moduleChartInstance,
+                    'Overall Module Attempts per Level',
+                    'overall-module-attempts.png'
+                );
+            });
+        }
+    });
 });
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -693,41 +698,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Export Module Chart Excel
-    const exportModuleBtn = document.getElementById('exportModuleExcel');
-    if (exportModuleBtn) {
-        exportModuleBtn.addEventListener('click', () => {
-            const rows = [
-                ['Module Attempts per Level'],
-                ['Level', 'Total Attempts', 'Full Name', 'Username', 'Grade Level', 'Section', 'Created At', 'User Attempts']
-            ];
+    const exportBtns = [
+        document.getElementById('exportModuleExcelSm'),
+        document.getElementById('exportModuleExcelLg')
+    ];
 
-            Object.entries(moduleRawData).forEach(([levelId, levelData]) => {
-                const totalAttempts = levelData.totalAttempts;
-                const users = levelData.users || [];
-                if (users.length) {
-                    users.forEach(u => {
-                        rows.push([
-                            levelId,
-                            totalAttempts,
-                            u.user,
-                            u.username,
-                            u.grade_level,
-                            u.section,
-                            u.created_at,
-                            u.totalAttempts
-                        ]);
-                    });
-                } else {
-                    rows.push([levelId, totalAttempts, '', '', '', '', '', '']);
-                }
+    exportBtns.forEach(btn => {
+        if (btn) {
+            btn.addEventListener('click', () => {
+                const rows = [
+                    ['Module Attempts per Level'],
+                    ['Level', 'Total Attempts', 'Full Name', 'Username', 'Grade Level', 'Section', 'Created At', 'User Attempts']
+                ];
+
+                Object.entries(moduleRawData).forEach(([levelId, levelData]) => {
+                    const totalAttempts = levelData.totalAttempts;
+                    const users = levelData.users || [];
+                    if (users.length) {
+                        users.forEach(u => {
+                            rows.push([
+                                levelId,
+                                totalAttempts,
+                                u.user,
+                                u.username,
+                                u.grade_level,
+                                u.section,
+                                u.created_at,
+                                u.totalAttempts
+                            ]);
+                        });
+                    } else {
+                        rows.push([levelId, totalAttempts, '', '', '', '', '', '']);
+                    }
+                });
+
+                const ws = XLSX.utils.aoa_to_sheet(rows);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Module Attempts');
+                XLSX.writeFile(wb, 'module-attempts.xlsx');
             });
-
-            const ws = XLSX.utils.aoa_to_sheet(rows);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Module Attempts');
-            XLSX.writeFile(wb, 'module-attempts.xlsx');
-        });
-    }
+        }
+    });
 });
 
 
