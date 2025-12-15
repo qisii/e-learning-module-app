@@ -407,14 +407,14 @@
                 <div class="flex justify-start gap-2 mb-2 hidden md:flex lg:flex">
                     {{-- Export Excel Button --}}
                     <button id="exportModuleExcel"
-                            class="flex items-center justify-center text-white hover:text-white gap-1 text-[12px] 
+                            class="flex items-center justify-center text-white cursor-pointer hover:text-white gap-1 text-[12px] 
                                 bg-green-500 hover:bg-green-600 px-3 py-2 rounded shadow-sm">
                         <i class="ri-export-line"></i> Export Excel
                     </button>
 
                     {{-- PNG Button --}}
                     <button id="downloadModuleChart"
-                            class="flex items-center justify-center text-gray-600 hover:text-gray-800 gap-1 text-[12px] 
+                            class="flex items-center justify-center text-gray-600 cursor-pointer hover:text-gray-800 gap-1 text-[12px] 
                                 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded shadow-sm">
                         <i class="ri-arrow-down-line"></i> PNG
                     </button>
