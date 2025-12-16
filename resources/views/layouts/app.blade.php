@@ -23,7 +23,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.css" integrity="sha512-kJlvECunwXftkPwyvHbclArO8wszgBGisiLeuDFwNM8ws+wKIw0sv1os3ClWZOcrEB2eRXULYUsm8OVRGJKwGA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
-    @vite(['resources/js/app.js'])
+    @vite([
+        'resources/js/app.js',
+        'resources/js/module-handout.js'
+    ])
 
     {{-- with Alphine JS --}}
     @livewireStyles

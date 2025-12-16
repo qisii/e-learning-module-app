@@ -42,7 +42,7 @@ class ModuleHandout extends Component
                 [
                     'folder_id' => $folder->id,
                     'level_id'  => $level_id,
-                    'user_id'   => Auth::id(), // safer than Auth::user()->id
+                    'user_id'   => Auth::id(),
                 ],
                 [
                     'title' => null
@@ -318,8 +318,6 @@ class ModuleHandout extends Component
                     return;
                 }
 
-                // Optional: you can still calculate size if you want to log it or warn the user
-                // $sizeKB = strlen($imageData) / 1024;
             }
 
             // Save content
