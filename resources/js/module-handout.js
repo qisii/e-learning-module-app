@@ -641,6 +641,31 @@ function showObjectiveDialog(message) {
 //     }, 250); // match CSS duration
 // }
 
+// function closeObjectiveDialog() {
+//     const dialog = document.getElementById('objective-dialog');
+//     const box = document.getElementById('objective-dialog-box');
+
+//     box.classList.remove('objective-dialog-open');
+//     box.classList.add('objective-dialog-close');
+
+//     setTimeout(() => {
+//         dialog.classList.add('hidden');
+//         dialog.classList.remove('flex');
+
+//         // SHOW PAGINATION AFTER OBJECTIVE COMPLETION
+//         const pagination = document.getElementById('pagination-wrapper');
+//         if (pagination) {
+//             pagination.classList.remove('hidden');
+//             // pagination.classList.add('flex', 'justify-center'); 
+//         }
+
+//         // HIDE hidden objectives after completion
+//         const hiddenObjectivesSection = document.querySelector('#module-wrapper .hidden-objective-glow')?.closest('div.mt-12');
+//         if (hiddenObjectivesSection) hiddenObjectivesSection.style.display = 'none';
+
+//     }, 250);
+// }
+
 function closeObjectiveDialog() {
     const dialog = document.getElementById('objective-dialog');
     const box = document.getElementById('objective-dialog-box');
@@ -656,15 +681,19 @@ function closeObjectiveDialog() {
         const pagination = document.getElementById('pagination-wrapper');
         if (pagination) {
             pagination.classList.remove('hidden');
-            // pagination.classList.add('flex', 'justify-center'); 
         }
 
         // HIDE hidden objectives after completion
         const hiddenObjectivesSection = document.querySelector('#module-wrapper .hidden-objective-glow')?.closest('div.mt-12');
         if (hiddenObjectivesSection) hiddenObjectivesSection.style.display = 'none';
 
+        // SHOW BOTTOM BUTTONS IF LAST PAGE
+        const bottomButtons = document.getElementById('bottom-buttons-wrapper');
+        if (bottomButtons) bottomButtons.style.display = 'block';
+
     }, 250);
 }
+
 
 
 function launchConfetti() {

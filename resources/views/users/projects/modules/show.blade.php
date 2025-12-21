@@ -155,59 +155,61 @@
         @endif
 
         {{-- BOTTOM BUTTONS — ONLY ON LAST PAGE --}}
-        @if ($pages->onLastPage() && !$hasHiddenObjectives)
-            <p class="text-gray-500 text-[13px] text-center mt-10" style="font-family: 'Inter', sans-serif;">
-                You may access other modules.
-            </p>
+        @if ($pages->onLastPage())
+            <div id="bottom-buttons-wrapper" style="{{ $hasHiddenObjectives ? 'display:none;' : '' }}">
+                <p class="text-gray-500 text-[13px] text-center mt-10" style="font-family: 'Inter', sans-serif;">
+                    You may access other modules.
+                </p>
 
-            <div class="flex flex-col items-center mt-4 px-4">
-                {{-- Other Module buttons --}}
-                @if ($level_id == 1)
+                <div class="flex flex-col items-center mt-4 px-4">
+                    {{-- Other Module buttons --}}
+                    @if ($level_id == 1)
+                        <form class="module-form" action="{{ route('projects.module.attempt.store', ['handout_id' => $handout->id]) }}" method="post">
+                            @csrf
+                            <input type="hidden" name="seconds" class="secondsInput" value="0">
+                            <input type="hidden" name="next_page" value="{{ route('projects.module.show', ['project_id' => $project_id, 'level_id' => 2]) }}">
+                            <a href="{{ route('projects.module.show', ['project_id' => $project_id, 'level_id' => 2]) }}"
+                                class="submit-link inline-flex items-center justify-center text-sm py-3 mb-3
+                                    bg-gradient-to-r from-blue-500 to-blue-900 bg-[length:150%_150%] bg-left 
+                                    text-white rounded-lg transition-all duration-500 
+                                    ease-in-out w-full lg:w-60 md:w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
+                                style="font-family: 'Inter', sans-serif;">
+                                Check Average Module
+                                <i class="ri-arrow-right-line ml-3"></i>
+                            </a>
+                        </form>
+                    @elseif ($level_id == 2)
+                        <form class="module-form" action="{{ route('projects.module.attempt.store', ['handout_id' => $handout->id]) }}" method="post">
+                            @csrf
+                            <input type="hidden" name="seconds" class="secondsInput" value="0">
+                            <input type="hidden" name="next_page" value="{{ route('projects.module.show', ['project_id' => $project_id, 'level_id' => 3]) }}">
+                            <a href="{{ route('projects.module.show', ['project_id' => $project_id, 'level_id' => 3]) }}"
+                                class="submit-link inline-flex items-center justify-center text-sm py-3 mb-3
+                                    bg-gradient-to-r from-blue-500 to-blue-900 bg-[length:150%_150%] bg-left 
+                                    text-white rounded-lg transition-all duration-500 
+                                    ease-in-out w-full lg:w-60 md:w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
+                                style="font-family: 'Inter', sans-serif;">
+                                Check Hard Module
+                                <i class="ri-arrow-right-line ml-3"></i>
+                            </a>
+                        </form>
+                    @endif
+                    {{-- Post Test Button --}}
                     <form class="module-form" action="{{ route('projects.module.attempt.store', ['handout_id' => $handout->id]) }}" method="post">
                         @csrf
                         <input type="hidden" name="seconds" class="secondsInput" value="0">
-                        <input type="hidden" name="next_page" value="{{ route('projects.module.show', ['project_id' => $project_id, 'level_id' => 2]) }}">
-                        <a href="{{ route('projects.module.show', ['project_id' => $project_id, 'level_id' => 2]) }}"
-                            class="submit-link inline-flex items-center justify-center text-sm py-3 mb-3
+                        <input type="hidden" name="next_page" value="{{ route('projects.welcome.posttest', $project_id) }}">
+                        <a href="{{ route('projects.welcome.posttest', $project_id) }}"
+                            class="submit-link inline-flex items-center justify-center text-sm py-3
                                 bg-gradient-to-r from-blue-500 to-blue-900 bg-[length:150%_150%] bg-left 
                                 text-white rounded-lg transition-all duration-500 
                                 ease-in-out w-full lg:w-60 md:w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
                             style="font-family: 'Inter', sans-serif;">
-                            Check Average Module
+                            Continue to Post Test
                             <i class="ri-arrow-right-line ml-3"></i>
                         </a>
                     </form>
-                @elseif ($level_id == 2)
-                    <form class="module-form" action="{{ route('projects.module.attempt.store', ['handout_id' => $handout->id]) }}" method="post">
-                        @csrf
-                        <input type="hidden" name="seconds" class="secondsInput" value="0">
-                        <input type="hidden" name="next_page" value="{{ route('projects.module.show', ['project_id' => $project_id, 'level_id' => 3]) }}">
-                        <a href="{{ route('projects.module.show', ['project_id' => $project_id, 'level_id' => 3]) }}"
-                            class="submit-link inline-flex items-center justify-center text-sm py-3 mb-3
-                                bg-gradient-to-r from-blue-500 to-blue-900 bg-[length:150%_150%] bg-left 
-                                text-white rounded-lg transition-all duration-500 
-                                ease-in-out w-full lg:w-60 md:w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
-                            style="font-family: 'Inter', sans-serif;">
-                            Check Hard Module
-                            <i class="ri-arrow-right-line ml-3"></i>
-                        </a>
-                    </form>
-                @endif
-                {{-- Post Test Button --}}
-                <form class="module-form" action="{{ route('projects.module.attempt.store', ['handout_id' => $handout->id]) }}" method="post">
-                    @csrf
-                    <input type="hidden" name="seconds" class="secondsInput" value="0">
-                    <input type="hidden" name="next_page" value="{{ route('projects.welcome.posttest', $project_id) }}">
-                    <a href="{{ route('projects.welcome.posttest', $project_id) }}"
-                        class="submit-link inline-flex items-center justify-center text-sm py-3
-                            bg-gradient-to-r from-blue-500 to-blue-900 bg-[length:150%_150%] bg-left 
-                            text-white rounded-lg transition-all duration-500 
-                            ease-in-out w-full lg:w-60 md:w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
-                        style="font-family: 'Inter', sans-serif;">
-                        Continue to Post Test
-                        <i class="ri-arrow-right-line ml-3"></i>
-                    </a>
-                </form>
+                </div>
             </div>
         @endif
 
