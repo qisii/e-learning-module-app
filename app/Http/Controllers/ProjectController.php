@@ -266,7 +266,7 @@ class ProjectController extends Controller
                         $q->orderBy('sort_order');
                     }])
                     ->orderBy('page_number')
-                    ->paginate(1)
+                    ->simplePaginate(1)
                 : collect();
 
         return view('users.projects.modules.show', compact(

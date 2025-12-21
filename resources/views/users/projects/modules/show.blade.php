@@ -45,6 +45,12 @@
             $currentPageComponentsCount = $pages->first() ? $pages->first()->components->count() : 0;
             $isFirstPage = $pages->currentPage() === 1;
             $hasContent = $currentPageComponentsCount > 0;
+
+            // collect hidden objectives
+            $hiddenObjectives = [];
+            $objectiveTargets = [];
+
+            $hasHiddenObjectives = false;
         @endphp
 
         @if($isFirstPage && !$hasContent)
@@ -69,11 +75,14 @@
             </div>
 
             {{-- MAIN WRAPPER --}}
-            <div id="module-wrapper" class="relative w-[90%] mx-auto max-h-[1056px] overflow-auto no-scrollbar mt-[4%] px-0 lg:px-5 py-10 rounded-lg bg-white shadow-md bg-cover bg-center">
+            <div id="module-wrapper"
+                class="relative w-[90%] mx-auto max-h-[1056px] overflow-auto no-scrollbar mt-[4%] px-0 lg:px-5 py-10 rounded-lg bg-white shadow-md bg-cover bg-center">
 
                 {{-- Title Header --}}
                 <div class="text-center mb-6">
-                    <h2 class="text-lg font-bold text-gray-800 font-secondary">Module Handout</h2>
+                    <h2 class="text-lg font-bold text-gray-800 font-secondary">
+                        Module Handout
+                    </h2>
                 </div>
 
                 {{-- HANDOUT CONTENT --}}
@@ -83,12 +92,31 @@
                             @foreach ($page->components as $component)
                                 @php
                                     $data = json_decode($component->data, true);
-                                    $html = $data['content'] ?? '';
                                 @endphp
 
-                                <div class="prose max-w-none">
-                                    {!! $html !!}
-                                </div>
+                                {{-- TEXT COMPONENT --}}
+                                @if ($component->type === 'text')
+                                    <div class="prose max-w-none handout-text">
+                                        {!! $data['content'] ?? '' !!}
+                                    </div>
+                                {{-- HIDDEN OBJECTIVE --}}
+                                @elseif ($component->type === 'objective')
+                                    @php
+                                        $hiddenObjectives[] = $data;
+                                        $hasHiddenObjectives = true;
+
+                                        if (!empty($data['targets'])) {
+                                            foreach ($data['targets'] as $target) {
+                                                $objectiveTargets[] = [
+                                                    'id' => $target['target_id'],
+                                                    'content' => $target['content'],
+                                                    'completion_message' => $data['completion_message'] ?? 'Objective completed!'
+                                                ];
+
+                                            }
+                                        }
+                                    @endphp
+                                @endif
                             @endforeach
                         @endforeach
                     @else
@@ -98,20 +126,36 @@
                         </div>
                     @endif
                 </div>
+
+                {{-- HIDDEN OBJECTIVES DISPLAY --}}
+                @if (!empty($hiddenObjectives))
+                    <div class="mt-12 mx-8 border-t pt-6">
+                        <div class="space-y-4">
+                            @foreach ($hiddenObjectives as $objective)
+                                <div
+                                    class="p-4 bg-white border-2 border-orange-200 rounded-lg
+                                        font-secondary shadow-sm hidden-objective-glow">
+                                    <p class="text-sm text-gray-700">
+                                        {{ $objective['instruction'] ?? 'Objective instruction not available.' }}
+                                    </p>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
             </div>
         @endif
 
+        {{-- PAGINATION (hidden if there are hidden objectives) --}}
         @if($hasContent)
-            {{-- PAGINATION ALWAYS VISIBLE --}}
-            <div class="w-[90%] mx-auto mt-8">
+            <div id="pagination-wrapper" class="w-[90%] mx-auto mt-8 {{ $hasHiddenObjectives ? 'hidden' : '' }}">
                 {{ $pages->links() }}
             </div>
         @endif
 
-        {{-- BOTTOM BUTTONS — ONLY ON LAST PAGE AND ONLY IF CONTENT EXISTS --}}
-        @if ($pages->onLastPage())
-        {{-- $hasContent --}}
-
+        {{-- BOTTOM BUTTONS — ONLY ON LAST PAGE --}}
+        @if ($pages->onLastPage() && !$hasHiddenObjectives)
             <p class="text-gray-500 text-[13px] text-center mt-10" style="font-family: 'Inter', sans-serif;">
                 You may access other modules.
             </p>
@@ -172,15 +216,79 @@
         <div class="w-[90%] lg:w-[80%] mx-auto mt-[20%] lg:mt-[10%] flex flex-col items-center justify-center text-center">
             <div class="text-7xl mb-6 animate-bounce">📘</div>
 
-            <h1 class="text-3xl lg:text-4xl font-extrabold text-gray-800 mb-3" style="font-family: 'Inter', sans-serif;">
+            <h1 class="text-3xl lg:text-4xl font-extrabold text-gray-800 mb-3">
                 Module not found
             </h1>
 
-            <p class="text-gray-600 text-lg mb-8" style="font-family: 'Inter', sans-serif;">
+            <p class="text-gray-600 text-lg mb-8">
                 The module is on its way. Please check back soon once the content has been added.
             </p>
         </div>
     @endif
+
+    {{-- Hidden Objective Completion Dialog --}}
+    <div id="objective-dialog"
+     class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+
+        <div
+            id="objective-dialog-box"
+            class="relative w-full max-w-2xl bg-white rounded-xl shadow-2xl
+                flex overflow-hidden m-3">
+
+            {{-- LEFT: Character / Image --}}
+            <div class="w-1/3 bg-gradient-to-b from-orange-100 to-orange-200
+                        flex items-end justify-center p-4">
+                <img
+                    src="{{ asset('assets/images/illustration5.png') }}"
+                    alt="Guide"
+                    class="h-full object-contain drop-shadow-lg">
+            </div>
+
+            {{-- RIGHT: Dialogue --}}
+            <div class="w-2/3 p-6 flex flex-col justify-between">
+
+                {{-- Title --}}
+                <div class="mb-2">
+                    <h3 class="lg:text-lg text-[12px] lg:text-lg font-bold text-gray-800 font-secondary">
+                        🎯 Objective Completed
+                    </h3>
+                </div>
+
+                {{-- Message Bubble --}}
+                <div
+                    class="relative bg-gray-100 rounded-lg p-2 lg:p-4 text-[12px] lg:text-sm text-gray-700
+                        shadow-inner before:content-['']
+                        before:absolute before:-left-2 before:top-6
+                        before:w-0 before:h-0
+                        before:border-t-8 before:border-b-8
+                        before:border-r-8
+                        before:border-t-transparent
+                        before:border-b-transparent
+                        before:border-r-gray-100">
+
+                    <p id="objective-dialog-message" class="leading-relaxed"></p>
+                </div>
+
+                {{-- Actions --}}
+                <div class="mt-4 text-right">
+                    <button
+                        id="objective-dialog-ok"
+                        type="button"
+                        class="px-3 py-2 lg:px-5 text-[10px] cursor-pointer lg:text-md
+                            bg-orange-500 text-white rounded-lg
+                            hover:bg-orange-600 transition font-semibold font-secondary">
+                        Continue
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <canvas
+        id="confetti-canvas"
+        class="fixed inset-0 pointer-events-none z-50 hidden">
+    </canvas>
 
     {{-- TIMER SCRIPT --}}
     <script>
@@ -249,6 +357,9 @@
             const bgUrl = "{{ asset('assets/images') }}/" + bgImages[randomIndex];
             wrapper.style.backgroundImage = `url('${bgUrl}')`;
         }
+
+        // Hidden Objective
+        window.hiddenObjectiveTargets = @json($objectiveTargets);
     </script>
 
 

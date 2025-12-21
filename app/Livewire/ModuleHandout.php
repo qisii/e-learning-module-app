@@ -23,12 +23,15 @@ class ModuleHandout extends Component
     public $handoutScore;
     public $gdriveLink;
     public $gdriveTitle;
+    public $objectiveData = [];
+
 
     protected $listeners = [
         'reorderPages',
         'addComponentFromPalette',
         'reorderComponents',
         'saveTextComponent',
+        'saveObjectiveWithTargets',
     ];
 
     public function mount(Folder $folder, $level_id)
@@ -71,6 +74,17 @@ class ModuleHandout extends Component
             // Optional: dispatch flash message to inform user
             $this->dispatch('flashMessage', type: 'warning', message: 'A new handout was created due to missing data.');
         }
+
+        // Initialize objectiveData for existing objective components
+    foreach ($this->handout->pages as $page) {
+        foreach ($page->components as $component) {
+            if ($component->type === 'objective') {
+                $data = json_decode($component->data ?? '{}', true) ?? [];
+                $this->objectiveData[$component->id]['instruction'] = $data['instruction'] ?? '';
+                $this->objectiveData[$component->id]['completion_message'] = $data['completion_message'] ?? '';
+            }
+        }
+    }
 
     }
 
@@ -317,7 +331,6 @@ class ModuleHandout extends Component
                     $this->dispatch('suneditor:refresh');
                     return;
                 }
-
             }
 
             // Save content
@@ -340,8 +353,121 @@ class ModuleHandout extends Component
         }
     }
 
+    // public function saveObjectiveWithTargets($objective_id, $targets)
+    // {
+    //     $instruction = $this->objectiveData[$objective_id]['display_message'] ?? null;
+    //     $completion  = $this->objectiveData[$objective_id]['completion_message'] ?? null;
+
+    //     dd([
+    //         'objective_id'       => $objective_id,
+    //         'instruction'        => $instruction,
+    //         'completion_message' => $completion,
+    //         'targets'            => $targets,
+    //         'target_count'       => count($targets),
+    //     ]);
+    // }
+
+    // public function saveObjectiveWithTargets($objective_id, $selected_editor_component_id, $targets) {
+    //     $instruction = $this->objectiveData[$objective_id]['display_message'] ?? null;
+    //     $completion  = $this->objectiveData[$objective_id]['completion_message'] ?? null;
+    //     $selected_editor_component_id = (int) $selected_editor_component_id;
+
+    //     dd([
+    //         'objective_id'                => $objective_id,
+    //         'selected_editor_component_id'=> $selected_editor_component_id,
+    //         'instruction'                 => $instruction,
+    //         'completion_message'          => $completion,
+    //         'targets'                     => $targets,
+    //         'target_count'                => count($targets),
+    //     ]);
+
+    // }
+
+    public function saveObjectiveWithTargets($objective_id, $selected_editor_component_id, $targets) {
+        $instruction = $this->objectiveData[$objective_id]['instruction'] ?? null;
+        $completion  = $this->objectiveData[$objective_id]['completion_message'] ?? null;
+        $selected_editor_component_id = (int) $selected_editor_component_id;
+
+        // ✅ Find the OBJECTIVE component row
+        $component = HandoutComponent::find($objective_id);
+
+        if (! $component) {
+            $this->dispatch(
+                'flashMessage',
+                type: 'error',
+                message: 'Objective component not found.'
+            );
+            return;
+        }
+
+        // Build objective payload
+        $payload = [
+            'type'                  => 'objective',
+            'editor_component_id'   => $selected_editor_component_id,
+            'instruction'           => $instruction,
+            'completion_message'    => $completion,
+            'targets'               => $targets,
+        ];
+
+        // Save JSON to this row
+        $component->update([
+            'data' => json_encode($payload),
+        ]);
+
+        $this->dispatch('flashMessage',type: 'success', message: 'Hidden objective saved successfully!');
+        $this->dispatch('suneditor:refresh');
+    }
+
     public function render()
     {
         return view('livewire.module-handout');
     }
 }
+
+/*
+
+{
+    "display_message": "...",
+    "completion_message": "...",
+    "targets": [
+        {"component_id":"1-target-1","content":"..."},
+        {"component_id":"1-target-2","content":"..."}
+    ]
+}
+
+
+[
+    'display_message'   => '...',
+    'completion_message'=> '...',
+    'targets' => [
+        [
+            'component_id' => '...',
+            'content' => '<p>Target 1 content</p>'
+        ],
+        [
+            'component_id' => '...',
+            'content' => '<p>Target 2 content</p>'
+        ]
+    ]
+]
+
+
+FINAL
+
+"{\"type\":\"objective\",\"editor_component_id\":81,\"instruction\":\"\\u2728 Please click the sample text!\",\"completion_message\":\"\\ud83e\\udd73 Congrats! \",\"targets\":[{\"target_id\":\"82-target-1\",\"content\":\"<p>\\u200b<em><u><strong>sample<\\\/strong><\\\/u><\\\/em>\\u200b<br><\\\/p>\"}]}"
+
+Next.   Please add this.
+
+
+I want that if the target from hidden objective has an equal text or json in text editor inside.
+
+For example:
+
+Here is a sample of hidden objective 'data' column(targets):
+
+"{\"type\":\"objective\",\"editor_component_id\":81,\"instruction\":\"\\u2728 Please click the sample text!\",\"completion_message\":\"\\ud83e\\udd73 Congrats! \",\"targets\":[{\"target_id\":\"82-target-1\",\"content\":\"<p>\\u200b<em><u><strong>sample<\\\/strong><\\\/u><\\\/em>\\u200b<br><\\\/p>\"}]}"
+
+I cannot give you a sample of text editor 'data' column since it has images and I am using base64.
+
+
+*/

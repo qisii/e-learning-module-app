@@ -175,12 +175,9 @@
                                                         id="suneditor-{{ $component->id }}"
                                                         class="suneditor-textarea"
                                                         data-component-id="{{ $component->id }}"
+                                                        data-editor-type="main"
                                                     >{{ optional(json_decode($component->data, true))['content'] ?? '' }}</textarea>
                                                 </div>
-                                                <?php
-                                                // echo ini_get('upload_max_filesize'); // e.g., 2M
-                                                // echo ini_get('post_max_size');
-                                                ?>
                                             {{-- HIDDEN OBJECTIVE BLOCK --}}
                                             @elseif ($component->type === 'objective')
                                                 <div class="flex justify-between items-center mb-2 overflow-auto">
@@ -194,7 +191,7 @@
                                                     <div class="hover:text-green-700 text-green-500 ms-auto text-[13px]">
                                                         <button
                                                             type="button"
-                                                            wire:click="saveObjective({{ $component->id }})"
+                                                            onclick="saveObjectiveWithTargets({{ $component->id }})"
                                                             class="cursor-pointer"
                                                         >
                                                             <i class="ri-checkbox-circle-line"></i> Save
@@ -210,6 +207,43 @@
 
                                                 {{-- OBJECTIVE INPUTS --}}
                                                 <div class="space-y-3 p-3 border rounded-md bg-gray-50">
+                                                    {{-- Target Selection --}}
+                                                    <div>
+                                                        <label class="block text-xs text-gray-600 mb-1">Target Element(s)</label>
+
+                                                        <div class="flex items-center gap-2 mb-2">
+                                                            {{-- Select Editor --}}
+                                                            <button
+                                                                type="button"
+                                                                class="px-3 py-1 text-xs bg-gray-500 hover:bg-gray-600 text-white rounded select-editor-btn"
+                                                                data-objective-id="{{ $component->id }}"
+                                                            >
+                                                                Select Editor
+                                                            </button>
+
+                                                            {{-- Add Target --}}
+                                                            <button 
+                                                                type="button"
+                                                                class="px-3 py-1 text-xs bg-blue-500 text-white rounded select-target-btn opacity-50 cursor-not-allowed"
+                                                                data-objective-id="{{ $component->id }}"
+                                                                disabled
+                                                            >
+                                                                + Add Target
+                                                            </button>
+
+                                                            {{-- Reminder --}}
+                                                            <span class="text-[11px] text-gray-400">
+                                                                (Please select text only · Max 2 targets)
+                                                            </span>
+                                                        </div>
+
+                                                        {{-- TARGET LIST --}}
+                                                        <div
+                                                            class="target-list grid grid-cols-2 gap-2 mt-2"
+                                                            data-objective-id="{{ $component->id }}"
+                                                        >
+                                                        </div>
+                                                    </div>
 
                                                     {{-- Display Message --}}
                                                     <div>
@@ -217,23 +251,8 @@
                                                         <textarea 
                                                             class="w-full border rounded p-2 text-sm"
                                                             rows="1"
-                                                            wire:model.lazy="objectiveData.{{ $component->id }}.display_message"
+                                                            wire:model.defer="objectiveData.{{ $component->id }}.instruction"
                                                         ></textarea>
-                                                    </div>
-
-                                                    {{-- Target Selection --}}
-                                                    <div>
-                                                        <label class="block text-xs text-gray-600 mb-1">Target Element(s)</label>
-
-                                                        <div class="flex items-center gap-2 mb-2">
-                                                            <button 
-                                                                type="button"
-                                                                class="px-3 py-1 text-xs bg-blue-500 hover:bg-blue-600 text-white rounded"
-                                                                onclick="window.selectTargetForObjective({{ $component->id }})"
-                                                            >
-                                                                + Select Target
-                                                            </button>
-                                                        </div>
                                                     </div>
 
                                                     {{-- Completion Message --}}
@@ -242,7 +261,7 @@
                                                         <textarea 
                                                             class="w-full border rounded p-2 text-sm"
                                                             rows="2"
-                                                            wire:model.lazy="objectiveData.{{ $component->id }}.completion_message"
+                                                            wire:model.defer="objectiveData.{{ $component->id }}.completion_message"
                                                         ></textarea>
                                                     </div>
                                                 </div>
@@ -261,5 +280,19 @@
             </div>
         </div>
     </div>
-    
+    <!-- Custom alert container -->
+    <div id="custom-alert" class="fixed inset-0 flex items-center justify-center bg-black/50 hidden z-50 font-secondary">
+        <div class="bg-white p-5 rounded-lg shadow-lg w-[360px] h-[200px] flex flex-col justify-between text-center">
+            
+            <p id="custom-alert-message"
+            class="text-gray-800 overflow-y-auto">
+            </p>
+
+            <button id="custom-alert-ok"
+                    class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                OK
+            </button>
+        </div>
+    </div>
+
 </div>

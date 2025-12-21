@@ -36,24 +36,29 @@ function initSunEditors() {
     if (textarea.dataset.initialized) return;
 
     // create editor
-    const editor = SUNEDITOR.create(textarea, { // pass the element directly
+    const editorType = textarea.dataset.editorType || 'main';
+
+    const editor = SUNEDITOR.create(textarea, {
       width: '100%',
-      height: 500,
+      height: editorType === 'target' ? '15px' : 500,
       plugins,
-      buttonList: [
-        [
-          'undo', 'redo',
-          'font', 'fontSize',
-          'formatBlock',
-          'paragraphStyle',
-          'blockquote',
-          'bold', 'underline', 'italic', 'strike', 'subscript', 'superscript',
-          'fontColor', 'hiliteColor', 'textStyle',
-          'align', 'horizontalRule', 'list', 'lineHeight',
-          'table', 'link', 'image', 'video',
-          'fullScreen', 'showBlocks', 'codeView'
-        ]
-      ],
+      buttonList: editorType === 'target'
+        ? []
+        : [
+            [
+              'undo', 'redo',
+              'font', 'fontSize',
+              'formatBlock',
+              'paragraphStyle',
+              'blockquote',
+              'bold', 'underline', 'italic', 'strike',
+              'fontColor', 'hiliteColor',
+              'align', 'list',
+              'table', 'link', 'image',
+              'fullScreen', 'codeView'
+            ]
+          ],
+      resizingBar: editorType !== 'target',
     });
 
     // store reference
@@ -62,7 +67,6 @@ function initSunEditors() {
     // mark DOM as initialized
     textarea.dataset.initialized = 'true';
 
-    console.log('SunEditor initialized for component', componentId);
   });
 }
 
@@ -83,16 +87,6 @@ function getEditorContent(componentId) {
 window.getEditorContent = getEditorContent;
 window.initSunEditors = initSunEditors;
 window.destroyAllSunEditors = destroyAllSunEditors;
-
-// init on load
-// document.addEventListener('DOMContentLoaded', () => initSunEditors());
-
-// // re-init when your Livewire event fires
-// window.addEventListener('suneditor:refresh', () => {
-//   console.log('suneditor:refresh received');
-//   // tiny delay to let Livewire patch DOM
-//   setTimeout(() => initSunEditors(), 15);
-// });
 
 document.addEventListener('DOMContentLoaded', () => initSunEditors());
 
