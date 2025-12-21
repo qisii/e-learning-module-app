@@ -219,7 +219,8 @@ class ProjectController extends Controller
         
         return view('users.projects.post-test.show')
                 ->with('project', $project)
-                ->with('post_test', $post_test);
+                ->with('post_test', $post_test)
+                ->with('gdriveLink', $gdriveLink);
     }
 
     // ---------- MODULE HANDOUT ----------

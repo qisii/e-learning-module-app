@@ -154,13 +154,8 @@
             </div>
         @endif
 
-        {{-- BOTTOM BUTTONS — ONLY ON LAST PAGE AND FIRST PAGE HAS CONTENT --}}
-        @php
-            $firstPage = $pages->first();
-            $firstPageHasContent = $firstPage ? $firstPage->components->count() > 0 : false;
-        @endphp
-
-        @if ($pages->onLastPage() && $firstPageHasContent)
+        {{-- BOTTOM BUTTONS — ONLY ON LAST PAGE --}}
+        @if ($pages->onLastPage())
             <div id="bottom-buttons-wrapper" style="{{ $hasHiddenObjectives ? 'display:none;' : '' }}">
                 <p class="text-gray-500 text-[13px] text-center mt-10" style="font-family: 'Inter', sans-serif;">
                     You may access other modules.
