@@ -169,7 +169,7 @@
                             <input type="hidden" name="seconds" class="secondsInput" value="0">
                             <input type="hidden" name="next_page" value="{{ route('projects.module.show', ['project_id' => $project_id, 'level_id' => 2]) }}">
                             <a href="{{ route('projects.module.show', ['project_id' => $project_id, 'level_id' => 2]) }}"
-                                class="submit-link inline-flex items-center justify-center text-sm py-3 mb-3
+                                class="submit-link inline-flex items-center justify-center text-sm py-3 px-5 mb-3
                                     bg-gradient-to-r from-blue-500 to-blue-900 bg-[length:150%_150%] bg-left 
                                     text-white rounded-lg transition-all duration-500 
                                     ease-in-out w-full lg:w-60 md:w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
@@ -184,7 +184,7 @@
                             <input type="hidden" name="seconds" class="secondsInput" value="0">
                             <input type="hidden" name="next_page" value="{{ route('projects.module.show', ['project_id' => $project_id, 'level_id' => 3]) }}">
                             <a href="{{ route('projects.module.show', ['project_id' => $project_id, 'level_id' => 3]) }}"
-                                class="submit-link inline-flex items-center justify-center text-sm py-3 mb-3
+                                class="submit-link inline-flex items-center justify-center text-sm py-3 px-5 mb-3
                                     bg-gradient-to-r from-blue-500 to-blue-900 bg-[length:150%_150%] bg-left 
                                     text-white rounded-lg transition-all duration-500 
                                     ease-in-out w-full lg:w-60 md:w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
@@ -200,7 +200,7 @@
                         <input type="hidden" name="seconds" class="secondsInput" value="0">
                         <input type="hidden" name="next_page" value="{{ route('projects.welcome.posttest', $project_id) }}">
                         <a href="{{ route('projects.welcome.posttest', $project_id) }}"
-                            class="submit-link inline-flex items-center justify-center text-sm py-3
+                            class="submit-link inline-flex items-center justify-center text-sm py-3 px-5
                                 bg-gradient-to-r from-blue-500 to-blue-900 bg-[length:150%_150%] bg-left 
                                 text-white rounded-lg transition-all duration-500 
                                 ease-in-out w-full lg:w-60 md:w-60 mx-auto hover:bg-right hover:shadow-lg transform hover:-translate-y-1"
