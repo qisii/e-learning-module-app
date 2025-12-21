@@ -99,3 +99,89 @@ Livewire.hook('message.processed', () => {
 window.addEventListener('suneditor:refresh', () => {
     setTimeout(() => initSunEditors(), 10);
 });
+
+// USER HELP MODAL
+document.addEventListener('DOMContentLoaded', () => {
+    const helpBtn = document.getElementById('help-btn');
+    const modal = document.getElementById('help-modal');
+    const modalBox = document.getElementById('help-modal-box');
+    const closeBtn = document.getElementById('help-modal-close');
+    const okBtn = document.getElementById('help-modal-ok');
+
+    if (!helpBtn || !modal) return;
+
+    function openModal() {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex', 'help-backdrop-show');
+        modal.classList.remove('help-backdrop-hide');
+
+        modalBox.classList.add('help-modal-show');
+        modalBox.classList.remove('help-modal-hide');
+    }
+
+    function closeModal() {
+        modal.classList.add('help-backdrop-hide');
+        modal.classList.remove('help-backdrop-show');
+
+        modalBox.classList.add('help-modal-hide');
+        modalBox.classList.remove('help-modal-show');
+
+        // Wait for animation to finish before hiding
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }, 200);
+    }
+
+    helpBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        openModal();
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+    okBtn.addEventListener('click', closeModal);
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const helpBtn = document.getElementById('admin-help-btn');
+    const modal = document.getElementById('admin-help-modal');
+    const modalBox = document.getElementById('admin-help-modal-box');
+    const closeBtn = document.getElementById('admin-help-modal-close');
+    const okBtn = document.getElementById('admin-help-modal-ok');
+
+    if (!helpBtn || !modal) return;
+
+    function openModal() {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex', 'help-backdrop-show');
+        modalBox.classList.add('help-modal-show');
+    }
+
+    function closeModal() {
+        modal.classList.add('help-backdrop-hide');
+        modalBox.classList.add('help-modal-hide');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            modal.classList.remove('help-backdrop-show', 'help-backdrop-hide');
+            modalBox.classList.remove('help-modal-show', 'help-modal-hide');
+        }, 200);
+    }
+
+    helpBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        openModal();
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+    okBtn.addEventListener('click', closeModal);
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+});

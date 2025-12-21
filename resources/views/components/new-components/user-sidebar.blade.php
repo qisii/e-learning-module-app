@@ -51,9 +51,11 @@
                 <!-- Logout at bottom of scrollable region -->
                 <div class="py-6 border-t border-blue-900 font-[Inter] mt-auto">
                     <a href="#"
-                        class="flex items-center text-[13px] gap-3 px-4 py-3 rounded-lg hover:bg-[#0F2250] hover:text-blue-300">
+                    id="help-btn"
+                    class="flex items-center text-[13px] gap-3 px-4 py-3 rounded-lg hover:bg-[#0F2250] hover:text-blue-300">
                         <i class="ri-question-line text-[14px]"></i> Help
                     </a>
+
 
                     <form method="POST" action="{{ route('logout') }}" 
                         class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#0F2250] hover:text-[#EF4444] cursor-pointer">
@@ -74,13 +76,5 @@
         class="fixed inset-0 bg-black/50 z-30 lg:hidden"
     ></div>
 </div>
-
-<!-- Burger Button (Tablet & Mobile only) -->
-    {{-- <button 
-        @click="open = !open" 
-        class="lg:hidden fixed top-4 left-4 z-50 bg-[#0B1A3F] text-white p-2 rounded-md focus:outline-none"
-    >
-        <i class="ri-menu-line text-2xl"></i>
-    </button> --}}
 
     

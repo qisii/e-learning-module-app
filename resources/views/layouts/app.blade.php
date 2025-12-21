@@ -74,6 +74,234 @@
         <!-- Page Content -->
         <div class="flex-1 bg-[#F3F4F6] overflow-auto no-scrollbar">
             @yield('content')
+
+            {{-- USER HELP MODAL --}}
+            <div id="help-modal"
+                class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center">
+
+                <div id="help-modal-box"
+                    class="bg-white rounded-xl shadow-2xl
+                            w-[90%] max-w-lg
+                            max-h-[80vh]
+                            flex flex-col
+                            p-6 relative">
+
+                    <!-- Close Button -->
+                    <button id="help-modal-close"
+                            class="absolute top-3 right-3 cursor-pointer
+                                text-gray-500 hover:text-gray-700 text-2xl font-bold">
+                        &times;
+                    </button>
+
+                    <!-- Header -->
+                    <h2 class="text-xl font-semibold mb-6 text-gray-800 font-secondary text-center">
+                        📘 Website Help Guide
+                    </h2>
+
+                    <!-- SCROLLABLE CONTENT -->
+                    <div class="flex-1 overflow-auto no-scrollbar pr-1">
+                        <div class="space-y-5">
+
+                            <!-- Account -->
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 min-w-[48px] min-h-[48px]
+                                            rounded-lg bg-blue-100 flex items-center justify-center">
+                                    <i class="ri-user-line text-blue-600 text-[22px]"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-800 font-secondary">Account</p>
+                                    <p class="text-sm text-gray-600 leading-relaxed">
+                                        Update your profile information. Make sure your
+                                        <strong>grade level</strong> and <strong>section</strong>
+                                        are correct.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Projects -->
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 min-w-[48px] min-h-[48px]
+                                            rounded-lg bg-indigo-100 flex items-center justify-center">
+                                    <i class="ri-folder-3-line text-indigo-600 text-[22px]"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-800 font-secondary">Projects</p>
+                                    <p class="text-sm text-gray-600 leading-relaxed">
+                                        Explore learning modules and take quizzes to test your knowledge.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Grades -->
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 min-w-[48px] min-h-[48px]
+                                            rounded-lg bg-green-100 flex items-center justify-center">
+                                    <i class="ri-table-line text-green-600 text-[22px]"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-800 font-secondary">Grades</p>
+                                    <p class="text-sm text-gray-600 leading-relaxed">
+                                        View your quiz scores.
+                                        <span class="text-red-500 font-medium">
+                                            Scores are deleted after 7 days.
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Comments -->
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 min-w-[48px] min-h-[48px]
+                                            rounded-lg bg-orange-100 flex items-center justify-center">
+                                    <i class="ri-chat-1-line text-orange-600 text-[22px]"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-800 font-secondary">
+                                        Comments & Suggestions
+                                    </p>
+                                    <p class="text-sm text-gray-600 leading-relaxed">
+                                        Share your feedback, ideas, or suggestions to help improve the website.
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="mt-6 text-right">
+                        <button id="help-modal-ok"
+                                class="px-4 py-2 cursor-pointer bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                            Got it!
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {{-- ADMIN HELP MODAL --}}
+            <div id="admin-help-modal"
+                class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center">
+
+                <div id="admin-help-modal-box"
+                    class="bg-white rounded-xl shadow-2xl
+                            w-[90%] max-w-lg
+                            max-h-[80vh]
+                            flex flex-col
+                            p-6 relative">
+
+                    <!-- Close -->
+                    <button id="admin-help-modal-close"
+                            class="absolute top-3 right-3 cursor-pointer
+                                text-gray-500 hover:text-gray-700 text-2xl font-bold">
+                        &times;
+                    </button>
+
+                    <h2 class="text-xl font-semibold mb-6 text-gray-800 font-secondary text-center">
+                        🛠️ Admin Help Guide
+                    </h2>
+
+                    <!-- SCROLLABLE CONTENT -->
+                    <div class="flex-1 overflow-auto no-scrollbar pr-1">
+                        <div class="space-y-5">
+                            <!-- Account -->
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 min-w-[48px] min-h-[48px]
+                                            rounded-lg bg-blue-100 flex items-center justify-center">
+                                    <i class="ri-user-line text-blue-600 text-[22px]"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-800 font-secondary">
+                                        Account
+                                    </p>
+                                    <p class="text-sm text-gray-600 leading-relaxed">
+                                        Update your profile information.
+                                        <br>
+                                        <span class="text-gray-500">
+                                            For accounts registered using Gmail, please make sure
+                                            to update your password.
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Projects -->
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 min-w-[48px] min-h-[48px]
+                                            rounded-lg bg-indigo-100 flex items-center justify-center">
+                                    <i class="ri-folder-3-line text-indigo-600 text-[22px]"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-800 font-secondary">
+                                        Projects
+                                    </p>
+                                    <p class="text-sm text-gray-600 leading-relaxed">
+                                        Create and manage learning modules and quizzes
+                                        that can be shared with students.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Grades -->
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 min-w-[48px] min-h-[48px]
+                                            rounded-lg bg-green-100 flex items-center justify-center">
+                                    <i class="ri-table-line text-green-600 text-[22px]"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-800 font-secondary">
+                                        Grades
+                                    </p>
+                                    <p class="text-sm text-gray-600 leading-relaxed">
+                                        View quiz scores and module attempts of students.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Analysis -->
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 min-w-[48px] min-h-[48px]
+                                            rounded-lg bg-purple-100 flex items-center justify-center">
+                                    <i class="ri-bar-chart-line text-purple-600 text-[22px]"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-800 font-secondary">
+                                        Analysis
+                                    </p>
+                                    <p class="text-sm text-gray-600 leading-relaxed">
+                                        Explore students’ learning growth and performance
+                                        using insights from modules and quizzes.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Comments -->
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 min-w-[48px] min-h-[48px]
+                                            rounded-lg bg-orange-100 flex items-center justify-center">
+                                    <i class="ri-chat-1-line text-orange-600 text-[22px]"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-800 font-secondary">
+                                        Comments & Suggestions
+                                    </p>
+                                    <p class="text-sm text-gray-600 leading-relaxed">
+                                        View feedback, comments, and suggestions submitted
+                                        by students.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 text-right">
+                        <button id="admin-help-modal-ok"
+                                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition cursor-pointer">
+                            Got it!
+                        </button>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </main>
 @livewireScripts

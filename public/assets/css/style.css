@@ -74,10 +74,11 @@ body {
     min-height: 150px;
 }
 
-
-
 .hidden-objective-btn {
     display: inline-block;
+    background: none;
+    border: none;
+    padding: 0;
     /* background: #fff7ed; */
     /* border: 2px solid #fb923c; */
     /* border-radius: 6px; */
@@ -162,6 +163,55 @@ body {
     }
 }
 
+/* Backdrop fade */
+.help-backdrop-show {
+    animation: helpBackdropIn 0.25s ease-out forwards;
+}
+
+.help-backdrop-hide {
+    animation: helpBackdropOut 0.2s ease-in forwards;
+}
+
+@keyframes helpBackdropIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes helpBackdropOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+/* Modal scale + fade */
+.help-modal-show {
+    animation: helpModalIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.help-modal-hide {
+    animation: helpModalOut 0.2s ease-in forwards;
+}
+
+@keyframes helpModalIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes helpModalOut {
+    from {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.9) translateY(10px);
+    }
+}
 
 
 

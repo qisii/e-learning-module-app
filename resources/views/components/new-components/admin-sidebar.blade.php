@@ -60,9 +60,11 @@
                 <!-- Logout Section -->
                 <div class="py-6 border-t border-blue-900 font-[Inter] mt-auto">
                     <a href="#"
-                        class="flex items-center text-[13px] gap-3 px-4 py-3 rounded-lg hover:bg-[#0F2250] hover:text-blue-300 transition-all duration-200">
+                    id="admin-help-btn"
+                    class="flex items-center text-[13px] gap-3 px-4 py-3 rounded-lg hover:bg-[#0F2250] hover:text-blue-300 transition-all duration-200">
                         <i class="ri-question-line text-[14px]"></i> Help
                     </a>
+
                     <form method="POST" action="{{ route('logout') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#0F2250] hover:text-[#EF4444] transition-all duration-200 cursor-pointer">
                         @csrf
                         <button type="submit" class="cursor-pointer text-[13px]">

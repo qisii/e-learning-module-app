@@ -421,7 +421,41 @@ window.saveObjectiveWithTargets = function (objectiveId) {
     });
 };
 
+document.addEventListener('click', (e) => {
+    const selectEditorBtn = e.target.closest('.select-editor-btn');
+    if (!selectEditorBtn) return;
 
+    const objectiveId = selectEditorBtn.dataset.objectiveId;
+    const targetList = document.querySelector(
+        `.target-list[data-objective-id="${objectiveId}"]`
+    );
+
+    if (!targetList) return;
+
+    // Remove default targets & placeholder
+    targetList.querySelectorAll('.default-target, .default-placeholder')
+        .forEach(el => el.remove());
+
+    // If list is empty, show fresh placeholder
+    if (!targetList.children.length) {
+        targetList.innerHTML = `
+            <div class="col-span-2 text-[11px] text-gray-400 italic">
+                Select text in the editor to add new targets.
+            </div>
+        `;
+    }
+
+    // Enable "Add Target" button
+    const addTargetBtn = document.querySelector(
+        `.select-target-btn[data-objective-id="${objectiveId}"]`
+    );
+
+    if (addTargetBtn) {
+        addTargetBtn.disabled = false;
+        addTargetBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        addTargetBtn.classList.add('cursor-pointer');
+    }
+});
 
 // HIDDEN OBJECTVE
 // document.addEventListener('DOMContentLoaded', () => {
@@ -503,6 +537,44 @@ window.saveObjectiveWithTargets = function (objectiveId) {
 //     });
 // });
 
+// document.addEventListener('DOMContentLoaded', () => {
+//     const targets = window.hiddenObjectiveTargets || [];
+//     console.log('Hidden targets:', targets);
+
+//     const handoutBlocks = document.querySelectorAll('.handout-text');
+//     console.log('Handout blocks:', handoutBlocks.length);
+
+//     if (!targets.length || !handoutBlocks.length) return;
+
+//     const removeZeroWidthSpaces = (str) => str.replace(/\u200B/g, '');
+
+//     handoutBlocks.forEach(container => {
+//         const tempDiv = document.createElement('div');
+//         tempDiv.innerHTML = container.innerHTML;
+
+//         targets.forEach(target => {
+//             const targetText = removeZeroWidthSpaces(target.content.replace(/<[^>]+>/g, '').trim());
+
+//             tempDiv.querySelectorAll('*').forEach(node => {
+//                 const nodeText = removeZeroWidthSpaces(node.textContent.trim());
+
+//                 if (nodeText === targetText) {
+//                     console.log('Match found for target:', target.id);
+
+//                     const button = document.createElement('button');
+//                     button.className = 'hidden-objective-btn';
+//                     button.dataset.targetId = target.id;
+//                     button.innerHTML = node.innerHTML; // preserve formatting
+
+//                     node.replaceWith(button);
+//                 }
+//             });
+//         });
+
+//         container.innerHTML = tempDiv.innerHTML;
+//     });
+// });
+
 document.addEventListener('DOMContentLoaded', () => {
     const targets = window.hiddenObjectiveTargets || [];
     console.log('Hidden targets:', targets);
@@ -512,35 +584,57 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!targets.length || !handoutBlocks.length) return;
 
-    const removeZeroWidthSpaces = (str) => str.replace(/\u200B/g, '');
+    const normalize = (str) =>
+        str
+            .replace(/\u200B/g, '')
+            .replace(/\s+/g, ' ')
+            .trim();
 
     handoutBlocks.forEach(container => {
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = container.innerHTML;
+        const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null, false);
 
-        targets.forEach(target => {
-            const targetText = removeZeroWidthSpaces(target.content.replace(/<[^>]+>/g, '').trim());
+        let textNode;
+        const nodesToReplace = [];
 
-            tempDiv.querySelectorAll('*').forEach(node => {
-                const nodeText = removeZeroWidthSpaces(node.textContent.trim());
+        while (textNode = walker.nextNode()) {
+            const parent = textNode.parentNode;
 
-                if (nodeText === targetText) {
-                    console.log('Match found for target:', target.id);
+            if (parent.closest('.hidden-objective-btn')) continue;
 
-                    const button = document.createElement('button');
-                    button.className = 'hidden-objective-btn';
-                    button.dataset.targetId = target.id;
-                    button.innerHTML = node.innerHTML; // preserve formatting
+            targets.forEach(target => {
+                const targetText = normalize(target.content.replace(/<[^>]+>/g, ''));
 
-                    node.replaceWith(button);
-                }
+                if (!targetText) return;
+
+                const nodeText = normalize(textNode.textContent);
+
+                const index = nodeText.indexOf(targetText);
+                if (index === -1) return;
+
+                nodesToReplace.push({ textNode, target, start: index, length: targetText.length });
             });
+        }
+
+        nodesToReplace.forEach(({ textNode, target, start, length }) => {
+            const originalText = Array.from(textNode.textContent); // split into Unicode-aware array
+            const beforeText = originalText.slice(0, start).join('');
+            const matchedText = originalText.slice(start, start + length).join('');
+            const afterText = originalText.slice(start + length).join('');
+
+            const before = document.createTextNode(beforeText);
+            const matchNode = document.createTextNode(matchedText);
+            const after = document.createTextNode(afterText);
+
+            const button = document.createElement('button');
+            button.className = 'hidden-objective-btn';
+            button.dataset.targetId = target.id;
+            button.appendChild(matchNode);
+
+            textNode.replaceWith(before, button, after);
         });
 
-        container.innerHTML = tempDiv.innerHTML;
     });
 });
-
 
 document.addEventListener('click', (e) => {
     const btn = e.target.closest('.hidden-objective-btn');
@@ -549,7 +643,6 @@ document.addEventListener('click', (e) => {
     const targetId = btn.dataset.targetId;
     handleObjectiveClick(targetId);
 });
-
 
 function handleObjectiveClick(targetId) {
     const target = window.hiddenObjectiveTargets.find(t => t.id === targetId);
@@ -693,8 +786,6 @@ function closeObjectiveDialog() {
 
     }, 250);
 }
-
-
 
 function launchConfetti() {
     const canvas = document.getElementById('confetti-canvas');

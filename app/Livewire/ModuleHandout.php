@@ -76,15 +76,15 @@ class ModuleHandout extends Component
         }
 
         // Initialize objectiveData for existing objective components
-    foreach ($this->handout->pages as $page) {
-        foreach ($page->components as $component) {
-            if ($component->type === 'objective') {
-                $data = json_decode($component->data ?? '{}', true) ?? [];
-                $this->objectiveData[$component->id]['instruction'] = $data['instruction'] ?? '';
-                $this->objectiveData[$component->id]['completion_message'] = $data['completion_message'] ?? '';
+        foreach ($this->handout->pages as $page) {
+            foreach ($page->components as $component) {
+                if ($component->type === 'objective') {
+                    $data = json_decode($component->data ?? '{}', true) ?? [];
+                    $this->objectiveData[$component->id]['instruction'] = $data['instruction'] ?? '';
+                    $this->objectiveData[$component->id]['completion_message'] = $data['completion_message'] ?? '';
+                }
             }
         }
-    }
 
     }
 

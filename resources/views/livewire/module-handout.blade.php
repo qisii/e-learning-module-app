@@ -180,6 +180,10 @@
                                                 </div>
                                             {{-- HIDDEN OBJECTIVE BLOCK --}}
                                             @elseif ($component->type === 'objective')
+                                                @php
+                                                    $objectivePayload = json_decode($component->data ?? '{}', true);
+                                                    $savedTargets = $objectivePayload['targets'] ?? [];
+                                                @endphp
                                                 <div class="flex justify-between items-center mb-2 overflow-auto">
 
                                                     {{-- LABEL --}}
@@ -239,10 +243,30 @@
 
                                                         {{-- TARGET LIST --}}
                                                         <div
-                                                            class="target-list grid grid-cols-2 gap-2 mt-2"
-                                                            data-objective-id="{{ $component->id }}"
-                                                        >
-                                                        </div>
+    class="target-list grid grid-cols-2 gap-2 mt-2"
+    data-objective-id="{{ $component->id }}"
+>
+
+    @forelse ($savedTargets as $target)
+        <div
+            class="default-target
+                   flex items-center justify-between
+                   bg-white border rounded px-2 py-1
+                   text-xs text-gray-700"
+            data-target-id="{{ $target['target_id'] }}"
+        >
+            <span class="truncate">
+                {!! strip_tags($target['content']) !!}
+            </span>
+        </div>
+    @empty
+        <div class="default-placeholder col-span-2 text-[11px] text-gray-400 italic">
+            No targets selected yet.
+        </div>
+    @endforelse
+
+</div>
+
                                                     </div>
 
                                                     {{-- Display Message --}}
