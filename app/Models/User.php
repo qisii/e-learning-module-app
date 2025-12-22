@@ -71,4 +71,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(HandoutAttempt::class, 'user_id', 'id');
     }
+
+    public function commentsSuggestions(){
+        return $this->hasMany(CommentSuggestion::class);
+    }
 }

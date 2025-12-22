@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AnalysisController;
+use App\Http\Controllers\CommentsSuggestionsController;
+use App\Http\Controllers\CommentSuggestionController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
@@ -73,6 +75,10 @@ Route::group(['middleware' => 'auth'], function(){
 
         # ANALYSIS
         Route::get('/analysis', [AnalysisController::class, 'index'])->name('analysis');
+
+        # COMMENTS & SUGGESTIONS
+        Route::get('/comments-suggestions', [CommentsSuggestionsController::class, 'index'])->name('comments.suggestions.index');
+        Route::get('/comments-suggestions/search', [CommentsSuggestionsController::class, 'search'])->name('comments.suggestions.search');
     });
 
     # USER
@@ -102,6 +108,11 @@ Route::group(['middleware' => 'auth'], function(){
         # SEARCH
         Route::get('/grades/pretests/search', [GradeController::class, 'searchPretest'])->name('grades.pretest.search');
         Route::get('/grades/post-tests/search', [GradeController::class, 'searchPostTest'])->name('grades.posttest.search');
+
+        # COMMENTS & SUGGESTIONS
+        Route::get('/comments-suggestions', [CommentSuggestionController::class, 'index'])->name('comments.suggestions.index');
+        Route::post('/comments-suggestions/store', [CommentSuggestionController::class, 'store'])->name('comments.suggestions.store');
+        Route::get('/comments-suggestions/message', [CommentSuggestionController::class, 'message'])->name('comments.suggestions.message');
     });
 });
 

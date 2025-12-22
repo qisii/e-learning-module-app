@@ -51,7 +51,7 @@
                         text-[#E5E7EB] text-[13px] hover:bg-[#0F2250] hover:text-blue-300 @yield('analysis-active')">
                         <i class="ri-bar-chart-line"></i> Analysis
                     </a>
-                    <a href="#" 
+                    <a href="{{ route('admin.comments.suggestions.index') }}" 
                         class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 
                         text-[#E5E7EB] text-[13px] hover:bg-[#0F2250] hover:text-blue-300 @yield('comment-active')">
                         <i class="ri-chat-1-line text-[14px]"></i> Comments & Suggestions
