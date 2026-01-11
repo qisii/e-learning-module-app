@@ -233,3 +233,16 @@ body {
     max-width: 100% !important;
     overflow-x: auto !important;
 } */
+
+
+/* IntroJS ONBOARDING */
+/* Optional: highlight only the target */
+.introjs-helperLayer {
+    box-shadow: none !important; 
+    /* box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5) !important; */
+    /* display: none !important; */
+}
+
+.introjs-skipbutton {
+    font-size: 12px !important;
+}

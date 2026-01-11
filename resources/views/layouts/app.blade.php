@@ -22,6 +22,9 @@
     {{-- Remix Icons --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.css" integrity="sha512-kJlvECunwXftkPwyvHbclArO8wszgBGisiLeuDFwNM8ws+wKIw0sv1os3ClWZOcrEB2eRXULYUsm8OVRGJKwGA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+    <!-- Intro.js CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
+
     {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
     @vite([
         'resources/js/app.js',
@@ -306,6 +309,9 @@
     </main>
 @livewireScripts
 @stack('scripts')
+<!-- Intro.js JS -->
+<script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
+
 </body>
 
 </html>

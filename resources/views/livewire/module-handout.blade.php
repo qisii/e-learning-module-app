@@ -13,6 +13,9 @@
                     <button 
                         wire:click.prevent="addPage" 
                         class="flex items-center w-full py-3 px-3 border-2 border-blue-400 rounded-lg hover:bg-blue-50 transition"
+                        id="intro-add-page"
+                        data-step="6"
+                        data-intro="Click Add Page first to create pages. Pages are clickable and their content will appear in the Handout area."
                     >
                         <i class="ri-add-line text-blue-500 text-lg mr-3"></i>
                         <span class="text-blue-600 font-medium text-[11px]">
@@ -23,7 +26,12 @@
             </div>
 
             {{-- Component buttons --}}
-            <div class="palette space-y-2 font-secondary text-[13px]">
+            <div class="palette space-y-2 font-secondary text-[13px]"
+                id="intro-components"
+                data-step="7"
+                data-intro="These are the Text Editor and Hidden Objective components. Drag and drop them inside a page to add content."
+                data-position="right"
+            >
                 <p class="text-gray-500 mb-2 font-medium text-[11px]">Drag & Drop to page</p>
                 <div class="palette-item flex items-center py-3 px-3 border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-50 cursor-grab" data-type="text">
                     <i class="ri-text align-middle text-gray-500 text-lg mr-3"></i>
@@ -40,7 +48,11 @@
 
         {{-- Main area --}}
         <div class="lg:col-span-6 col-span-1">
-            <div class="bg-[#DBEAFE] border border-blue-300 text-blue-800 rounded-lg py-4 px-5 mb-5">
+            <div class="bg-[#DBEAFE] border border-blue-300 text-blue-800 rounded-lg py-4 px-5 mb-5"
+                id="intro-note"
+                data-step="1"
+                data-intro="Please read this note carefully. It contains important reminders about links, saving changes, and media usage."
+            >
                 <div class="flex items-center">
                     <i class="ri-information-fill text-blue-600 text-lg mr-2"></i>
                     <h2 class="text-[15px] font-semibold" style="font-family: 'Poppins', sans-serif;">Please Note</h2>
@@ -68,7 +80,11 @@
             </div>
 
             {{-- Score Area --}}
-            <div class="bg-white shadow-lg rounded-lg px-5 py-3 mb-6 font-secondary">
+            <div class="bg-white shadow-lg rounded-lg px-5 py-3 mb-6 font-secondary"
+                id="intro-score-area"
+                data-step="4"
+                data-intro="Do not forget to set the handout score. This controls when the module handout becomes visible to students."
+            >
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2 flex-wrap">
                         <span class="text-gray-700 text-[12px]">
@@ -91,7 +107,11 @@
             </div>
 
             {{-- PDF gdrive --}}
-            <div class="bg-white shadow-lg rounded-lg px-5 py-3 mb-6 font-secondary">
+            <div class="bg-white shadow-lg rounded-lg px-5 py-3 mb-6 font-secondary"
+                id="intro-pdf-area"
+                data-step="5"
+                data-intro="Add a Google Drive PDF link here so students can download the module for offline use."
+            >
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2 flex-wrap">
                         <span class="text-gray-700 text-[12px]">
@@ -114,7 +134,12 @@
             </div>
 
             {{-- Handout Area --}}
-            <div class="bg-white shadow-lg rounded-lg p-6 mb-6 h-[1000px] overflow-auto no-scrollbar">
+            <div class="bg-white shadow-lg rounded-lg p-6 mb-6 h-[1000px] overflow-auto no-scrollbar"
+                id="intro-handout-area"
+                data-step="8"
+                data-position="left"
+                data-intro="This is the Handout area. Components and pages are sortable, so be careful when editing and rearranging content."
+            >
                 <div class="text-center mb-10">
                     <h2 class="text-lg font-bold text-gray-800 font-secondary">Module Handout</h2>
                     <span class="inline-block mt-2 px-4 py-1 bg-purple-100 text-purple-600 text-sm font-semibold rounded-full font-secondary">
@@ -243,30 +268,29 @@
 
                                                         {{-- TARGET LIST --}}
                                                         <div
-    class="target-list grid grid-cols-2 gap-2 mt-2"
-    data-objective-id="{{ $component->id }}"
->
+                                                            class="target-list grid grid-cols-2 gap-2 mt-2"
+                                                            data-objective-id="{{ $component->id }}"
+                                                        >
 
-    @forelse ($savedTargets as $target)
-        <div
-            class="default-target
-                   flex items-center justify-between
-                   bg-white border rounded px-2 py-1
-                   text-xs text-gray-700"
-            data-target-id="{{ $target['target_id'] }}"
-        >
-            <span class="truncate">
-                {!! strip_tags($target['content']) !!}
-            </span>
-        </div>
-    @empty
-        <div class="default-placeholder col-span-2 text-[11px] text-gray-400 italic">
-            No targets selected yet.
-        </div>
-    @endforelse
+                                                            @forelse ($savedTargets as $target)
+                                                                <div
+                                                                    class="default-target
+                                                                        flex items-center justify-between
+                                                                        bg-white border rounded px-2 py-1
+                                                                        text-xs text-gray-700"
+                                                                    data-target-id="{{ $target['target_id'] }}"
+                                                                >
+                                                                    <span class="truncate">
+                                                                        {!! strip_tags($target['content']) !!}
+                                                                    </span>
+                                                                </div>
+                                                            @empty
+                                                                <div class="default-placeholder col-span-2 text-[11px] text-gray-400 italic">
+                                                                    No targets selected yet.
+                                                                </div>
+                                                            @endforelse
 
-</div>
-
+                                                        </div>
                                                     </div>
 
                                                     {{-- Display Message --}}
