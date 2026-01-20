@@ -146,7 +146,7 @@
                                     <p class="text-sm text-gray-600 leading-relaxed">
                                         View your quiz scores.
                                         <span class="text-red-500 font-medium">
-                                            Scores are deleted after 7 days.
+                                            Scores are deleted after 3 months.
                                         </span>
                                     </p>
                                 </div>
@@ -256,6 +256,9 @@
                                     </p>
                                     <p class="text-sm text-gray-600 leading-relaxed">
                                         View quiz scores and module attempts of students.
+                                        <span class="text-red-500 font-medium">
+                                            Scores are deleted after 3 months.
+                                        </span>
                                     </p>
                                 </div>
                             </div>

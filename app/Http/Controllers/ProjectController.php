@@ -124,11 +124,20 @@ class ProjectController extends Controller
         
         $attempted = false;
 
-        if ($latestAttempt) {
-            $weekAgo = now()->subDays(7);
+        // if ($latestAttempt) {
+        //     $weekAgo = now()->subDays(7);
 
-            // If attempt is WITHIN last 7 days → show score
-            if ($latestAttempt->created_at->gte($weekAgo)) {
+        //     // If attempt is WITHIN last 7 days → show score
+        //     if ($latestAttempt->created_at->gte($weekAgo)) {
+        //         $attempted = true;
+        //         return $this->openPreScore($latestAttempt->id, $attempted);
+        //     }
+        // }
+        if ($latestAttempt) {
+            $oneMonthAgo = now()->subMonth();
+
+            // If attempt is WITHIN last 1 month → show score
+            if ($latestAttempt->created_at->gte($oneMonthAgo)) {
                 $attempted = true;
                 return $this->openPreScore($latestAttempt->id, $attempted);
             }
