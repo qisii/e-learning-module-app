@@ -131,6 +131,9 @@
                                     <p class="font-semibold text-gray-800 font-secondary">Projects</p>
                                     <p class="text-sm text-gray-600 leading-relaxed">
                                         Explore learning modules and take quizzes to test your knowledge.
+                                        <span class="text-indigo-500 font-medium">
+                                            Tests and modules reset after 1 month.
+                                        </span>
                                     </p>
                                 </div>
                             </div>
