@@ -481,89 +481,203 @@ class GradeController extends Controller
         }, $filename);
     }
 
+    // public function exportModuleExcel(Request $request)
+    // {
+    //     $search = $request->input('search');
+    //     $date   = $request->input('date');
+
+
+    //     // Fetch all filtered module attempts (without pagination)
+    //     $modules = HandoutAttempt::with('user', 'handout.folder.project', 'handout')
+    //         ->whereHas('handout.folder.project', fn($q) => $q->where('user_id', Auth::id()))
+    //         ->when($search, function ($query) use ($search) {
+    //             $query->where(function ($q) use ($search) {
+    //                 $q->whereHas('user', fn($u) => $u->where('first_name', 'like', "%$search%")
+    //                     ->orWhere('last_name', 'like', "%$search%")
+    //                     ->orWhere('username', 'like', "%$search%")
+    //                     ->orWhere('grade_level', 'like', "%$search%")
+    //                     ->orWhere('section', 'like', "%$search%")
+    //                 )
+    //                 ->orWhereHas('handout.folder.project', fn($p) => $p->where('title', 'like', "%$search%"))
+    //                 ->orWhere('attempt_number', 'like', "%$search%")
+    //                 ->orWhere('time_spent', 'like', "%$search%");
+    //             });
+    //         })
+    //         ->when($date, fn($q) => $q->whereDate('created_at', $date))
+    //         ->latest()
+    //         ->get(); // 🔥 all filtered records
+
+    //     // ===============================
+    //     // Excel Generation
+    //     // ===============================
+    //     $spreadsheet = new Spreadsheet();
+    //     $sheet = $spreadsheet->getActiveSheet();
+
+    //     // Header Row
+    //     $headers = [
+    //         'Student Name',
+    //         'Username',
+    //         'Grade',
+    //         'Section',
+    //         'Project Title',
+    //         'Level',
+    //         'Score',
+    //         'Time Spent',
+    //         'Attempt',
+    //         'Date'
+    //     ];
+    //     $sheet->fromArray($headers, null, 'A1');
+
+    //     // Map level_id to string
+    //     $levelMap = [
+    //         1 => 'Easy',
+    //         2 => 'Average',
+    //         3 => 'Hard',
+    //     ];
+
+    //     // Data Rows
+    //     $row = 2;
+    //     foreach ($modules as $m) {
+    //         $levelName = $levelMap[$m->handout->level_id] ?? 'N/A';
+
+    //         $sheet->fromArray([
+    //             ($m->user->first_name ?? '') . ' ' . ($m->user->last_name ?? ''),
+    //             $m->user->username ?? '-',
+    //             $m->user->grade_level ?? '-',
+    //             $m->user->section ?? '-',
+    //             $m->handout->folder->project->title ?? 'N/A',
+    //             $levelName, // now as text
+    //             gmdate('i:s', $m->time_spent),
+    //             $m->attempt_number,
+    //             // $m->created_at->format('M d, Y h:i:s A'),
+    //             $m->created_at->addHours(8)->format('M d, Y h:i:s A'),
+    //         ], null, "A{$row}");
+
+    //         $row++;
+    //     }
+
+    //     $filename = 'module-grades-' . now()->format('Ymd_His') . '.xlsx';
+
+    //     return response()->streamDownload(function () use ($spreadsheet) {
+    //         ob_clean();
+    //         flush();
+    //         $writer = new Xlsx($spreadsheet);
+    //         $writer->save('php://output');
+    //     }, $filename);
+    // }
+
     public function exportModuleExcel(Request $request)
-    {
-        $search = $request->input('search');
-        $date   = $request->input('date');
+{
+    $search = $request->input('search');
+    $date   = $request->input('date');
 
-        // Fetch all filtered module attempts (without pagination)
-        $modules = HandoutAttempt::with('user', 'handout.folder.project', 'handout')
-            ->whereHas('handout.folder.project', fn($q) => $q->where('user_id', Auth::id()))
-            ->when($search, function ($query) use ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->whereHas('user', fn($u) => $u->where('first_name', 'like', "%$search%")
-                        ->orWhere('last_name', 'like', "%$search%")
-                        ->orWhere('username', 'like', "%$search%")
-                        ->orWhere('grade_level', 'like', "%$search%")
-                        ->orWhere('section', 'like', "%$search%")
-                    )
-                    ->orWhereHas('handout.folder.project', fn($p) => $p->where('title', 'like', "%$search%"))
-                    ->orWhere('attempt_number', 'like', "%$search%")
-                    ->orWhere('time_spent', 'like', "%$search%");
+    // Fetch all filtered module attempts (without pagination)
+    $modules = HandoutAttempt::with('user', 'handout.folder.project', 'handout')
+        ->whereHas('handout.folder.project', fn($q) => $q->where('user_id', Auth::id()))
+        ->when($search, function ($query) use ($search) {
+            $query->where(function ($q) use ($search) {
+
+                // User filters
+                $q->whereHas('user', fn($u) => $u->where('first_name', 'like', "%$search%")
+                    ->orWhere('last_name', 'like', "%$search%")
+                    ->orWhere('username', 'like', "%$search%")
+                    ->orWhere('grade_level', 'like', "%$search%")
+                    ->orWhere('section', 'like', "%$search%")
+                )
+
+                // Project filters
+                ->orWhereHas('handout.folder.project', fn($p) => $p->where('title', 'like', "%$search%"))
+
+                // Level filter (same as searchModuleAdmin)
+                ->orWhere(function ($lvl) use ($search) {
+                    $levelMap = [
+                        'easy' => 1,
+                        'average' => 2,
+                        'hard' => 3,
+                    ];
+
+                    $searchLower = strtolower($search);
+                    $searchLevelId = $levelMap[$searchLower] ?? null;
+
+                    if ($searchLevelId) {
+                        $lvl->whereHas('handout', fn($h) => $h->where('level_id', $searchLevelId));
+                    }
+                })
+
+                // Attempt number
+                ->orWhere('attempt_number', 'like', "%$search%")
+
+                // Time spent mm:ss
+                ->when(preg_match('/^(\d+):(\d+)$/', $search, $matches), function ($q) use ($matches) {
+                    $seconds = ($matches[1] * 60) + $matches[2];
+                    $q->orWhere('time_spent', $seconds);
                 });
-            })
-            ->when($date, fn($q) => $q->whereDate('created_at', $date))
-            ->latest()
-            ->get(); // 🔥 all filtered records
+            });
+        })
+        // Date filter
+        ->when($date, fn($q) => $q->whereDate('created_at', $date))
+        ->latest()
+        ->get();
 
-        // ===============================
-        // Excel Generation
-        // ===============================
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
+    // ===============================
+    // Excel Generation
+    // ===============================
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
 
-        // Header Row
-        $headers = [
-            'Student Name',
-            'Username',
-            'Grade',
-            'Section',
-            'Project Title',
-            'Level',
-            'Score',
-            'Time Spent',
-            'Attempt',
-            'Date'
-        ];
-        $sheet->fromArray($headers, null, 'A1');
+    // Header Row
+    $headers = [
+        'Student Name',
+        'Username',
+        'Grade',
+        'Section',
+        'Project Title',
+        'Level',
+        // 'Score',
+        'Time Spent',
+        'Attempt',
+        'Date'
+    ];
+    $sheet->fromArray($headers, null, 'A1');
 
-        // Map level_id to string
-        $levelMap = [
-            1 => 'Easy',
-            2 => 'Average',
-            3 => 'Hard',
-        ];
+    // Map level_id to text
+    $levelTextMap = [
+        1 => 'Easy',
+        2 => 'Average',
+        3 => 'Hard',
+    ];
 
-        // Data Rows
-        $row = 2;
-        foreach ($modules as $m) {
-            $levelName = $levelMap[$m->handout->level_id] ?? 'N/A';
+    // Data Rows
+    $row = 2;
+    foreach ($modules as $m) {
+        $levelName = $levelTextMap[$m->handout->level_id] ?? 'N/A';
 
-            $sheet->fromArray([
-                ($m->user->first_name ?? '') . ' ' . ($m->user->last_name ?? ''),
-                $m->user->username ?? '-',
-                $m->user->grade_level ?? '-',
-                $m->user->section ?? '-',
-                $m->handout->folder->project->title ?? 'N/A',
-                $levelName, // now as text
-                gmdate('i:s', $m->time_spent),
-                $m->attempt_number,
-                // $m->created_at->format('M d, Y h:i:s A'),
-                $m->created_at->addHours(8)->format('M d, Y h:i:s A'),
-            ], null, "A{$row}");
+        $sheet->fromArray([
+            ($m->user->first_name ?? '') . ' ' . ($m->user->last_name ?? ''),
+            $m->user->username ?? '-',
+            $m->user->grade_level ?? '-',
+            $m->user->section ?? '-',
+            $m->handout->folder->project->title ?? 'N/A',
+            $levelName,
+            // "{$m->score} / {$m->handout->questions->count()}",
+            gmdate('i:s', $m->time_spent),
+            $m->attempt_number,
+            $m->created_at->addHours(8)->format('M d, Y h:i:s A'),
+        ], null, "A{$row}");
 
-            $row++;
-        }
-
-        $filename = 'module-grades-' . now()->format('Ymd_His') . '.xlsx';
-
-        return response()->streamDownload(function () use ($spreadsheet) {
-            ob_clean();
-            flush();
-            $writer = new Xlsx($spreadsheet);
-            $writer->save('php://output');
-        }, $filename);
+        $row++;
     }
+
+    $filename = 'module-grades-' . now()->format('Ymd_His') . '.xlsx';
+
+    return response()->streamDownload(function () use ($spreadsheet) {
+        ob_clean();
+        flush();
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('php://output');
+    }, $filename);
+}
+
 
     public function exportPosttestExcel(Request $request)
     {
