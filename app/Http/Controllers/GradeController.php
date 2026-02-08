@@ -466,7 +466,8 @@ class GradeController extends Controller
                 "{$grade->score} / {$grade->quiz->questions->count()}",
                 gmdate('i:s', $grade->time_spent),
                 $grade->attempt_number,
-                $grade->created_at->format('M d, Y H:i:s A'),
+                // $grade->created_at->format('M d, Y h:i:s A'),
+                $grade->created_at->addHours(8)->format('M d, Y h:i:s A'),
             ], null, "A{$row}");
 
             $row++;
@@ -547,7 +548,8 @@ class GradeController extends Controller
                 $levelName, // now as text
                 gmdate('i:s', $m->time_spent),
                 $m->attempt_number,
-                $m->created_at->format('M d, Y H:i:s A'),
+                // $m->created_at->format('M d, Y h:i:s A'),
+                $grade->created_at->addHours(8)->format('M d, Y h:i:s A'),
             ], null, "A{$row}");
 
             $row++;
@@ -637,7 +639,8 @@ class GradeController extends Controller
                 "{$grade->score} / {$grade->quiz->questions->count()}",
                 gmdate('i:s', $grade->time_spent),
                 $grade->attempt_number,
-                $grade->created_at->format('M d, Y H:i:s A'),
+                // $grade->created_at->format('M d, Y h:i:s A'),
+                $grade->created_at->addHours(8)->format('M d, Y h:i:s A'),
             ], null, "A{$row}");
 
             $row++;
