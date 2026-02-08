@@ -549,7 +549,7 @@ class GradeController extends Controller
                 gmdate('i:s', $m->time_spent),
                 $m->attempt_number,
                 // $m->created_at->format('M d, Y h:i:s A'),
-                $grade->created_at->addHours(8)->format('M d, Y h:i:s A'),
+                $m->created_at->addHours(8)->format('M d, Y h:i:s A'),
             ], null, "A{$row}");
 
             $row++;
