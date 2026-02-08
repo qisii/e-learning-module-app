@@ -8,6 +8,7 @@ export default defineConfig({
                 'resources/css/app.css', 
                 'resources/js/app.js',
                 'resources/js/charting.js',
+                'resources/js/grade.js',
                 'resources/js/module-handout.js',
             ],
             refresh: true,

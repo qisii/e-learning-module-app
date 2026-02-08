@@ -79,6 +79,12 @@ Route::group(['middleware' => 'auth'], function(){
         # COMMENTS & SUGGESTIONS
         Route::get('/comments-suggestions', [CommentsSuggestionsController::class, 'index'])->name('comments.suggestions.index');
         Route::get('/comments-suggestions/search', [CommentsSuggestionsController::class, 'search'])->name('comments.suggestions.search');
+
+        # GRADES EXPORT
+        // web.php
+        Route::get('/grades/pretest/export', [GradeController::class, 'exportPretestExcel'])->name('grades.pretest.export');
+        Route::get('/grades/module/export', [GradeController::class, 'exportModuleExcel'])->name('grades.module.export');
+        Route::get('/grades/posttest/export', [GradeController::class, 'exportPosttestExcel'])->name('grades.posttest.export');
     });
 
     # USER

@@ -66,12 +66,18 @@
                     Filter
                 </button>
 
+                <a href="{{ route('admin.grades.posttest.export', request()->query()) }}"
+                class="ml-auto text-white hover:text-white flex items-center gap-1 text-[12px]
+                        bg-green-500 hover:bg-green-600 px-3 py-2 rounded shadow-sm">
+                    <i class="ri-export-line"></i> Export Excel
+                </a>
+
             </form>
         </div>
 
         {{-- Table --}}
         <div class="overflow-x-auto mt-5">
-            <table class="min-w-full border-collapse table-auto">
+            <table id="posttestTable" class="min-w-full border-collapse table-auto">
                 <thead class="bg-[#f0f4ff] text-gray-700 uppercase">
                     <tr>
                         <th class="py-4 px-6 text-left font-semibold">Student Name</th>
@@ -134,3 +140,8 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+    @vite(['resources/js/grade.js'])
+@endpush
+

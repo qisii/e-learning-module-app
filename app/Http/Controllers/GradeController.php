@@ -7,6 +7,8 @@ use App\Models\QuizAttempt;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class GradeController extends Controller
 {
@@ -152,8 +154,6 @@ class GradeController extends Controller
 
         return view('users.grades.post-test', compact('posttests'));
     }
-
-
 
 
     // ---------- ADMIN SIDE ----------
@@ -395,4 +395,261 @@ class GradeController extends Controller
         return view('admin.grades.module')->with('modules', $modules);
     }
 
+    // ---------- EXPORT ----------
+    public function exportPretestExcel(Request $request)
+    {
+        $search = $request->input('search');
+        $date   = $request->input('date');
+
+        $pretests = QuizAttempt::with('user', 'quiz.folder.project', 'quiz.questions')
+            ->whereHas('quiz.folder', fn ($q) => 
+                $q->where('folder_type_id', 1) // Pretest
+            )
+            ->whereHas('quiz.folder.project', fn ($q) =>
+                $q->where('user_id', Auth::id())
+            )
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+
+                    $q->whereHas('user', function ($u) use ($search) {
+                        $u->where('first_name', 'like', "%$search%")
+                        ->orWhere('last_name', 'like', "%$search%")
+                        ->orWhere('grade_level', 'like', "%$search%")
+                        ->orWhere('section', 'like', "%$search%");
+                    })
+
+                    ->orWhereHas('quiz.folder.project', function ($p) use ($search) {
+                        $p->where('title', 'like', "%$search%");
+                    })
+
+                    ->orWhere('score', 'like', "%$search%")
+                    ->orWhere('attempt_number', 'like', "%$search%");
+
+                    if (preg_match('/^(\d+):(\d+)$/', $search, $m)) {
+                        $q->orWhere('time_spent', ($m[1] * 60) + $m[2]);
+                    }
+                });
+            })
+            ->when($date, fn ($q) => $q->whereDate('created_at', $date))
+            ->latest()
+            ->get(); // 🔥 NOT paginate
+
+        // ===============================
+        // Excel Generation
+        // ===============================
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Header Row
+        $headers = [
+            'Student Name',
+            'Username',
+            'Grade',
+            'Section',
+            'Project Title',
+            'Score',
+            'Time Spent',
+            'Attempt',
+            'Date'
+        ];
+        $sheet->fromArray($headers, null, 'A1');
+
+        // Data Rows
+        $row = 2;
+        foreach ($pretests as $grade) {
+            $sheet->fromArray([
+                ($grade->user->first_name ?? '') . ' ' . ($grade->user->last_name ?? ''),
+                $grade->user->username ?? '-',
+                $grade->user->grade_level ?? '-',
+                $grade->user->section ?? '-',
+                $grade->quiz->folder->project->title ?? 'N/A',
+                "{$grade->score} / {$grade->quiz->questions->count()}",
+                gmdate('i:s', $grade->time_spent),
+                $grade->attempt_number,
+                $grade->created_at->format('M d, Y h:i:s A'),
+            ], null, "A{$row}");
+
+            $row++;
+        }
+
+        $filename = 'pretest-grades-' . now()->format('Ymd_His') . '.xlsx';
+
+        return response()->streamDownload(function () use ($spreadsheet) {
+            $writer = new Xlsx($spreadsheet);
+            $writer->save('php://output');
+        }, $filename);
+    }
+
+    public function exportModuleExcel(Request $request)
+    {
+        $search = $request->input('search');
+        $date   = $request->input('date');
+
+        // Fetch all filtered module attempts (without pagination)
+        $modules = HandoutAttempt::with('user', 'handout.folder.project', 'handout')
+            ->whereHas('handout.folder.project', fn($q) => $q->where('user_id', Auth::id()))
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('user', fn($u) => $u->where('first_name', 'like', "%$search%")
+                        ->orWhere('last_name', 'like', "%$search%")
+                        ->orWhere('username', 'like', "%$search%")
+                        ->orWhere('grade_level', 'like', "%$search%")
+                        ->orWhere('section', 'like', "%$search%")
+                    )
+                    ->orWhereHas('handout.folder.project', fn($p) => $p->where('title', 'like', "%$search%"))
+                    ->orWhere('attempt_number', 'like', "%$search%")
+                    ->orWhere('time_spent', 'like', "%$search%");
+                });
+            })
+            ->when($date, fn($q) => $q->whereDate('created_at', $date))
+            ->latest()
+            ->get(); // 🔥 all filtered records
+
+        // ===============================
+        // Excel Generation
+        // ===============================
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Header Row
+        $headers = [
+            'Student Name',
+            'Username',
+            'Grade',
+            'Section',
+            'Project Title',
+            'Level',
+            'Score',
+            'Time Spent',
+            'Attempt',
+            'Date'
+        ];
+        $sheet->fromArray($headers, null, 'A1');
+
+        // Map level_id to string
+        $levelMap = [
+            1 => 'Easy',
+            2 => 'Average',
+            3 => 'Hard',
+        ];
+
+        // Data Rows
+        $row = 2;
+        foreach ($modules as $m) {
+            $levelName = $levelMap[$m->handout->level_id] ?? 'N/A';
+
+            $sheet->fromArray([
+                ($m->user->first_name ?? '') . ' ' . ($m->user->last_name ?? ''),
+                $m->user->username ?? '-',
+                $m->user->grade_level ?? '-',
+                $m->user->section ?? '-',
+                $m->handout->folder->project->title ?? 'N/A',
+                $levelName, // now as text
+                gmdate('i:s', $m->time_spent),
+                $m->attempt_number,
+                $m->created_at->format('M d, Y h:i:s A'),
+            ], null, "A{$row}");
+
+            $row++;
+        }
+
+        $filename = 'module-grades-' . now()->format('Ymd_His') . '.xlsx';
+
+        return response()->streamDownload(function () use ($spreadsheet) {
+            ob_clean();
+            flush();
+            $writer = new Xlsx($spreadsheet);
+            $writer->save('php://output');
+        }, $filename);
+    }
+
+    public function exportPosttestExcel(Request $request)
+    {
+        $search = $request->input('search');
+        $date   = $request->input('date');
+
+        // Fetch all filtered posttests (no pagination)
+        $posttests = QuizAttempt::with('user', 'quiz.folder.project', 'quiz.questions')
+            ->whereHas('quiz.folder', fn($q) => $q->where('folder_type_id', 3)) // Post-test
+            ->whereHas('quiz.folder.project', fn($q) => $q->where('user_id', Auth::id()))
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+
+                    // User filters
+                    $q->whereHas('user', function ($u) use ($search) {
+                        $u->where('first_name', 'like', "%$search%")
+                        ->orWhere('last_name', 'like', "%$search%")
+                        ->orWhere('grade_level', 'like', "%$search%")
+                        ->orWhere('section', 'like', "%$search%");
+                    })
+
+                    // Project title
+                    ->orWhereHas('quiz.folder.project', function ($p) use ($search) {
+                        $p->where('title', 'like', "%$search%");
+                    })
+
+                    // Score
+                    ->orWhere('score', 'like', "%$search%")
+
+                    // Attempt number
+                    ->orWhere('attempt_number', 'like', "%$search%");
+
+                    // Time spent (mm:ss format)
+                    if (preg_match('/^(\d+):(\d+)$/', $search, $matches)) {
+                        $seconds = ($matches[1] * 60) + $matches[2];
+                        $q->orWhere('time_spent', $seconds);
+                    }
+                });
+            })
+            ->when($date, fn($q) => $q->whereDate('created_at', $date))
+            ->latest()
+            ->get(); // get all filtered records
+
+        // ===============================
+        // Excel Generation
+        // ===============================
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Header Row
+        $headers = [
+            'Student Name',
+            'Username',
+            'Grade',
+            'Section',
+            'Project Title',
+            'Score',
+            'Time Spent',
+            'Attempt',
+            'Date'
+        ];
+        $sheet->fromArray($headers, null, 'A1');
+
+        // Data Rows
+        $row = 2;
+        foreach ($posttests as $grade) {
+            $sheet->fromArray([
+                ($grade->user->first_name ?? '') . ' ' . ($grade->user->last_name ?? ''),
+                $grade->user->username ?? '-',
+                $grade->user->grade_level ?? '-',
+                $grade->user->section ?? '-',
+                $grade->quiz->folder->project->title ?? 'N/A',
+                "{$grade->score} / {$grade->quiz->questions->count()}",
+                gmdate('i:s', $grade->time_spent),
+                $grade->attempt_number,
+                $grade->created_at->format('M d, Y h:i:s A'),
+            ], null, "A{$row}");
+
+            $row++;
+        }
+
+        $filename = 'posttest-grades-' . now()->format('Ymd_His') . '.xlsx';
+
+        return response()->streamDownload(function () use ($spreadsheet) {
+            ob_clean();
+            flush();
+            $writer = new Xlsx($spreadsheet);
+            $writer->save('php://output');
+        }, $filename);
+    }
 }
