@@ -217,7 +217,8 @@ class ProfileForm extends Component
         $user->save();
 
         // session()->flash('message', 'Profile updated successfully!');
-        $this->dispatch('flashMessage', type: 'success', message: 'Profile updated successfully!');
+        // $this->dispatch('flashMessage', type: 'success', message: 'Profile updated successfully!');
+        $this->redirectRoute('projects.index');
 
     }
 
