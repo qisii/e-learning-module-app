@@ -4,12 +4,12 @@
 
 @section('image')
     <!-- Desktop: large login image at center-left -->
-    <img src="{{ asset('assets/images/login2.png') }}" 
+    <img src="{{ asset('assets/images/signup-v2.png') }}" 
         alt="Login" 
         class="hidden lg:block absolute bottom-0 left-[26%] transform -translate-x-1/2 w-[400px] z-15">
 
     <!-- Tablet & Mobile: smaller login image bottom-left -->
-    <img src="{{ asset('assets/images/login2.png') }}" 
+    <img src="{{ asset('assets/images/signup-v2.png') }}" 
         alt="Login" 
         class="md:w-[220px] md:hidden lg:hidden absolute bottom-0 left-[4%] hidden z-0">
 @endsection
